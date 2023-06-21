@@ -79,6 +79,35 @@ class VideoMediaInput: NSObject {
         
     }
     
+    func onChange(for url : URL) {
+
+        self.playerItem = AVPlayerItem(url: url)
+        
+        playerItemObserver = playerItem.observe(\.status) { [weak self] item, _ in
+            guard item.status == .readyToPlay else { return }
+            self?.playerItemObserver = nil
+            self?.player.play()
+            self?.player.currentItem?.audioTimePitchAlgorithm = .timeDomain
+            self?.player.rate = 1
+        }
+        player.replaceCurrentItem(with: playerItem)
+        player.currentItem!.add(videoOutput)
+        NotificationCenter.default.removeObserver(self)
+        NotificationCenter.default.addObserver(forName: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: nil, queue: nil) {[weak self] notification in
+            
+            if let weakSelf = self {
+                /*
+                 Setting actionAtItemEnd to None prevents the movie from getting paused at item end. A very simplistic, and not gapless, looped playback.
+                 */
+//                weakSelf.player.actionAtItemEnd = .none
+                weakSelf.player.seek(to: CMTime.zero)
+                self?.onEndVideo()
+//                weakSelf.player.play()
+            }
+            
+        }
+    }
+    
     func stopAllProcesses(){
         self.queue.sync {
             self.player.pause()

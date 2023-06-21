@@ -128,6 +128,15 @@
         }
       },
       {
+        "package": "Kingfisher",
+        "repositoryURL": "https://github.com/onevcat/Kingfisher.git",
+        "state": {
+          "branch": null,
+          "revision": "3f6992b5cd3143e83b02300ea59c400d4cf0747a",
+          "version": "7.8.0"
+        }
+      },
+      {
         "package": "leveldb",
         "repositoryURL": "https://github.com/firebase/leveldb.git",
         "state": {
@@ -143,6 +152,15 @@
           "branch": null,
           "revision": "819d0a2173aff699fb8c364b6fb906f7cdb1a692",
           "version": "2.30909.0"
+        }
+      },
+      {
+        "package": "NavigationStack",
+        "repositoryURL": "https://github.com/indieSoftware/NavigationStack.git",
+        "state": {
+          "branch": null,
+          "revision": "900b75924f218a68c2487ab8a9c3fc7c42130705",
+          "version": "1.1.1"
         }
       },
       {
@@ -206,6 +224,15 @@
           "branch": "master",
           "revision": "dfb78563c581eea560ea90c19dbe8d1d93d11260",
           "version": null
+        }
+      },
+      {
+        "package": "WrappingHStack",
+        "repositoryURL": "https://github.com/dkk/WrappingHStack.git",
+        "state": {
+          "branch": null,
+          "revision": "f31b8fdc57759c5aa5fc98c70746db5556e73300",
+          "version": "2.2.10"
         }
       }
     ]

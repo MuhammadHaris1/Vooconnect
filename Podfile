@@ -11,5 +11,5 @@ target 'Vooconnect' do
 	pod 'FBSDKCoreKit'
  	pod 'FBSDKLoginKit'
  	pod 'FBSDKShareKit'
-  pod 'RealmSwift'
+  	pod 'RealmSwift'
 end

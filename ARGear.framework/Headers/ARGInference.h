@@ -23,7 +23,7 @@ typedef NS_ENUM(NSInteger, InferenceState) {
 typedef NS_OPTIONS (NSInteger,ARGInferenceFeature)  {
     ARGInferenceFeatureFaceLowTracking          = 1 << 0,
 //    ARGInferenceFeatureFaceHighTracking         = 1 << 1,
-//    ARGInferenceFeatureFaceMeshTracking         = 1 << 2,
+    ARGInferenceFeatureFaceMeshTracking         = 1 << 2,
 //    ARGInferenceFeatureFaceBlendShapes          = 1 << 3,
 //    ARGInferenceFeatureSegmentationHalf         = 1 << 4,
 //    ARGInferenceFeatureSegmentationFull         = 1 << 5,

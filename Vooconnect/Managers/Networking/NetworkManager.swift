@@ -9,7 +9,7 @@ import Combine
 import Foundation
 import Network
 import Swinject
-
+import ARGear
 /// enum for the media type object, currently there will be photo or video.
 enum MediaType: String {
     case photo = "image/jpeg"
@@ -39,7 +39,7 @@ class NetworkManager {
     
     // Set global logger object
     static let netlogger = Logger()
-    
+    var argSession: ARGSession?
     /// Use this method to call your desired endpoint
     ///
     /// - Parameters:

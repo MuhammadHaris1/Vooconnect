@@ -23,11 +23,33 @@
 		042FDD2729D8CE1C008B81C7 /* VooconnectModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 042FDD2529D8CE1C008B81C7 /* VooconnectModel.xcdatamodeld */; };
 		042FDD2A29D8CF2E008B81C7 /* DataPersistenceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 042FDD2929D8CF2E008B81C7 /* DataPersistenceManager.swift */; };
 		042FDD2C29D8D659008B81C7 /* SwitchAccountViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 042FDD2B29D8D659008B81C7 /* SwitchAccountViewModel.swift */; };
+		0435B9382A3CDC9900AEDC57 /* CustomViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0435B9362A3CDC9900AEDC57 /* CustomViews.swift */; };
+		0435B93C2A3CDE2E00AEDC57 /* NavigationStack in Frameworks */ = {isa = PBXBuildFile; productRef = 0435B93B2A3CDE2E00AEDC57 /* NavigationStack */; };
+		043BCB422A3B5F230051A57C /* Foundation+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 043BCB412A3B5F220051A57C /* Foundation+Extension.swift */; };
+		043BCB442A3B7C900051A57C /* RatioView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 043BCB432A3B7C900051A57C /* RatioView.xib */; };
+		043BCB462A3B7E570051A57C /* RatioView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 043BCB452A3B7E570051A57C /* RatioView.swift */; };
+		043BCB482A3C84A50051A57C /* AdjustVideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 043BCB472A3C84A40051A57C /* AdjustVideoView.swift */; };
+		043BCB4D2A3CD1BA0051A57C /* MyVideoPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 043BCB4A2A3CD1B60051A57C /* MyVideoPlayerView.swift */; };
+		043BCB4E2A3CD1BA0051A57C /* VideoTrimSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 043BCB4B2A3CD1B80051A57C /* VideoTrimSliderView.swift */; };
+		043BCB512A3CD30B0051A57C /* VideoCursorSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 043BCB502A3CD30B0051A57C /* VideoCursorSlider.swift */; };
+		043BCB532A3CD3CF0051A57C /* RangeSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 043BCB522A3CD3CF0051A57C /* RangeSlider.swift */; };
+		043BCB552A3CD4F00051A57C /* PlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 043BCB542A3CD4F00051A57C /* PlayerViewModel.swift */; };
 		047A625329D22F3D006D2635 /* EditProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047A625229D22F3D006D2635 /* EditProfileViewModel.swift */; };
 		047A625629D23333006D2635 /* ContactsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047A625529D23333006D2635 /* ContactsView.swift */; };
 		047A625829D23387006D2635 /* ContactsComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047A625729D23387006D2635 /* ContactsComponents.swift */; };
 		047A625B29D2356B006D2635 /* ContactsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047A625A29D2356B006D2635 /* ContactsViewModel.swift */; };
 		047A625E29D23E28006D2635 /* MessageComposeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047A625D29D23E28006D2635 /* MessageComposeView.swift */; };
+		0480589A2A34F53400C5AB1B /* ARGCamera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 048058972A34F53200C5AB1B /* ARGCamera.swift */; };
+		0480589B2A34F53400C5AB1B /* Permission.swift in Sources */ = {isa = PBXBuildFile; fileRef = 048058982A34F53300C5AB1B /* Permission.swift */; };
+		0480589C2A34F53400C5AB1B /* ARGCameraProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 048058992A34F53400C5AB1B /* ARGCameraProtocol.swift */; };
+		0480589F2A34F57300C5AB1B /* ARGPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0480589E2A34F57300C5AB1B /* ARGPreferences.swift */; };
+		048058A22A34F5A200C5AB1B /* ARGScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 048058A12A34F5A200C5AB1B /* ARGScene.swift */; };
+		048058A72A34F5F300C5AB1B /* FilterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 048058A32A34F5ED00C5AB1B /* FilterManager.swift */; };
+		048058A82A34F5F300C5AB1B /* BulgeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 048058A42A34F5EE00C5AB1B /* BulgeManager.swift */; };
+		048058A92A34F5F300C5AB1B /* BeautyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 048058A52A34F5F000C5AB1B /* BeautyManager.swift */; };
+		048058AA2A34F5F300C5AB1B /* ContentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 048058A62A34F5F300C5AB1B /* ContentManager.swift */; };
+		048058AD2A34F60500C5AB1B /* NetworkManager+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 048058AC2A34F60400C5AB1B /* NetworkManager+Ext.swift */; };
+		048058AF2A35C94200C5AB1B /* BeautyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 048058AE2A35C94200C5AB1B /* BeautyView.swift */; };
 		0496379229BFB2CE0044DA57 /* CreatorMoreOptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0496379129BFB2CE0044DA57 /* CreatorMoreOptionsView.swift */; };
 		0496379429BFB2DD0044DA57 /* CreatorMoreOptionsComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0496379329BFB2DD0044DA57 /* CreatorMoreOptionsComponents.swift */; };
 		049F4BBC29BBB54300113EA0 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 049F4BBB29BBB54300113EA0 /* SDWebImageSwiftUI */; };
@@ -108,6 +130,8 @@
 		04DD22EF29DCC07700DE7103 /* InstagramLoginManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04DD22EE29DCC07700DE7103 /* InstagramLoginManager.swift */; };
 		04E05D9629CF221F004F5406 /* PostsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04E05D9529CF221F004F5406 /* PostsModel.swift */; };
 		04E05D9829CF2320004F5406 /* StatsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04E05D9729CF2320004F5406 /* StatsModel.swift */; };
+		04E25F272A3CE1F70074D0E3 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 04E25F262A3CE1F70074D0E3 /* Kingfisher */; };
+		04E25F2A2A3CE33B0074D0E3 /* WrappingHStack in Frameworks */ = {isa = PBXBuildFile; productRef = 04E25F292A3CE33B0074D0E3 /* WrappingHStack */; };
 		1064AC6E2A2F6CCD00DFF2BB /* ARGear.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1064AC6C2A2F6CA800DFF2BB /* ARGear.framework */; };
 		1064AC6F2A2F6CCD00DFF2BB /* ARGear.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1064AC6C2A2F6CA800DFF2BB /* ARGear.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		107DCDA12A165FA900A95F17 /* Categories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 107DCD9E2A165FA900A95F17 /* Categories.swift */; };
@@ -420,11 +444,32 @@
 		042FDD2629D8CE1C008B81C7 /* VooconnectModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = VooconnectModel.xcdatamodel; sourceTree = "<group>"; };
 		042FDD2929D8CF2E008B81C7 /* DataPersistenceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataPersistenceManager.swift; sourceTree = "<group>"; };
 		042FDD2B29D8D659008B81C7 /* SwitchAccountViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchAccountViewModel.swift; sourceTree = "<group>"; };
+		0435B9362A3CDC9900AEDC57 /* CustomViews.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomViews.swift; sourceTree = "<group>"; };
+		043BCB412A3B5F220051A57C /* Foundation+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Foundation+Extension.swift"; sourceTree = "<group>"; };
+		043BCB432A3B7C900051A57C /* RatioView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = RatioView.xib; sourceTree = "<group>"; };
+		043BCB452A3B7E570051A57C /* RatioView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatioView.swift; sourceTree = "<group>"; };
+		043BCB472A3C84A40051A57C /* AdjustVideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdjustVideoView.swift; sourceTree = "<group>"; };
+		043BCB4A2A3CD1B60051A57C /* MyVideoPlayerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyVideoPlayerView.swift; sourceTree = "<group>"; };
+		043BCB4B2A3CD1B80051A57C /* VideoTrimSliderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoTrimSliderView.swift; sourceTree = "<group>"; };
+		043BCB502A3CD30B0051A57C /* VideoCursorSlider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoCursorSlider.swift; sourceTree = "<group>"; };
+		043BCB522A3CD3CF0051A57C /* RangeSlider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RangeSlider.swift; sourceTree = "<group>"; };
+		043BCB542A3CD4F00051A57C /* PlayerViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerViewModel.swift; sourceTree = "<group>"; };
 		047A625229D22F3D006D2635 /* EditProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileViewModel.swift; sourceTree = "<group>"; };
 		047A625529D23333006D2635 /* ContactsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsView.swift; sourceTree = "<group>"; };
 		047A625729D23387006D2635 /* ContactsComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsComponents.swift; sourceTree = "<group>"; };
 		047A625A29D2356B006D2635 /* ContactsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsViewModel.swift; sourceTree = "<group>"; };
 		047A625D29D23E28006D2635 /* MessageComposeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageComposeView.swift; sourceTree = "<group>"; };
+		048058972A34F53200C5AB1B /* ARGCamera.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARGCamera.swift; sourceTree = "<group>"; };
+		048058982A34F53300C5AB1B /* Permission.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Permission.swift; sourceTree = "<group>"; };
+		048058992A34F53400C5AB1B /* ARGCameraProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARGCameraProtocol.swift; sourceTree = "<group>"; };
+		0480589E2A34F57300C5AB1B /* ARGPreferences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARGPreferences.swift; sourceTree = "<group>"; };
+		048058A12A34F5A200C5AB1B /* ARGScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARGScene.swift; sourceTree = "<group>"; };
+		048058A32A34F5ED00C5AB1B /* FilterManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterManager.swift; sourceTree = "<group>"; };
+		048058A42A34F5EE00C5AB1B /* BulgeManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BulgeManager.swift; sourceTree = "<group>"; };
+		048058A52A34F5F000C5AB1B /* BeautyManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BeautyManager.swift; sourceTree = "<group>"; };
+		048058A62A34F5F300C5AB1B /* ContentManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentManager.swift; sourceTree = "<group>"; };
+		048058AC2A34F60400C5AB1B /* NetworkManager+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NetworkManager+Ext.swift"; sourceTree = "<group>"; };
+		048058AE2A35C94200C5AB1B /* BeautyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BeautyView.swift; sourceTree = "<group>"; };
 		0496379129BFB2CE0044DA57 /* CreatorMoreOptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatorMoreOptionsView.swift; sourceTree = "<group>"; };
 		0496379329BFB2DD0044DA57 /* CreatorMoreOptionsComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatorMoreOptionsComponents.swift; sourceTree = "<group>"; };
 		049F4BC429BBB5E100113EA0 /* Color + Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Color + Extensions.swift"; sourceTree = "<group>"; };
@@ -512,7 +557,6 @@
 		10B40BB62A308A9800C4D098 /* Item.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
 		23BAA11E8767BE34AB95E0B2 /* Pods-Vooconnect.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Vooconnect.debug.xcconfig"; path = "Target Support Files/Pods-Vooconnect/Pods-Vooconnect.debug.xcconfig"; sourceTree = "<group>"; };
 		29625F082A178C95008E00FB /* ARGear.framework 2 */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "ARGear.framework 2"; path = "../../../../../../Downloads/ARGear.framework 2"; sourceTree = "<group>"; };
-		29625F092A178CB6008E00FB /* ARGear.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ARGear.framework; path = ../../../../../../Downloads/ARGear.framework; sourceTree = "<group>"; };
 		29625FB22A182017008E00FB /* RealmManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmManager.swift; sourceTree = "<group>"; };
 		297754B82A2A036A0006DB3F /* LanguageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageModel.swift; sourceTree = "<group>"; };
 		297754BA2A2A039B0006DB3F /* LangViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LangViewModel.swift; sourceTree = "<group>"; };
@@ -792,8 +836,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				ABC55C4B29AEC51700C3E320 /* swift-video-generator in Frameworks */,
+				0435B93C2A3CDE2E00AEDC57 /* NavigationStack in Frameworks */,
 				AB811D0429E1FD6200E14881 /* AVPlayerViewController-Subtitles in Frameworks */,
 				AB6D75D629D5F7F000FA05CE /* FirebaseAuth in Frameworks */,
+				04E25F2A2A3CE33B0074D0E3 /* WrappingHStack in Frameworks */,
 				ABC55C4D29AEC51700C3E320 /* SwiftUIBloc in Frameworks */,
 				AB6D75D429D5F7F000FA05CE /* FirebaseAppCheck in Frameworks */,
 				AB6D75D829D5F7F000FA05CE /* FirebaseFirestore in Frameworks */,
@@ -807,6 +853,7 @@
 				1064AC6E2A2F6CCD00DFF2BB /* ARGear.framework in Frameworks */,
 				502C133429D57BE300FB0577 /* AgoraUIKit in Frameworks */,
 				049F4BBF29BBB55B00113EA0 /* Swinject in Frameworks */,
+				04E25F272A3CE1F70074D0E3 /* Kingfisher in Frameworks */,
 				9DB61B7F668C5A90B13AF9D4 /* Pods_Vooconnect.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -841,6 +888,20 @@
 			path = DataPersistenceManager;
 			sourceTree = "<group>";
 		};
+		043BCB492A3CD16C0051A57C /* VideoTrimView */ = {
+			isa = PBXGroup;
+			children = (
+				0435B9362A3CDC9900AEDC57 /* CustomViews.swift */,
+				043BCB542A3CD4F00051A57C /* PlayerViewModel.swift */,
+				043BCB522A3CD3CF0051A57C /* RangeSlider.swift */,
+				043BCB502A3CD30B0051A57C /* VideoCursorSlider.swift */,
+				043BCB4A2A3CD1B60051A57C /* MyVideoPlayerView.swift */,
+				043BCB4B2A3CD1B80051A57C /* VideoTrimSliderView.swift */,
+				043BCB472A3C84A40051A57C /* AdjustVideoView.swift */,
+			);
+			path = VideoTrimView;
+			sourceTree = "<group>";
+		};
 		047A625429D2331A006D2635 /* Contacts */ = {
 			isa = PBXGroup;
 			children = (
@@ -860,6 +921,55 @@
 			path = SubViews;
 			sourceTree = "<group>";
 		};
+		048058952A34F50600C5AB1B /* ARGearHelpers */ = {
+			isa = PBXGroup;
+			children = (
+				048058AB2A34F5F900C5AB1B /* Network */,
+				048058A52A34F5F000C5AB1B /* BeautyManager.swift */,
+				048058A42A34F5EE00C5AB1B /* BulgeManager.swift */,
+				048058A62A34F5F300C5AB1B /* ContentManager.swift */,
+				048058A32A34F5ED00C5AB1B /* FilterManager.swift */,
+				048058A02A34F58900C5AB1B /* ARGScene */,
+				0480589D2A34F55000C5AB1B /* ARGPreferences */,
+				048058962A34F50F00C5AB1B /* ARGCamera */,
+			);
+			path = ARGearHelpers;
+			sourceTree = "<group>";
+		};
+		048058962A34F50F00C5AB1B /* ARGCamera */ = {
+			isa = PBXGroup;
+			children = (
+				048058972A34F53200C5AB1B /* ARGCamera.swift */,
+				048058992A34F53400C5AB1B /* ARGCameraProtocol.swift */,
+				048058982A34F53300C5AB1B /* Permission.swift */,
+			);
+			path = ARGCamera;
+			sourceTree = "<group>";
+		};
+		0480589D2A34F55000C5AB1B /* ARGPreferences */ = {
+			isa = PBXGroup;
+			children = (
+				0480589E2A34F57300C5AB1B /* ARGPreferences.swift */,
+			);
+			path = ARGPreferences;
+			sourceTree = "<group>";
+		};
+		048058A02A34F58900C5AB1B /* ARGScene */ = {
+			isa = PBXGroup;
+			children = (
+				048058A12A34F5A200C5AB1B /* ARGScene.swift */,
+			);
+			path = ARGScene;
+			sourceTree = "<group>";
+		};
+		048058AB2A34F5F900C5AB1B /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				048058AC2A34F60400C5AB1B /* NetworkManager+Ext.swift */,
+			);
+			path = Network;
+			sourceTree = "<group>";
+		};
 		0496379029BFB2B40044DA57 /* ShareView */ = {
 			isa = PBXGroup;
 			children = (
@@ -867,6 +977,14 @@
 				0496379329BFB2DD0044DA57 /* CreatorMoreOptionsComponents.swift */,
 			);
 			path = ShareView;
+			sourceTree = "<group>";
+		};
+		049F0C932A3856450072B618 /* Beauty */ = {
+			isa = PBXGroup;
+			children = (
+				048058AE2A35C94200C5AB1B /* BeautyView.swift */,
+			);
+			path = Beauty;
 			sourceTree = "<group>";
 		};
 		049F4BC329BBB5E100113EA0 /* Extensions */ = {
@@ -1866,6 +1984,7 @@
 		A9566DFA29447EBB00FCBA75 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				043BCB492A3CD16C0051A57C /* VideoTrimView */,
 				A9E4B67A293F023100C92C57 /* FinalPreview.swift */,
 				A92DF0C2293F49EE00FB8B3D /* FinalVideoToPostView.swift */,
 				A943809C2940525E007D9DF4 /* CustomeSheetView.swift */,
@@ -1881,7 +2000,7 @@
 		A958B6542923B1AD00FE16EA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				29625F092A178CB6008E00FB /* ARGear.framework */,
+				1064AC6C2A2F6CA800DFF2BB /* ARGear.framework */,
 				29625F082A178C95008E00FB /* ARGear.framework 2 */,
 				04DD22EC29DC6BE300DE7103 /* Twitter.framework */,
 				0DE5759621D06BEFA8AF4238 /* Pods_Vooconnect.framework */,
@@ -1939,7 +2058,6 @@
 		A9785F952911102D00F19ADD = {
 			isa = PBXGroup;
 			children = (
-				1064AC6C2A2F6CA800DFF2BB /* ARGear.framework */,
 				ABAEA65E29BA71DC00B5277E /* ARScenes */,
 				ABAEA64C29B8308000B5277E /* 3DModels */,
 				A958B65C2923B7DA00FE16EA /* CountryPicker-master */,
@@ -1964,6 +2082,7 @@
 		A9785FA02911102D00F19ADD /* Vooconnect */ = {
 			isa = PBXGroup;
 			children = (
+				048058952A34F50600C5AB1B /* ARGearHelpers */,
 				10B40BB32A3089F100C4D098 /* ARModel */,
 				29625FB12A181FEF008E00FB /* Data */,
 				85A4676D29F59DDC005A5D4C /* ContentView.swift */,
@@ -2165,6 +2284,7 @@
 		A9B2478C293DC06800B5A233 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				049F0C932A3856450072B618 /* Beauty */,
 				A9B247B1293DD3F900B5A233 /* CustomeCameraHome.swift */,
 				A9B2478D293DC3BB00B5A233 /* CustomeCameraView.swift */,
 				A9C460002949C54400A06896 /* CustomeCameraForPhoto.swift */,
@@ -2177,6 +2297,8 @@
 				A932F8FB295FF9280098B14E /* EffectsList.swift */,
 				297754BC2A2A05340006DB3F /* BotSheetView.swift */,
 				29E5A2AC2A2B4D3100E4C093 /* CategoryView.swift */,
+				043BCB432A3B7C900051A57C /* RatioView.xib */,
+				043BCB452A3B7E570051A57C /* RatioView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -2288,6 +2410,7 @@
 			children = (
 				AB752EB929AC53370065E1C8 /* FinalPreviewController.swift */,
 				29E4B45F2A25183800C79AA8 /* Functions.swift */,
+				043BCB412A3B5F220051A57C /* Foundation+Extension.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -2473,6 +2596,9 @@
 				502C133129D57BE300FB0577 /* AgoraBroadcastExtensionHelper */,
 				502C133329D57BE300FB0577 /* AgoraUIKit */,
 				503A8F4A29E59C880035135D /* AgoraVideoSwiftUI */,
+				0435B93B2A3CDE2E00AEDC57 /* NavigationStack */,
+				04E25F262A3CE1F70074D0E3 /* Kingfisher */,
+				04E25F292A3CE33B0074D0E3 /* WrappingHStack */,
 			);
 			productName = Vooconnect;
 			productReference = A9785F9E2911102D00F19ADD /* Vooconnect.app */;
@@ -2512,6 +2638,9 @@
 				AB811D0229E1FD6200E14881 /* XCRemoteSwiftPackageReference "AVPlayerViewController-Subtitles" */,
 				502C132B29D579EA00FB0577 /* XCRemoteSwiftPackageReference "AgoraVideoSwiftUI" */,
 				502C132E29D57BE300FB0577 /* XCRemoteSwiftPackageReference "iOS-UIKit" */,
+				0435B93A2A3CDE2E00AEDC57 /* XCRemoteSwiftPackageReference "NavigationStack" */,
+				04E25F252A3CE1F70074D0E3 /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				04E25F282A3CE33B0074D0E3 /* XCRemoteSwiftPackageReference "WrappingHStack" */,
 			);
 			productRefGroup = A9785F9F2911102D00F19ADD /* Products */;
 			projectDirPath = "";
@@ -2557,6 +2686,7 @@
 				A91280CD2919067E008FE970 /* Urbanist-LightItalic.ttf in Resources */,
 				A91280CE2919067E008FE970 /* Urbanist-ExtraLightItalic.ttf in Resources */,
 				A91280DA2919067E008FE970 /* Urbanist-Medium.ttf in Resources */,
+				043BCB442A3B7C900051A57C /* RatioView.xib in Resources */,
 				A91280D42919067E008FE970 /* Urbanist-Black.ttf in Resources */,
 				A91280D32919067E008FE970 /* Urbanist-Italic.ttf in Resources */,
 				A93DBA1429127ADD00420B83 /* notificationW.gif in Resources */,
@@ -2643,6 +2773,7 @@
 				A99AE83C291E5D6E00E613F1 /* OTPValidation.swift in Sources */,
 				049F4BF029BBB67100113EA0 /* FindFriendsView.swift in Sources */,
 				049F4C1B29BBB6E400113EA0 /* UserDefaultsKeys.swift in Sources */,
+				0435B9382A3CDC9900AEDC57 /* CustomViews.swift in Sources */,
 				042FDD1529D52CF1008B81C7 /* UIScreen + Extensions.swift in Sources */,
 				A932F902296014D00098B14E /* ReelsCommentTextField.swift in Sources */,
 				AB37593629CAB32A000D0A2D /* curlyHairScene.rcproject in Sources */,
@@ -2651,6 +2782,7 @@
 				A9F24082296824200063D430 /* HastagNotificationView.swift in Sources */,
 				049F4C1329BBB6BD00113EA0 /* SettingRowType.swift in Sources */,
 				04D6393229F6631300718FE0 /* CreatorViewComponents.swift in Sources */,
+				048058A82A34F5F300C5AB1B /* BulgeManager.swift in Sources */,
 				049F4C1329BBB6BD00113EA0 /* SettingRowType.swift in Sources */,
 				049F4BF429BBB67100113EA0 /* CreatorProfileView.swift in Sources */,
 				A933C9C5294728AC0009F8A5 /* PreviewFromGallery.swift in Sources */,
@@ -2664,13 +2796,16 @@
 				042FDD2C29D8D659008B81C7 /* SwitchAccountViewModel.swift in Sources */,
 				049F4C1129BBB6BD00113EA0 /* LanguageView.swift in Sources */,
 				049F4C0C29BBB6BC00113EA0 /* PrivacyView.swift in Sources */,
+				048058AD2A34F60500C5AB1B /* NetworkManager+Ext.swift in Sources */,
 				042FDD2C29D8D659008B81C7 /* SwitchAccountViewModel.swift in Sources */,
 				ABC9F83429AAD437006436A1 /* DeezerSongModel.swift in Sources */,
+				043BCB552A3CD4F00051A57C /* PlayerViewModel.swift in Sources */,
 				A901699A2941E3560089AA45 /* CustomeSheetMoreOtptions.swift in Sources */,
 				049F4C0E29BBB6BC00113EA0 /* HelpCenterView.swift in Sources */,
 				049F4C1C29BBB6E400113EA0 /* Logger.swift in Sources */,
 				ABC55C5229AFBF4300C3E320 /* ContentOverlayModel.swift in Sources */,
 				A955F24229532FB200498540 /* LiveSettingsSheet.swift in Sources */,
+				0480589C2A34F53400C5AB1B /* ARGCameraProtocol.swift in Sources */,
 				A95462472955AD1B00C4D233 /* ViewersList.swift in Sources */,
 				ABC55C3A29AE8A8100C3E320 /* ViewExtension.swift in Sources */,
 				A9C460052949E8DD00A06896 /* SoundsView.swift in Sources */,
@@ -2706,6 +2841,7 @@
 				049F4BCA29BBB5E100113EA0 /* View + Extensions.swift in Sources */,
 				04DBC98229BD933C00DEBAF5 /* EditProfileView.swift in Sources */,
 				049F4BF729BBB67100113EA0 /* SubscribeComponents.swift in Sources */,
+				043BCB422A3B5F230051A57C /* Foundation+Extension.swift in Sources */,
 				049F4C2529BBBCE700113EA0 /* NilModel.swift in Sources */,
 				042FDD1F29D791E1008B81C7 /* BottomSheet.swift in Sources */,
 				049F4C1E29BBB6E400113EA0 /* SetReactiveMethods.swift in Sources */,
@@ -2733,9 +2869,11 @@
 				A9453E97292B51BA00728A19 /* MediaFile.swift in Sources */,
 				04D6392B29F55F2700718FE0 /* ManageAccountsViewModel.swift in Sources */,
 				042FDD2729D8CE1C008B81C7 /* VooconnectModel.xcdatamodeld in Sources */,
+				048058AA2A34F5F300C5AB1B /* ContentManager.swift in Sources */,
 				049F4BFA29BBB67100113EA0 /* CreatorSearchComponents.swift in Sources */,
 				049F4C1029BBB6BD00113EA0 /* CreatorView.swift in Sources */,
 				A945313C2914D6CC00321407 /* BuzzView.swift in Sources */,
+				048058AF2A35C94200C5AB1B /* BeautyView.swift in Sources */,
 				04E05D9829CF2320004F5406 /* StatsModel.swift in Sources */,
 				A9AD88D829321393009B16F8 /* CustomeTextFieldFive.swift in Sources */,
 				AB37595E29D4A3FE000D0A2D /* TypeOfSoundFilter.swift in Sources */,
@@ -2773,6 +2911,7 @@
 				297754BB2A2A039B0006DB3F /* LangViewModel.swift in Sources */,
 				049F4C2C29BBBD6000113EA0 /* ShareSheet.swift in Sources */,
 				A9F24080296818B30063D430 /* TrendingView.swift in Sources */,
+				043BCB532A3CD3CF0051A57C /* RangeSlider.swift in Sources */,
 				ABAEA67629BC447F00B5277E /* TypeContent.swift in Sources */,
 				ABC9F82429AAC9F2006436A1 /* ButtonExtension.swift in Sources */,
 				0496379229BFB2CE0044DA57 /* CreatorMoreOptionsView.swift in Sources */,
@@ -2781,8 +2920,10 @@
 				A914832B291B753C00FB0FED /* OTPViewModel.swift in Sources */,
 				85A4676E29F59DDC005A5D4C /* ContentView.swift in Sources */,
 				ABC9F82D29AAD201006436A1 /* SoundsViewController.swift in Sources */,
+				043BCB4D2A3CD1BA0051A57C /* MyVideoPlayerView.swift in Sources */,
 				A9546221295556A800C4D233 /* LiveViewersView.swift in Sources */,
 				AB752EAD29AAFEA80065E1C8 /* DeezerAlbumModel.swift in Sources */,
+				043BCB482A3C84A50051A57C /* AdjustVideoView.swift in Sources */,
 				A955F240295324B100498540 /* SendtoJoinLiveSheet.swift in Sources */,
 				04DBC97F29BD819D00DEBAF5 /* ButtonWithBorder.swift in Sources */,
 				A954624B2955B23300C4D233 /* GoLiveTogeRequestList.swift in Sources */,
@@ -2842,6 +2983,7 @@
 				A95462492955AFD700C4D233 /* GoLiveTogeRequestSheet.swift in Sources */,
 				A97E6C5029486DB400FD6B7B /* SearchLiveView.swift in Sources */,
 				049F4BF829BBB67100113EA0 /* SubscriberViewModel.swift in Sources */,
+				048058A22A34F5A200C5AB1B /* ARGScene.swift in Sources */,
 				A9975A58295428E300E6C71C /* AddModeratorsList.swift in Sources */,
 				A9975A562954255C00E6C71C /* AddModeratorsListView.swift in Sources */,
 				29625FB32A182017008E00FB /* RealmManager.swift in Sources */,
@@ -2850,6 +2992,7 @@
 				A91280E229190BD0008FE970 /* ConnectWithEmailAndPhoneView.swift in Sources */,
 				A9B2478E293DC3BB00B5A233 /* CustomeCameraView.swift in Sources */,
 				04C1D5F829BBC42000284F72 /* LogInResource.swift in Sources */,
+				0480589F2A34F57300C5AB1B /* ARGPreferences.swift in Sources */,
 				A98201E9293B004F0055CAFD /* ReelsModel.swift in Sources */,
 				04C7526429D1A81C00A0337A /* GeneralManagerImpl.swift in Sources */,
 				A92F2AE8291A560D00FD63B9 /* OTPView.swift in Sources */,
@@ -2860,12 +3003,15 @@
 				A9BBD3E3292234BE00ABC50D /* PopUpView.swift in Sources */,
 				AB37593F29CDFC7F000D0A2D /* VideoMediaInput.swift in Sources */,
 				A97E6C562948792E00FD6B7B /* SearchButtonView.swift in Sources */,
+				0480589B2A34F53400C5AB1B /* Permission.swift in Sources */,
 				A9975A5E295467C800E6C71C /* UserManageSheet.swift in Sources */,
+				0480589A2A34F53400C5AB1B /* ARGCamera.swift in Sources */,
 				049F4BF329BBB67100113EA0 /* SwitchAccountView.swift in Sources */,
 				049F4C2E29BBBD6E00113EA0 /* PrimaryFillButton.swift in Sources */,
 				A955F2362952C19900498540 /* LiveStreamingView.swift in Sources */,
 				AB752EB729AB1E1D0065E1C8 /* SoundsViewBlocEvent.swift in Sources */,
 				A958B55229234B3100FE16EA /* PopUpViewTwo.swift in Sources */,
+				043BCB512A3CD30B0051A57C /* VideoCursorSlider.swift in Sources */,
 				04DD22DF29DBA51100DE7103 /* FacebookLoginManager.swift in Sources */,
 				A998410B29596DAE003209F3 /* GiftPanelList.swift in Sources */,
 				A9785FD02911237D00F19ADD /* GifImage.swift in Sources */,
@@ -2876,11 +3022,13 @@
 				A9453E9B292B522C00728A19 /* ReelsView.swift in Sources */,
 				ABC55C5929AFC82900C3E320 /* TypeOfVisibility.swift in Sources */,
 				AB37595B29D4A297000D0A2D /* SoundsFilterView.swift in Sources */,
+				048058A92A34F5F300C5AB1B /* BeautyManager.swift in Sources */,
 				B24881402923F69B0024B72F /* CustomeTextFieldFour.swift in Sources */,
 				04DD22EB29DC690700DE7103 /* TwitterLoginManager.swift in Sources */,
 				A954623F2955A3CD00C4D233 /* ViewerProfileDetailSheet.swift in Sources */,
 				049F4C1429BBB6BD00113EA0 /* SettingView.swift in Sources */,
 				049F4C0F29BBB6BD00113EA0 /* ManageAccountsView.swift in Sources */,
+				048058A72A34F5F300C5AB1B /* FilterManager.swift in Sources */,
 				041572B02A13E4FB002CEE1E /* CommentReplySheet.swift in Sources */,
 				29E5A2AD2A2B4D3100E4C093 /* CategoryView.swift in Sources */,
 				ABC9F82729AACACA006436A1 /* ColorsHelper.swift in Sources */,
@@ -2925,6 +3073,7 @@
 				049F4BC929BBB5E100113EA0 /* Font + Extensions.swift in Sources */,
 				ABAEA66429BA768400B5277E /* marioHatScene.rcproject in Sources */,
 				A9820220293B42390055CAFD /* NetworkingManager.swift in Sources */,
+				043BCB4E2A3CD1BA0051A57C /* VideoTrimSliderView.swift in Sources */,
 				049F4BF529BBB67100113EA0 /* CreatorProfileComponents.swift in Sources */,
 				10B40BB82A308A9900C4D098 /* Filter.swift in Sources */,
 				A9BBD3DB2922097D00ABC50D /* FillYourProfileView.swift in Sources */,
@@ -2946,6 +3095,7 @@
 				A932F8FE2960070F0098B14E /* CommentSheet.swift in Sources */,
 				A9453E96292B51BA00728A19 /* Reel.swift in Sources */,
 				A94531362914D65F00321407 /* NotificationsView.swift in Sources */,
+				043BCB462A3B7E570051A57C /* RatioView.swift in Sources */,
 				040B707329F90E4E00BCCACD /* ProfileViewersViewComponents.swift in Sources */,
 				A9F55828291F9E0300BC6267 /* GenderViewModel.swift in Sources */,
 				042FDD2A29D8CF2E008B81C7 /* DataPersistenceManager.swift in Sources */,
@@ -3104,7 +3254,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Vooconnect/Preview Content\"";
-				DEVELOPMENT_TEAM = 5FQV9R5NVC;
+				DEVELOPMENT_TEAM = R884X3NXXR;
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3133,6 +3283,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				"OTHER_CODE_SIGN_FLAGS[sdk=*]" = "--generate-entitlement-der";
 				PRODUCT_BUNDLE_IDENTIFIER = com.vooconnectsss;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -3156,7 +3307,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Vooconnect/Preview Content\"";
-				DEVELOPMENT_TEAM = 5FQV9R5NVC;
+				DEVELOPMENT_TEAM = R884X3NXXR;
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3185,7 +3336,8 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.Vooconnect;
+				"OTHER_CODE_SIGN_FLAGS[sdk=*]" = "--generate-entitlement-der";
+				PRODUCT_BUNDLE_IDENTIFIER = com.vooconnectsss;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -3221,6 +3373,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		0435B93A2A3CDE2E00AEDC57 /* XCRemoteSwiftPackageReference "NavigationStack" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/indieSoftware/NavigationStack.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 		049F4BBA29BBB54300113EA0 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SDWebImage/SDWebImageSwiftUI";
@@ -3243,6 +3403,22 @@
 			requirement = {
 				branch = master;
 				kind = branch;
+			};
+		};
+		04E25F252A3CE1F70074D0E3 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.0.0;
+			};
+		};
+		04E25F282A3CE33B0074D0E3 /* XCRemoteSwiftPackageReference "WrappingHStack" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/dkk/WrappingHStack.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
 			};
 		};
 		502C132B29D579EA00FB0577 /* XCRemoteSwiftPackageReference "AgoraVideoSwiftUI" */ = {
@@ -3296,6 +3472,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		0435B93B2A3CDE2E00AEDC57 /* NavigationStack */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0435B93A2A3CDE2E00AEDC57 /* XCRemoteSwiftPackageReference "NavigationStack" */;
+			productName = NavigationStack;
+		};
 		049F4BBB29BBB54300113EA0 /* SDWebImageSwiftUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 049F4BBA29BBB54300113EA0 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
@@ -3310,6 +3491,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 049F4BC029BBB57500113EA0 /* XCRemoteSwiftPackageReference "KeychainAccess" */;
 			productName = KeychainAccess;
+		};
+		04E25F262A3CE1F70074D0E3 /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 04E25F252A3CE1F70074D0E3 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
+		04E25F292A3CE33B0074D0E3 /* WrappingHStack */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 04E25F282A3CE33B0074D0E3 /* XCRemoteSwiftPackageReference "WrappingHStack" */;
+			productName = WrappingHStack;
 		};
 		502C132F29D57BE300FB0577 /* AgoraAppGroupDataHelper */ = {
 			isa = XCSwiftPackageProductDependency;

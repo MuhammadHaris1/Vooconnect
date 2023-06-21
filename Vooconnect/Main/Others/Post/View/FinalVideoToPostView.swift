@@ -8,6 +8,10 @@
 import SwiftUI
 import Photos
 import SDWebImageSwiftUI
+import FBSDKShareKit
+//import SocialMedia
+//import FacebookLogin
+//import FacebookCore
 
 struct FinalVideoToPostView: View {
     
@@ -51,6 +55,21 @@ struct FinalVideoToPostView: View {
     @State private var selectedTopic = ""
     @State private var selectedCat: Int?
     @State private var videoData: Data?
+    
+//    @State private var whatsAppImage: String = "WhatsAppLogo"
+//    @State private var twetterImage: String = "TwetterLogo"
+//    @State private var facebookImage: String = "FacebookLogo"
+//    @State private var instagramImage: String = "InstagramLogo"
+    
+//    @State private var isFacebook = false
+    @State private var isFacebook = false
+    @State private var isWhatsApp = false
+    @State private var isTwetter = false
+    @State private var isInstagram = false
+    @GestureState private var tapGestureState = false
+    @State private var extractedImage: UIImage?
+    
+    
     var catSelected: (Int) -> () = {val in}
     
     init(postModel : PostModel, renderUrl : URL?){
@@ -121,10 +140,24 @@ struct FinalVideoToPostView: View {
                                 .padding(.trailing)
                             
                             //                            Image("SelectCover")
-                            testCover()
-                                .cornerRadius(15)
+                            if let image = extractedImage {
+                                ExtractedImageView(image: image)
+                                    .cornerRadius(15)
+                            } else {
+                                testCover()
+                                    .cornerRadius(15)
+                            }
+//                            testCover()
+//                                .cornerRadius(15)
                             
                             
+                        }
+                        .onAppear {
+                            extractImageFromVideo(url: postModel.contentUrl!) { image in
+                                DispatchQueue.main.async {
+                                    extractedImage = image
+                                }
+                            }
                         }
                         .padding(.top,2)
                         
@@ -515,10 +548,165 @@ struct FinalVideoToPostView: View {
                         .padding(.top)
                         
                         HStack{
-                            Image("WhatsAppLogo")
-                            Image("InstagramLogo")
-                            Image("FacebookLogo")
-                            Image("TwetterLogo")
+                            VStack {
+                                if isWhatsApp {
+                                    Circle()
+                                        .strokeBorder(Color.black, lineWidth: 2)
+                                        .frame(width: 50, height: 50)
+                                        .overlay(
+                                            Circle()
+                                                .foregroundColor(.white) // Add a contrasting background color
+                                                .frame(width: 46, height: 46) // Slightly smaller than the main circle
+                                                .overlay(
+                                                    Image("WhatsAppLogo") // Replace "yourImageName" with the actual name of your image asset
+                                                        .resizable()
+                                                        .scaledToFit()
+                                                )
+                                        )
+                                        .onTapGesture {
+                                            isWhatsApp.toggle()
+                                        }
+                                } else {
+                                    Image("WhatsAppLogo")
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .opacity(tapGestureState ? 0.5 : 1.0)
+                                        .animation(.easeInOut)
+                                        .onTapGesture {
+                                            isWhatsApp.toggle()
+                                        }
+                                }
+                            }
+                            .frame(width: 50, height: 50)
+                            .gesture(
+                                TapGesture()
+                                    .updating($tapGestureState) { value, state, _ in
+                                        state = true
+                                    }
+                                    .onEnded { _ in
+                                        isWhatsApp.toggle()
+                                    }
+                            )
+                            VStack {
+                                if isInstagram {
+                                    Circle()
+                                        .strokeBorder(Color.black, lineWidth: 2)
+                                        .frame(width: 50, height: 50)
+                                        .overlay(
+                                            Circle()
+                                                .foregroundColor(.white) // Add a contrasting background color
+                                                .frame(width: 46, height: 46) // Slightly smaller than the main circle
+                                                .overlay(
+                                                    Image("InstagramLogo") // Replace "yourImageName" with the actual name of your image asset
+                                                        .resizable()
+                                                        .scaledToFit()
+                                                )
+                                        )
+                                        .onTapGesture {
+                                            isInstagram.toggle()
+                                        }
+                                } else {
+                                    Image("InstagramLogo")
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .opacity(tapGestureState ? 0.5 : 1.0)
+                                        .animation(.easeInOut)
+                                        .onTapGesture {
+                                            isInstagram.toggle()
+                                        }
+                                }
+                            }
+                            .frame(width: 50, height: 50)
+                            .gesture(
+                                TapGesture()
+                                    .updating($tapGestureState) { value, state, _ in
+                                        state = true
+                                    }
+                                    .onEnded { _ in
+                                        isInstagram.toggle()
+                                    }
+                            )
+                            VStack {
+                                if isFacebook {
+                                    Circle()
+                                        .strokeBorder(Color.black, lineWidth: 2)
+                                        .frame(width: 50, height: 50)
+                                        .overlay(
+                                            Circle()
+                                                .foregroundColor(.white) // Add a contrasting background color
+                                                .frame(width: 46, height: 46) // Slightly smaller than the main circle
+                                                .overlay(
+                                                    Image("FacebookLogo") // Replace "yourImageName" with the actual name of your image asset
+                                                        .resizable()
+                                                        .scaledToFit()
+                                                )
+                                        )
+                                        .onTapGesture {
+                                            isFacebook.toggle()
+                                        }
+                                } else {
+                                    Image("FacebookLogo")
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .opacity(tapGestureState ? 0.5 : 1.0)
+                                        .animation(.easeInOut)
+                                        .onTapGesture {
+                                            isFacebook.toggle()
+                                        }
+                                }
+                            }
+                            .frame(width: 50, height: 50)
+                            .gesture(
+                                TapGesture()
+                                    .updating($tapGestureState) { value, state, _ in
+                                        state = true
+                                    }
+                                    .onEnded { _ in
+                                        isFacebook.toggle()
+                                    }
+                            )
+                            VStack {
+                                if isTwetter {
+                                    Circle()
+                                        .strokeBorder(Color.black, lineWidth: 2)
+                                        .frame(width: 50, height: 50)
+                                        .overlay(
+                                            Circle()
+                                                .foregroundColor(.white) // Add a contrasting background color
+                                                .frame(width: 46, height: 46) // Slightly smaller than the main circle
+                                                .overlay(
+                                                    Image("TwetterLogo") // Replace "yourImageName" with the actual name of your image asset
+                                                        .resizable()
+                                                        .scaledToFit()
+                                                )
+                                        )
+                                        .onTapGesture {
+                                            isTwetter.toggle()
+                                        }
+                                } else {
+                                    Image("TwetterLogo")
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .opacity(tapGestureState ? 0.5 : 1.0)
+                                        .animation(.easeInOut)
+                                        .onTapGesture {
+                                            isTwetter.toggle()
+                                        }
+                                }
+                            }
+                            .frame(width: 50, height: 50)
+                            .gesture(
+                                TapGesture()
+                                    .updating($tapGestureState) { value, state, _ in
+                                        state = true
+                                    }
+                                    .onEnded { _ in
+                                        isTwetter.toggle()
+                                    }
+                            )
+//                                .onTapGesture {
+//                                    twetterImage =
+//                                }
                             Spacer()
                         }
                         .padding(.top)
@@ -569,7 +757,7 @@ struct FinalVideoToPostView: View {
                                         print("success=========")
                                         navigateToNextView = true
                                         if (self.saveToDevice){
-                                            print("Should save to device: "+self.saveToDevice.description)
+                                            print("Should save to device: " + self.saveToDevice.description)
                                             if (self.autoCaption) {
                                                 Task {
                                                     downloadAndSaveWithCaptionVideo()
@@ -580,6 +768,15 @@ struct FinalVideoToPostView: View {
                                                     downloadAncdSaveVideo()
                                                     loader = false
                                                 }
+                                            }
+                                        }
+                                        if (isFacebook == true){
+                                            DispatchQueue.main.async{
+                                                print("Facebook is true")
+                                                let fileName = UserDefaults.standard.string(forKey: "imageName") ?? ""
+                                                let videoURL =  URL(string: getImageVideoMarkedBaseURL + fileName)
+                                                    print("shareable Url \(videoURL)")
+                                                shareToFacebook(videoURL: videoURL!)
                                             }
                                         }
                                         } else {
@@ -632,6 +829,8 @@ struct FinalVideoToPostView: View {
                     .padding(.horizontal)
                     //                .navigationBarHidden(true)
                     //            } CustomeSheetMoreOtptions
+                
+
                     
                     if bottomSheetShown {
                         Rectangle()
@@ -646,7 +845,7 @@ struct FinalVideoToPostView: View {
                     Color.black.opacity(0.3)
                         .edgesIgnoringSafeArea(.all)
                         .overlay(
-                            ActivityIndicator()
+                            ProgressView()
                                 .frame(width: 50, height: 50)
                                 .padding()
                         )
@@ -724,9 +923,32 @@ struct FinalVideoToPostView: View {
                 .navigationBarHidden(true)
             }
         }
+    func shareToFacebook(videoURL: URL) {
+        let activityItems: [Any] = [videoURL, self.postModel.description]
+                let activityViewController = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
+                UIApplication.shared.windows.first?.rootViewController?.present(activityViewController, animated: true, completion: nil)
+    }
     func showMessagePopup(messages: String) {
         self.message = messages
         self.isShowPopup = true
+    }
+    
+    func extractImageFromVideo(url: URL, completion: @escaping (UIImage?) -> Void) {
+        let asset = AVAsset(url: url)
+        let generator = AVAssetImageGenerator(asset: asset)
+        
+        generator.appliesPreferredTrackTransform = true
+        let time = CMTime(seconds: 0, preferredTimescale: 1)
+        
+        generator.generateCGImagesAsynchronously(forTimes: [NSValue(time: time)]) { _, image, _, _, _ in
+            guard let cgImage = image else {
+                completion(nil)
+                return
+            }
+            
+            let uiImage = UIImage(cgImage: cgImage)
+            completion(uiImage)
+        }
     }
         
         func testCover() -> some View{
@@ -789,12 +1011,9 @@ struct FinalVideoToPostView: View {
                             print("Sucessss......")
                             complitionHandler(true)
                         } else {
-                            if (error == "502 Bad Gateway"){
-                                print("Fill the mandatory fields")
-                                loader = false
-                            }
                             print("Errror.....")
                             complitionHandler(false)
+                            loader = false
                         }
                     }
                 })
@@ -808,3 +1027,15 @@ struct FinalVideoToPostView: View {
 //    }
 //}
 //getImageVideoBaseURL + "/marked" + fileName
+
+struct ExtractedImageView: View {
+    let image: UIImage
+    
+    var body: some View {
+        Image(uiImage: image ?? UIImage(imageLiteralResourceName: "SelectCover"))
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .scaledToFill()
+            .frame(width: 100, height: 132)
+    }
+}

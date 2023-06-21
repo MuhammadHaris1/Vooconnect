@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import AVKit
+import ARGear
 
 struct CustomeCameraHome: View {
     
@@ -39,14 +39,59 @@ struct CustomeCameraHome: View {
     @State private var cameraFlip: Bool = false
     
     @State private var filersSheet: Bool = false
+    @State private var beautySheet: Bool = false
     @State private var effectsSheet: Bool = false
+    @State private var isShowPopup: Bool = false
+    var toast_main_position = CGPoint(x: 0, y: 0)
+    
+    // MARK: - ARGearSDK properties
+    private var argConfig: ARGConfig?
+    @State private var argSession: ARGSession?
+    private var currentFaceFrame: ARGFrame?
+    private var nextFaceFrame: ARGFrame?
+    private var preferences: ARGPreferences = ARGPreferences()
+    
+    @State private var cameraPreviewCALayer = CALayer()
+    
+    // MARK: - Camera & Scene properties
+    private let serialQueue = DispatchQueue(label: "serialQueue")
+    private var currentCamera: CameraDeviceWithPosition = .front
+    
+    @State private var arCamera: ARGCamera!
+    @State private var arScene: ARGScene!
+//    private var arMedia: ARGMedia = ARGMedia()
+    
     
     var body: some View {
         
         NavigationView {
             
             VStack {
-                
+                if self.isShowPopup {
+                    GeometryReader { geometry in
+                        VStack {
+                            Spacer()
+                            Spacer()
+                            Text("Beauty")
+                                .frame(maxWidth: geometry.size.width * 0.8, maxHeight: 40.0)
+                                .padding(.bottom, 20)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .fill(Color.black.opacity(0.50))
+                                )
+                                .foregroundColor(Color.white)
+                                .onAppear {
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                        withAnimation {
+                                            self.isShowPopup = false
+                                        }
+                                    }
+                                }
+                        }
+                        .frame(width: geometry.size.width, height: geometry.size.height, alignment: .bottom)
+                    }
+                }
+
                 if let url = cameraModel.previewURL ,cameraModel.showPreview {
                     NavigationLink(
                         destination: FinalPreview(
@@ -57,14 +102,14 @@ struct CustomeCameraHome: View {
                         )
                             .navigationBarBackButtonHidden(true)
                             .navigationBarHidden(true)
-                            
+
                         ,
                         isActive: $preview) {
                             EmptyView()
                         }
-                        
+
                 }
-                
+
                 NavigationLink(destination: AllMediaView(callback: {val in
 //                    self.photos = false
                     self.cameraModel.previewURL = val.url
@@ -77,7 +122,7 @@ struct CustomeCameraHome: View {
                     .navigationBarBackButtonHidden(true).navigationBarHidden(true), isActive: $photos) {
                         EmptyView()
                     }
-                                
+
                 NavigationLink(destination: SoundsView(
                     pickSong: {song in
                         cameraModel.songModel = song
@@ -87,7 +132,7 @@ struct CustomeCameraHome: View {
                     .navigationBarBackButtonHidden(true).navigationBarHidden(true), isActive: $soundView) {
                         EmptyView()
                     }
-                
+
                 HStack {
                     Spacer()
                     Button {
@@ -95,14 +140,16 @@ struct CustomeCameraHome: View {
                     } label: {
                         Image("CameraBack")
                     }
-                    
+
                 }
                 .padding(.trailing)
-                
-                
+
+
                 ZStack {   // (alignment: .bottom)
-                    // MARK: Camera View
-                    
+//                MARK: Camera View
+//                     Text("MARK: Camera View")
+//                    MyARView(arScene: $arScene, argConfig: argConfig, argSession: argSession, currentFaceFrame: currentFaceFrame, nextFaceFrame: nextFaceFrame, preferences: preferences, arCamera: $arCamera, cameraPreviewCALayer: $cameraPreviewCALayer)
+
                     if clickPhoto == true {
                         CustomeCameraForPhoto(preview:{url in
                             print("picture taked: "+url.absoluteString)
@@ -113,19 +160,18 @@ struct CustomeCameraHome: View {
                             .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous))
                             .padding(.top,10)
                             .padding(.bottom,30)
-                        
+
                     } else {
-                    
-                            CustomeCameraView()
-                                .environmentObject(cameraModel)
-                                .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous))
-                                .padding(.top,10)
-                                .padding(.bottom,30)
-                      
+                        CustomeCameraView()
+                            .environmentObject(cameraModel)
+                            .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous))
+                            .padding(.top,10)
+                            .padding(.bottom,30)
+
                     }
-                    
+
                     if timerRunning == true {
-                        
+
                         Text("\(countdownTimer)")
                             .foregroundColor(.white)
                             .padding()
@@ -135,42 +181,42 @@ struct CustomeCameraHome: View {
                                 } else {
                                     timerRunning = false
                                 }
-                                
+
                             }
                             .font(.system(size: 40, weight: .bold))
                     }
-                    
+
                     // MARK: Controls
                     ZStack{
-                        
+
                         if clickPhoto == true {
-                            
+
                         } else {
-                            
+
                             VStack(alignment: .leading) {
-                                
+
                                 VStack {
-                                    
+
                                     VStack {
-                                        
+
                                         VStack(spacing: 12) {
-                                            
+
                                             VStack {
-                                                
-                                                
+
+
                                                 Button {
                                                     cameraFlip.toggle()
                                                     print("Flip===========")
-                                                    
+
                                                     self.cameraModel.isBackCamera.toggle()
-                                                    
+
                                                     if self.cameraModel.isBackCamera == false {
                                                         self.cameraModel.switchCamera()
                                                     } else {
                                                         flash = false
                                                         self.cameraModel.checkPermission(isBackCamera: self.cameraModel.isBackCamera)
                                                     }
-                                                    
+
                                                 } label: {
                                                     VStack{
                                                         Text("Flip")
@@ -179,13 +225,13 @@ struct CustomeCameraHome: View {
                                                             .padding(.bottom, -5)
                                                         Image(cameraFlip ? "FlipCameraPurple" :"CameraFlip2") //FlipCameraPurple
                                                     }
-                                                   
+
                                                 }
-                                                
+
                                             }
-                                            
+
                                             VStack {
-                                                
+
                                                 Text("Flash")
                                                     .font(.custom("Urbanist-Regular", size: 10))
                                                     .foregroundColor(.white)
@@ -197,15 +243,15 @@ struct CustomeCameraHome: View {
                                                     } else {
                                                         print("Flash===========")
                                                     }
-                                                    
+
                                                 } label: {
                                                     Image(flash ? "Flash2" : "Flash3") //Flash3
                                                 }
-                                                
+
                                             }
-                                            
+
                                             VStack {
-                                                
+
                                                 Text("Timer")
                                                     .font(.custom("Urbanist-Regular", size: 10))
                                                     .foregroundColor(.white)
@@ -213,9 +259,9 @@ struct CustomeCameraHome: View {
                                                 Button {
                                                     print("Timer===========")
 //                                                    countdownTimer = 7
-                                                    
+
                                                     timerImage = true
-                                                    
+
                                                     if countdownTimer == 3 {
                                                         countdownTimer = 5
                                                         countdownTimerText = 5
@@ -239,7 +285,7 @@ struct CustomeCameraHome: View {
                                                         countdownTimerText = 3
                                                     }
                                                     countdownTimer2 = countdownTimer
-                                                    
+
                                                 } label: {
                                                     //                                            VStack {
                                                     Image(timerImage ? "TimerPurple" : "Timer2") // TimerPurple
@@ -260,13 +306,13 @@ struct CustomeCameraHome: View {
                                                                 }
                                                                 .offset(x: 10, y: 13)
                                                         }
-                                                    
+
                                                 }
-                                                
+
                                             }
-                                            
+
                                             VStack {
-                                                
+
                                                 Text("Duration")
                                                     .font(.custom("Urbanist-Regular", size: 10))
                                                     .foregroundColor(.white)
@@ -288,7 +334,7 @@ struct CustomeCameraHome: View {
                                                     } else {
                                                         cameraModel.maxDuration = 10
                                                     }
-                                                    
+
                                                 } label: {
                                                     Image(durationImage ? "DurationPurple" : "Duration2")
                                                         .overlay {
@@ -308,16 +354,16 @@ struct CustomeCameraHome: View {
                                                                 .offset(x: 10, y: 13)
                                                         }
                                                 }
-                                                
+
                                             }
-                                            
+
                                         }
                                         .padding(.bottom, 12)
-                                        
+
                                         VStack(spacing: 12) {
-                                            
+
                                             VStack {
-                                                
+
                                                 Text("Speed")
                                                     .font(.custom("Urbanist-Regular", size: 10))
                                                     .foregroundColor(.white)
@@ -332,7 +378,7 @@ struct CustomeCameraHome: View {
                                                         default : cameraModel.speed = 0.25
                                                     }
                                                     print("speed: " + cameraModel.speed.description)
-                                                    
+
                                                 } label: {
                                                     Image("Speed2")
                                                         .overlay {
@@ -355,12 +401,12 @@ struct CustomeCameraHome: View {
                                                                 .offset(x: 10, y: 13)
                                                         }
                                                 }
-                                                
+
                                             }
                                             .padding(.bottom, 6)
-                                            
+
                                             VStack {
-                                                
+
                                                 Text("Add Sound")
                                                     .font(.custom("Urbanist-Regular", size: 10))
                                                     .foregroundColor(.white)
@@ -381,43 +427,44 @@ struct CustomeCameraHome: View {
                                                     {
                                                         Image("AddSound2")
                                                     }
-                                                    
+
                                                 }
-                                                
+
                                             }
-                                            
+
                                             VStack {
-                                                
+
                                                 Text("Beauty")
                                                     .font(.custom("Urbanist-Regular", size: 10))
                                                     .foregroundColor(.white)
                                                     .padding(.bottom, -5)
                                                 Button {
                                                     print("Beauty2===========")
-                                                    
+                                                    beautySheet.toggle()
+//                                                    isShowPopup.toggle()
                                                 } label: {
                                                     Image("Beauty2")
                                                 }
-                                                
+
                                             }
-                                            
+
                                             VStack {
-                                                
+
                                                 Text("Filter")
                                                     .font(.custom("Urbanist-Regular", size: 10))
                                                     .foregroundColor(.white)
                                                     .padding(.bottom, -5)
                                                 Button {
                                                     filersSheet.toggle()
-                                                    
+
                                                     print("Filter2===========")
-                                                    
+
                                                 } label: {
                                                     Image("Filter2")
                                                 }
-                                                
+
                                             }
-                                            
+
                                         }
                                     }
                                     .padding(.vertical)
@@ -432,19 +479,19 @@ struct CustomeCameraHome: View {
                                             Color("GrayFour"),
                                         ], startPoint: .leading, endPoint: .trailing)) // GrayOneC
                                     .cornerRadius(50)
-                                    
+
                                 }
                                 .frame(maxWidth: .infinity,alignment: .trailing)
                                 .padding(.bottom, -20)
                                 .padding(.trailing, 6)
-                                
+
                             }
                             .padding(.leading)
                             .padding(.bottom)
                         }
-                        
+
                         VStack(alignment: .leading) {
-                            
+
                             Button {
                                 DispatchQueue.main.async {
                                     clickPhoto = false
@@ -453,36 +500,36 @@ struct CustomeCameraHome: View {
                             } label: {
                                 Image(clickPhoto ? "VideoUnSlected" : "VideoSlected")
                             }
-                            
+
                             HStack {
-                                
+
                                 Button {
                                     clickPhoto = true
                                     self.cameraModel.previewURL = nil
                                 } label: {
                                     Image(clickPhoto ? "PhotoSlected" : "PhotoUnSlected") // PhotoSlected
                                 }
-                                
+
                                 Spacer()
-                                
+
                                 if clickPhoto == true {  // CameraClick
 
                                     Text("")
                                         .frame(height: 58)
                                     .padding(.leading, 8)
                                     Spacer()
-                                    
+
                                 } else {
                                     Button {
-                                        
+
                                         print("click")
-                                        
+
                                         if cameraModel.isRecording{
                                             cameraModel.stopRecording()
                                             countdownTimer = countdownTimer2
                                             countdownTimerText = countdownTimer2
                                         }
-                                        
+
                                         else {
                                             timerRunning = true
                                             countdownTimer = countdownTimer2
@@ -493,22 +540,22 @@ struct CustomeCameraHome: View {
                                                 timerRunning = false
                                                 cameraModel.startRecording()
                                             }
-                                            
-                                           
+
+
                                         }
-                                        
+
                                     } label: {
-                                        
+
                                         if cameraModel.isRecording {
                                             Image("CameraRecording")
                                                 .resizable()
                                                 .aspectRatio(contentMode: .fill)
                                                 .frame(width: 58, height: 58)
-                                            
+
 //                                                .overlay(content: {
 //                                                    CircleeTwo(circleProgress: $circleProgress, widthAndHeight: widthAndHeight, progressColor: progressColor)
 //                                                })
-                                            
+
 //                                                .overlay(
 //
 ////                                                    circleee(percent: (cameraModel.recordedDuration / cameraModel.maxDuration))
@@ -525,7 +572,7 @@ struct CustomeCameraHome: View {
 //                                                .frame(width: size.width * (cameraModel.recordedDuration / cameraModel.maxDuration))
                                             
                                                 .offset(x: 10)
-                                            
+
                                         } else {
                                             Image("VideoClick")
                                                 .resizable()
@@ -591,19 +638,19 @@ struct CustomeCameraHome: View {
                                 }else{
                                     HStack{Text("                         ")}
                                 }
-                                
-                                
+
+
                             }
                         }
                         .padding(.horizontal)
                         .padding(.bottom)
                         .frame(maxWidth: .infinity,maxHeight: .infinity,alignment: .bottomLeading)
-                        
+
                     }
                     .frame(maxHeight: .infinity,alignment: .bottom)
                     .padding(.bottom,10)
                     .padding(.bottom,30)
-                    
+
                     Button {
                         countdownTimer = 3
                         cameraModel.recordedDuration = 0
@@ -618,8 +665,8 @@ struct CustomeCameraHome: View {
                     .padding()
                     .padding(.top)
                     .opacity(!cameraModel.recordedURLs.isEmpty && cameraModel.previewURL != nil && !cameraModel.isRecording ? 1 : 0)
-                    
-                    
+
+
                     if cameraModel.isRecording {
                         Text("Recording")
                             .font(.custom("Urbanist-Regular", size: 14))
@@ -627,37 +674,37 @@ struct CustomeCameraHome: View {
                             .frame(maxWidth: .infinity,maxHeight: .infinity,alignment: .top)
                             .padding(.top, 40)
                     } else {
-                        
+
                     }
 //                        .frame(maxWidth: .infinity,maxHeight: .infinity,alignment: .top)
-                    
+
                 }
                 .padding(.top, -10)
-                
+
                 .padding(.bottom, -35)
-                
+
                 HStack {
-                    
+
                     Button {
                         photos.toggle()
                     } label: {
                         Image("UploadGalery")
                     }
-                    
+
                     Spacer()
-                    
+
                     Button {
                         effectsSheet.toggle()
                     } label: {
                         Image("CameraEffact")
                     }
-                    
-                    
-                    
+
+
+
                 }
                 .padding(.horizontal)
                 .padding(.bottom, -5)
-                
+
                 // Filters
                 .blurredSheet(.init(.white), show: $filersSheet) {
 
@@ -672,8 +719,21 @@ struct CustomeCameraHome: View {
                         // Fallback on earlier versions
                     }
                 }
-                
-                
+                .blurredSheet(.init(.white), show: $beautySheet) {
+
+                } content: {
+                    if #available(iOS 16.0, *) {
+                        BeautyView()
+
+                            .presentationDetents([.large,.medium,.height(140)])
+                            .onAppear {
+                                cameraModel.getFilterData()
+                            }
+                    } else {
+                        // Fallback on earlier versions
+                    }
+                }
+
                 // Effects
                 .blurredSheet(.init(.white), show: $effectsSheet) {
 
@@ -685,14 +745,18 @@ struct CustomeCameraHome: View {
                         // Fallback on earlier versions
                     }
                 }
-                
+
             }
-            
+
             .animation(.easeInOut, value: cameraModel.showPreview)
             .navigationBarHidden(true)
             .onAppear {
+                
                 cameraModel.recordedDuration = 0
+                runARGSession()
+                initHelpers()
 //                cameraModel.previewURL = nil
+                setupARGearConfig()
                 cameraModel.recordedURLs.removeAll()
             }
             
@@ -700,7 +764,106 @@ struct CustomeCameraHome: View {
         
         
     }
+    
+    
+    
+    // MARK: - ARGearSDK setupConfig
+    private func setupARGearConfig() {
+        do {
+            let config = ARGConfig(
+                apiURL: API_HOST,
+                apiKey: API_KEY,
+                secretKey: API_SECRET_KEY,
+                authKey: API_AUTH_KEY
+            )
+            argSession = try ARGSession(argConfig: config, feature: [.faceMeshTracking])
+//            argSession?.delegate = self
+            
+            let debugOption: ARGInferenceDebugOption = self.preferences.showLandmark ? .optionDebugFaceLandmark2D : .optionDebugNON
+            argSession?.inferenceDebugOption = debugOption
+            
+        } catch let error as NSError {
+            print("Failed to initialize ARGear Session with error: %@", error.description)
+        } catch let exception as NSException {
+            print("Exception to initialize ARGear Session with error: %@", exception.description)
+        }
+    }
+//    private func setupCamera() {
+//        arCamera = ARGCamera()
+//
+//        arCamera.sampleBufferHandler = { [weak self] output, sampleBuffer, connection in
+//            guard let self = self else { return }
+//
+//            self.serialQueue.async {
+//
+//                self.argSession?.update(sampleBuffer, from: connection)
+//            }
+//        }
+//
+//        self.permissionCheck {
+//            self.arCamera.startCamera()
+//
+//            self.setCameraInfo()
+//        }
+//    }
+ 
+    
+    private func connectAPI() {
+        
+        NetworkManager.shared.connectAPI { (result: Result<[String: Any], APIError>) in
+            switch result {
+            case .success(let data):
+                RealmManager.shared.setARGearData(data) { success in
+                    self.loadAPIData()
+                }
+            case .failure(.network):
+                self.loadAPIData()
+                break
+            case .failure(.data):
+                self.loadAPIData()
+                break
+            case .failure(.serializeJSON):
+                self.loadAPIData()
+                break
+            }
+        }
+    }
+    private func loadAPIData() {
+        DispatchQueue.main.async {
+            let categories = RealmManager.shared.getCategories()
+
+            // Assuming mainBottomFunctionView is a UIKit view
+//            mainBottomFunctionView.contentView.contentsCollectionView.contents = categories
+//            mainBottomFunctionView.contentView.contentTitleListScrollView.contents = categories
+//            mainBottomFunctionView.filterView.filterCollectionView.filters = RealmManager.shared.getFilters()
+        }
+    }
+    
+    private func initHelpers() {
+        NetworkManager.shared.argSession = self.argSession
+        BeautyManager.shared.argSession = self.argSession
+        FilterManager.shared.argSession = self.argSession
+        ContentManager.shared.argSession = self.argSession
+        BulgeManager.shared.argSession = self.argSession
+        
+        BeautyManager.shared.start()
+    }
+    
+
+    
+    private func runARGSession() {
+        argSession?.run()
+    }
+    
+    private func stopARGSession() {
+        argSession?.pause()
+    }
+    private func destroyARGSession() {
+        argSession?.destroy()
+    }
+    
 }
+
 
 struct CustomeCameraHome_Previews: PreviewProvider {
     static var previews: some View {
@@ -766,6 +929,74 @@ struct CircleeTwo: View {
             }
         }
             .frame(width: widthAndHeight, height: widthAndHeight)
+    }
+    
+}
+
+
+struct MyARView: UIViewRepresentable {
+    @Binding var arScene: ARGScene?
+    
+    
+    var argConfig: ARGConfig?
+    @State  var argSession: ARGSession?
+    @State  var currentFaceFrame: ARGFrame?
+    @State  var nextFaceFrame: ARGFrame?
+    @State  var preferences: ARGPreferences = ARGPreferences()
+    @Binding  var arCamera: ARGCamera?
+    private let serialQueue = DispatchQueue(label: "serialQueue")
+    
+    @Binding var cameraPreviewCALayer: CALayer
+
+    func makeUIView(context: Context) -> UIView {
+        let view = UIView()
+        setupScene(view: view)
+        return view
+    }
+
+    func updateUIView(_ uiView: UIView, context: Context) {
+       
+    }
+    
+    private func setupScene(view: UIView) {
+        arScene = ARGScene(viewContainer: view)
+
+        arScene?.sceneRenderUpdateAtTimeHandler = {  renderer, time in
+//            guard let self = self else { return }
+            self.refreshARFrame()
+        }
+
+        arScene?.sceneRenderDidRenderSceneHandler = { renderer, scene, time in
+//            guard let _ = self else { return }
+        }
+
+        cameraPreviewCALayer.contentsGravity = .resizeAspect//.resizeAspectFill
+        cameraPreviewCALayer.frame = CGRect(x: 0, y: 0, width: arScene?.sceneView.frame.size.height ?? 0, height: arScene?.sceneView.frame.size.width ?? 0)
+        cameraPreviewCALayer.contentsScale = UIScreen.main.scale
+        view.layer.insertSublayer(cameraPreviewCALayer, at: 0)
+    }
+    private func refreshARFrame() {
+        
+        guard self.nextFaceFrame != nil && self.nextFaceFrame != self.currentFaceFrame else { return }
+        self.currentFaceFrame = self.nextFaceFrame
+    }
+    private func setupCamera() {
+        arCamera = ARGCamera()
+        
+        arCamera?.sampleBufferHandler = { output, sampleBuffer, connection in
+//            guard let self = self else { return }
+            
+            self.serialQueue.async {
+
+                self.argSession?.update(sampleBuffer, from: connection)
+            }
+        }
+        
+//        self.permissionCheck {
+//            self.arCamera.startCamera()
+//
+//            self.setCameraInfo()
+//        }
     }
     
 }

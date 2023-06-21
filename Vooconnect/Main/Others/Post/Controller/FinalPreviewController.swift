@@ -12,6 +12,7 @@ import UIKit
 import SwiftVideoGenerator
 import AVKit
 import Speech
+import MobileCoreServices
 
 ///Final preview controller
 class FinalPreviewController :  NSObject , ObservableObject , AVAudioPlayerDelegate, VideoMediaInputDelegate
@@ -368,7 +369,8 @@ class FinalPreviewController :  NSObject , ObservableObject , AVAudioPlayerDeleg
         audioRecorder?.stop()
     }
     
-    ///Get the audio from video, callback the url of the file
+    //Get the audio from video, callback the url of the file
+    
     func getAudioFromVideoUrl(url : String, callback : @escaping (URL) -> ()) {
         // Create a composition
         let composition = AVMutableComposition()
@@ -417,15 +419,6 @@ class FinalPreviewController :  NSObject , ObservableObject , AVAudioPlayerDeleg
             self.convertSignalToAudio(floatArray: signal, callback: {val2 in
                 SoundsManagerHelper.instance.pause()
                 SoundsManagerHelper.instance.playAudioFromUrl(url: val2.absoluteString)
-//                self.mergeVideoAndAudio(videoUrl: URL(string: videoUrl)!, audioUrl: val2, completion: {error,videoUrl2 in
-//                    guard let videoUrl2 = videoUrl2 else{
-//                        print("video url with noise reduction audio has errors")
-//                        return
-//                    }
-//                    DispatchQueue.main.async {
-//                        callback(videoUrl2)
-//                    }
-//                })
             })
         })
     }
@@ -461,37 +454,7 @@ class FinalPreviewController :  NSObject , ObservableObject , AVAudioPlayerDeleg
         }catch{
             print("CSTA: "+error.localizedDescription)
         }
-//        do{
-//            try floats.withUnsafeMutableBufferPointer { bytes in
-//                let audioBuffer = AudioBuffer(mNumberChannels: 2, mDataByteSize: UInt32(bytes.count * MemoryLayout<Float>.size), mData: bytes.baseAddress)
-//                var bufferList = AudioBufferList(mNumberBuffers: 1, mBuffers: audioBuffer)
-//                let inputFormat = AVAudioFormat(
-//                    commonFormat: .pcmFormatFloat32,
-//                    sampleRate: 44100,
-//                    channels: AVAudioChannelCount(2),
-//                    interleaved: true
-//                )!
-//                let outputAudioBuffer = AVAudioPCMBuffer(pcmFormat: inputFormat, bufferListNoCopy: &bufferList)!
-//                let settings: [String: Any] = [
-//                        AVFormatIDKey: outputAudioBuffer.format.settings[AVFormatIDKey] ?? kAudioFormatLinearPCM,
-//                        AVNumberOfChannelsKey: outputAudioBuffer.format.settings[AVNumberOfChannelsKey] ?? 2,
-//                        AVSampleRateKey: outputAudioBuffer.format.settings[AVSampleRateKey] ?? 44100,
-//                        AVLinearPCMBitDepthKey: outputAudioBuffer.format.settings[AVLinearPCMBitDepthKey] ?? 16
-//                    ]
 //
-//                let outputUrl = URL(fileURLWithPath: NSTemporaryDirectory() + "out2.m4a")
-//                if FileManager.default.fileExists(atPath: outputUrl.path) {
-//                    try? FileManager.default.removeItem(atPath: outputUrl.path)
-//                }
-//                let output = try AVAudioFile(forWriting: outputUrl, settings: settings, commonFormat: outputAudioBuffer.format.commonFormat, interleaved: outputAudioBuffer.format.isInterleaved)
-//                print("starting to save audio file")
-//                try output.write(from: outputAudioBuffer)
-//                print("saved audio on: "+outputUrl.absoluteString)
-//                callback(output.url)
-//            }
-//        }catch{
-//            print("CSTA: "+error.localizedDescription)
-//        }
     }
     
     private func convertAudioToSignal(url : String) -> [Float]{
@@ -505,12 +468,6 @@ class FinalPreviewController :  NSObject , ObservableObject , AVAudioPlayerDeleg
                     // this makes a copy, you might not want that
                     let floatArray = Array(UnsafeBufferPointer(start: buf.floatChannelData?[0], count:Int(buf.frameLength)))
                     return floatArray
-                    // convert to data
-//                    var data = Data()
-//                    for buf in floatArray {
-//                        data.append(withUnsafeBytes(of: buf) { Data($0) })
-//                    }
-                    // use the data if required.
                 }
             }
         }
@@ -522,6 +479,7 @@ class FinalPreviewController :  NSObject , ObservableObject , AVAudioPlayerDeleg
     func mergeVideoAndAudio(videoUrl: URL,audioUrl: URL,shouldFlipHorizontally: Bool = false,
                             completion: @escaping (_ error: Error?, _ url: URL?) -> Void) {
 
+        
         let mixComposition = AVMutableComposition()
         var mutableCompositionVideoTrack = [AVMutableCompositionTrack]()
         var mutableCompositionAudioTrack = [AVMutableCompositionTrack]()
@@ -622,6 +580,57 @@ class FinalPreviewController :  NSObject , ObservableObject , AVAudioPlayerDeleg
         }
 
     }
+    
+//    func cropVideo(sourceURL1: URL, startTime:Float, endTime:Float)
+//    {
+//        let manager = FileManager.default
+//
+//        guard let documentDirectory = try? manager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true) else {return}
+//        let mediaType = "mp4"
+//        if mediaType == kUTTypeMovie as String || mediaType == "mp4" as String {
+//            let asset = AVAsset(url: sourceURL1 as URL)
+//            let length = Float(asset.duration.value) / Float(asset.duration.timescale)
+//            print("video length: \(length) seconds")
+//
+//            let start = startTime
+//            let end = endTime
+//
+//            var outputURL = documentDirectory.appendingPathComponent("output")
+//            do {
+//                try manager.createDirectory(at: outputURL, withIntermediateDirectories: true, attributes: nil)
+//                outputURL = outputURL.appendingPathComponent("\(UUID().uuidString).\(mediaType)")
+//            }catch let error {
+//                print(error)
+//            }
+//
+//            //Remove existing file
+//            _ = try? manager.removeItem(at: outputURL)
+//
+//
+//            guard let exportSession = AVAssetExportSession(asset: asset, presetName: AVAssetExportPresetHighestQuality) else {return}
+//            exportSession.outputURL = outputURL
+//            exportSession.outputFileType = .mp4
+//
+//            let startTime = CMTime(seconds: Double(start ), preferredTimescale: 1000)
+//            let endTime = CMTime(seconds: Double(end ), preferredTimescale: 1000)
+//            let timeRange = CMTimeRange(start: startTime, end: endTime)
+//
+//            exportSession.timeRange = timeRange
+//            exportSession.exportAsynchronously{
+//                switch exportSession.status {
+//                case .completed:
+//                    print("exported at \(outputURL)")
+//                case .failed:
+//                    print("failed \(exportSession.error)")
+//
+//                case .cancelled:
+//                    print("cancelled \(exportSession.error)")
+//
+//                default: break
+//                }
+//            }
+//        }
+//    }
     
     
     
