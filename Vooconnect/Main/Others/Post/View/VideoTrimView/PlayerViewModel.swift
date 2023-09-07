@@ -7,9 +7,7 @@
 
 import AVFoundation
 import Combine
-
-import AVFoundation
-import Combine
+import SwiftUI
 
 final class PlayerViewModel: ObservableObject {
     @Published var player = AVPlayer()
@@ -20,6 +18,7 @@ final class PlayerViewModel: ObservableObject {
     @Published var isEditingCurrentTime = false
     @Published var currentTime: Double = .zero
     @Published var duration: Double?
+    @Published var speed: Float?
     
     private var subscriptions: Set<AnyCancellable> = []
     private var timeObserver: Any?
@@ -30,7 +29,8 @@ final class PlayerViewModel: ObservableObject {
         }
     }
     
-    init(videoUrl: URL) {
+    init(videoUrl: URL, speed: Float) {
+        self.speed = speed
         self.player = AVPlayer(url: videoUrl)
         $isEditingCurrentTime
             .dropFirst()
@@ -40,6 +40,7 @@ final class PlayerViewModel: ObservableObject {
                 self.player.seek(to: CMTime(seconds: self.currentTime, preferredTimescale: 1), toleranceBefore: .zero, toleranceAfter: .zero)
                 if self.player.rate != 0 {
                     self.player.play()
+                    self.player.rate = speed
                 }
             })
             .store(in: &subscriptions)
@@ -70,6 +71,11 @@ final class PlayerViewModel: ObservableObject {
 
     }
     
+    
+    func toggleMute() {
+        player.isMuted.toggle()
+    }
+    
     func reset(videoUrl: URL) {
         self.isInPipMode = false
         self.isPlaying = false
@@ -86,6 +92,7 @@ final class PlayerViewModel: ObservableObject {
                 self.player.seek(to: CMTime(seconds: self.currentTime, preferredTimescale: 1), toleranceBefore: .zero, toleranceAfter: .zero)
                 if self.player.rate != 0 {
                     self.player.play()
+                    self.player.rate = speed!
                 }
             })
             .store(in: &subscriptions)
@@ -124,6 +131,7 @@ final class PlayerViewModel: ObservableObject {
         currentTime = .zero
         duration = nil
         player.replaceCurrentItem(with: item)
+        player.rate = speed!
         
         item.publisher(for: \.status)
             .filter({ $0 == .readyToPlay })
@@ -137,10 +145,11 @@ final class PlayerViewModel: ObservableObject {
         if player.timeControlStatus == .playing {
             player.pause()
         } else {
+            self.player.rate = speed!
             player.play()
             isFinishedPlaying = false
         }
-//        isPlaying.toggle()
+        isPlaying.toggle()
     }
     
     func seekVideo(toPosition position: CGFloat) {

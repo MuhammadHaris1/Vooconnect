@@ -9,8 +9,12 @@ import Foundation
 
 struct LogInDataModel {
    
-    var email: String = String()
-    var password: String = String()
+    
+    // "hnhtechsolutionsemail@gmail.com"
+    //"abcd@1234"
+    
+    var email: String = "hnh@gmail.com"//"hnhtechsolutionsemail@gmail.com"// = "jude@jude.com"
+    var password: String = "abcd@1234"// = "Password12!"
     
     var phone: String = String()
     var phoneCode: String = String()

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 struct FiltersSheet: View {
     //    typealias UIViewType = MyView
@@ -16,6 +17,8 @@ struct FiltersSheet: View {
     @State private var vibe: Bool = false
     @State var isPresented = false
     @ObservedObject var cameraModel: CameraViewModel
+    
+//    @State var filters: [Item]
     
     var body: some View {
         VStack {
@@ -269,8 +272,8 @@ struct FiltersSheet: View {
     }
 }
         
-        struct FiltersSheet_Previews: PreviewProvider {
-            static var previews: some View {
-                FiltersSheet(cameraModel: CameraViewModel())
-            }
-        }
+//        struct FiltersSheet_Previews: PreviewProvider {
+//            static var previews: some View {
+//                FiltersSheet(cameraModel: CameraViewModel())
+//            }
+//        }

@@ -47,6 +47,7 @@ struct VooconnectApp: App {
             .overlay {
                 LaunchView()
             }
+//            ARGearView()
         }
     }
 }
@@ -67,7 +68,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Ask for Tracking
         requestTracking()
-        
+//        RealmManager.shared.checkAndMigration()
         return true
     }
     

@@ -9,4 +9,5 @@ import Foundation
 enum TypeOfOverlay : String, Codable{
     case text
     case sticker
+    case marker
 }

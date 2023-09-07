@@ -77,11 +77,11 @@ class ReelsLikeViewModel: ObservableObject {
             fetchUICategoryApi()
         }
     
-    func reelsLikeApi() {
+    func reelsLikeApi(reactionType: Int, postID: Int) {
         
         let uuid = UserDefaults.standard.string(forKey: "uuid") ?? ""
         
-        let request = LikeRequest(user_uuid: uuid, post_id: reelsLikeDataModel.postID, reaction_type: 1)
+        let request = LikeRequest(user_uuid: uuid, post_id: postID, reaction_type: reactionType)
         
         print("REQUEST=========",request)
         
@@ -102,11 +102,66 @@ class ReelsLikeViewModel: ObservableObject {
         }
         
     }
+    func reelsReactionApi(reactionType: Int, postID: Int) {
+        
+        let uuid = UserDefaults.standard.string(forKey: "uuid") ?? ""
+        
+        let request = LikeRequest(user_uuid: uuid, post_id: postID, reaction_type: reactionType)
+        
+        print("REQUEST=========",request)
+        
+        reelsLikeResource.hittingReactionApi(likeRequest: request) { isSuccess, sussesMessage in
+            if isSuccess {
+                DispatchQueue.main.async {
+                    print("Success=========")
+                    
+                }
+                
+            } else {
+                DispatchQueue.main.async {
+                    print("Faileur===========")
+                    
+                }
+                
+            }
+        }
+        
+    }
     
+    func blockUserApi() {  // postID
+        
+        let uuid = UserDefaults.standard.string(forKey: "uuid") ?? ""
+        let user_uuid = UserDefaults.standard.string(forKey: "user_uuid") ?? ""
+        
+        let request = BlockUserRequest(uuid: uuid, user_uuid: user_uuid)
+        
+        print("REQUEST=========",request)
+        
+            reelsLikeResource.hittingBlockUserApi(blockUserRequest: request) { isSuccess, sussesMessage in
+            if isSuccess {
+                DispatchQueue.main.async {
+                    print("Success=========")
+                    
+                    self.blockPostDataModel.isPresentingSuccess = true
+                    self.blockPostDataModel.successMessage = sussesMessage ?? ""
+                    
+//                    likeVM.blockPostDataModel.isPresentingSuccess
+                }
+                
+            } else {
+                DispatchQueue.main.async {
+                    print("Faileur===========")
+                    
+                }
+                
+            }
+        }
+        
+    }
     func blockPostApi() {  // postID
         
         let uuid = UserDefaults.standard.string(forKey: "uuid") ?? ""
-        let postID = UserDefaults.standard.integer(forKey: "postID") 
+        let postID = UserDefaults.standard.integer(forKey: "postID")
         
         let request = BlockPostRequest(uuid: uuid, post_id: postID)
         
@@ -224,13 +279,39 @@ class ReelsLikeViewModel: ObservableObject {
     func followApi(user_uuid: String) {
             
             let uuid = UserDefaults.standard.string(forKey: "uuid") ?? ""
-            let postID = UserDefaults.standard.integer(forKey: "postID")
+//            let postID = UserDefaults.standard.integer(forKey: "postID")
             
             let request = FollowRequest(user_uuid: uuid, uuid: user_uuid)
             
             print("REQUEST=========",request)
             
             reelsLikeResource.hittingFollowApi(followRequest: request) { isSuccess, sussesMessage in
+                if isSuccess {
+                    DispatchQueue.main.async {
+                        print("Success=========")
+                        
+                    }
+                    
+                } else {
+                    DispatchQueue.main.async {
+                        print("Faileur===========")
+                        
+                    }
+                    
+                }
+            }
+            
+        }
+    func unFollowApi(user_uuid: String) {
+            
+            let uuid = UserDefaults.standard.string(forKey: "uuid") ?? ""
+//            let postID = UserDefaults.standard.integer(forKey: "postID")
+            
+            let request = FollowRequest(user_uuid: uuid, uuid: user_uuid)
+            
+            print("REQUEST=========",request)
+            
+            reelsLikeResource.hittingUnFollowApi(followRequest: request) { isSuccess, sussesMessage in
                 if isSuccess {
                     DispatchQueue.main.async {
                         print("Success=========")

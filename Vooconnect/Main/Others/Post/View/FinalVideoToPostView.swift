@@ -16,10 +16,10 @@ import FBSDKShareKit
 struct FinalVideoToPostView: View {
     
     @Environment(\.presentationMode) var presentaionMode
-    @State private var navigateToNextView = false
     @State private var showPreview = false
     @State private var bottomSheetShown = false
     @State private var bottomSheetMoreOption = false
+    @State private var loadingVideo = false
     @State private var homeView = false
     @State var text2: String = ""
     @State var description: String = ""
@@ -27,7 +27,7 @@ struct FinalVideoToPostView: View {
     @State var text = ""
     @State var didStartEditing = false
     
-    @State var placeholder: String = "Hi everyone, in this video I will sing a song #song #music #love #beauty Thanks to @Vooconnect Video credit to"
+    @State var placeholder: String = "Add Video Description"
     
     //    @State var airplaneMode = true
     @State var toggleOn =  true
@@ -49,33 +49,50 @@ struct FinalVideoToPostView: View {
     @State private var autoCaption = false
     @State private var loader = false
     @State private var showTopicView = false
+    @State private var videoCreditsView = false
     @State private var isShowPopup = false
     @State private var message = ""
     @State private var captionLang = ""
     @State private var selectedTopic = ""
     @State private var selectedCat: Int?
     @State private var videoData: Data?
+    @State private var showPrivacySettings = false
     
-//    @State private var whatsAppImage: String = "WhatsAppLogo"
-//    @State private var twetterImage: String = "TwetterLogo"
-//    @State private var facebookImage: String = "FacebookLogo"
-//    @State private var instagramImage: String = "InstagramLogo"
-    
-//    @State private var isFacebook = false
     @State private var isFacebook = false
+    @State private var isSocialMedia = false
     @State private var isWhatsApp = false
     @State private var isTwetter = false
     @State private var isInstagram = false
+    @State private var isListView = false
     @GestureState private var tapGestureState = false
     @State private var extractedImage: UIImage?
-    
+    @FocusState private var isFocused: Bool
+    @State var progress: Double = 0
+    @State private var subLang: String = ""
+    @State private var subAllow: String = ""
+    @State private var subString: String = ""
+    @State private var videoCreditsText: String = ""
+    @State private var videoCreditsVisible: Bool = false
+    @State var userNames: [String] = []
+    @State var videoCredits: [String] = []
     
     var catSelected: (Int) -> () = {val in}
+    @State private var selectedType: SocialMediaType?
     
     init(postModel : PostModel, renderUrl : URL?){
         _postModel = State(initialValue: postModel)
         _renderUrl = State(initialValue: renderUrl)
     }
+    
+//    private func selectMention(_ mention: String) {
+//        let mentionRange = description.range(of: mentionData, options: .caseInsensitive)
+//
+//        if let range = mentionRange {
+//            text.replaceSubrange(range, with: "\(mention)")
+////            isListVisible = false
+////            mentionData = ""
+//        }
+//    }
     
     var body: some View {
         NavigationView {
@@ -86,10 +103,7 @@ struct FinalVideoToPostView: View {
                 
                 VStack {
                     
-                    NavigationLink(destination: HomePageView()
-                        .navigationBarBackButtonHidden(true).navigationBarHidden(true), isActive: $homeView) {
-                            EmptyView()
-                        }
+                    
                     
                     HStack {
                         Button {
@@ -109,35 +123,21 @@ struct FinalVideoToPostView: View {
                     ScrollView(showsIndicators: false) {
                         
                         HStack {
-                            
-                            //                            Text("Hi everyone, in this video I will sing a song #song #music #love #beauty Thanks to @Vooconnect Video credit to ")
-                            
-                            //                            TextView(text: $text2).frame(numLines: 5)
-                            //                            TextViewTwo(text: $description, didStartEditing: $didStartEditing, placeholder: $placeholder
-                            //                            )
-                            TextField(placeholder, text: $description)
-                                .focused($focusedField, equals: .captionn)
-                                .onChange(of: description){val in
-                                    print("ON CHANGE DESCRIPTION: " + self.postModel.description)
-                                    self.postModel.description = val
+                            DescriptionTextEditor(text: $description, isListVisible: $isListView, userNames: $userNames, videoCreditsVisible: $videoCreditsVisible, videoCreditsText: $videoCreditsText)
+                                .focused($isFocused)
+                                .onTapGesture{
+                                    isFocused = true
                                 }
-                                .onTapGesture {
-                                    didStartEditing = true
+                                .onChange(of: description) { newValue in
+                                    print("value is\(newValue)")
+                                    if let lastIndex = newValue.lastIndex(of: "@") {
+                                        let substring = newValue.suffix(from: newValue.index(after: lastIndex))
+                                        
+                                        self.subString = String(substring)
+                                        print("sub value is\(self.subString)")
+                                    }
                                 }
                             
-                            
-                                .padding(.horizontal)
-                                .padding(.top, 5)
-                                .overlay {
-                                    RoundedRectangle(cornerRadius: 15)
-                                        .strokeBorder((LinearGradient(colors: [
-                                            Color("GradientOne"),
-                                            Color("GradientTwo"),
-                                        ], startPoint: .top, endPoint: .bottom)
-                                        ), lineWidth: 2)
-                                        .frame(height: 136)
-                                }
-                                .padding(.trailing)
                             
                             //                            Image("SelectCover")
                             if let image = extractedImage {
@@ -147,8 +147,8 @@ struct FinalVideoToPostView: View {
                                 testCover()
                                     .cornerRadius(15)
                             }
-//                            testCover()
-//                                .cornerRadius(15)
+                            //                            testCover()
+                            //                                .cornerRadius(15)
                             
                             
                         }
@@ -161,6 +161,17 @@ struct FinalVideoToPostView: View {
                         }
                         .padding(.top,2)
                         
+                        HStack(alignment: .top){
+                            Text("Video credit to: ")
+                                .font(.custom("Urbanist-Regular", size: 18))
+                                .frame(width: 120)
+                            if videoCreditsVisible {
+                                CreditsView(videoCreditsText: $videoCreditsText)
+                                    .padding(.trailing, 10)
+                            }
+                            Spacer()
+                        }
+                        .padding(.top,2)
                         
                         
                         // Hastag
@@ -171,7 +182,9 @@ struct FinalVideoToPostView: View {
                                 Image("HastagLogo")
                                 
                                 Button {
-                                    self.description = self.postModel.description + " #"
+                                    isFocused = true
+                                    description += " #"
+                                    
                                 } label: {
                                     Text("Hashtag")
                                         .lineLimit(1)
@@ -205,7 +218,8 @@ struct FinalVideoToPostView: View {
                                 Image("AttheRateLogo")
                                 
                                 Button {
-                                    self.description = self.postModel.description + " @"
+                                    isFocused = true
+                                    description += " @"
                                 } label: {
                                     Text("Mention")
                                         .lineLimit(1)
@@ -236,34 +250,40 @@ struct FinalVideoToPostView: View {
                             
                             HStack {
                                 
-                                Image("VideoLogo")
-                                
                                 Button {
-                                    
+                                    if (videoCreditsVisible == true){
+                                        videoCreditsVisible = false
+                                        videoCreditsView = false
+                                    }else{
+                                        videoCreditsView = true
+                                    }
                                 } label: {
-                                    Text("Videos")
-                                        .lineLimit(1)
-                                        .font(.custom("Urbanist-SemiBold", size: 14))
-                                        .foregroundStyle((LinearGradient(colors: [
-                                            Color("buttionGradientTwo"),
-                                            Color("buttionGradientOne"),
-                                        ], startPoint: .topLeading, endPoint: .bottomTrailing)
-                                        ))
+                                    HStack{
+                                        Image("VideoLogo")
+                                        Text("Videos")
+                                            .lineLimit(1)
+                                            .font(.custom("Urbanist-SemiBold", size: 14))
+                                    }
                                 }
-                                .padding(.leading, -4)
+                                .frame(width: 80, height: 32)
+                                .foregroundStyle(videoCreditsVisible ? LinearGradient(colors: [
+                                    Color.white
+                                ], startPoint: .topLeading, endPoint: .bottomTrailing) : LinearGradient(colors: [
+                                    Color("buttionGradientTwo"),
+                                    Color("buttionGradientOne"),
+                                ], startPoint: .topLeading, endPoint: .bottomTrailing))
+                                .background(videoCreditsVisible ? LinearGradient(colors: [
+                                    Color("buttionGradientTwo"),
+                                    Color("buttionGradientOne"),
+                                    Color("buttionGradientOne"),
+                                ], startPoint: .topLeading, endPoint: .bottomTrailing) : LinearGradient(colors: [
+                                    Color.clear,
+                                ], startPoint: .topLeading, endPoint: .bottomTrailing)
+                                )
+                                .cornerRadius(25)
+                                .overlay(videoCreditsVisible ?
+                                         RoundedRectangle(cornerRadius: 25).stroke(Color.clear, lineWidth: 0) : RoundedRectangle(cornerRadius: 25).stroke(Color("buttionGradientOne"), lineWidth: 1.5))
                                 
-                            }
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 8)
-                            //                            .padding(5)
-                            //                            .padding(.horizontal, 4)
-                            .overlay {
-                                RoundedRectangle(cornerRadius: 20)
-                                    .strokeBorder((LinearGradient(colors: [
-                                        Color("buttionGradientTwo"),
-                                        Color("buttionGradientOne"),
-                                    ], startPoint: .topLeading, endPoint: .bottomTrailing)
-                                    ), lineWidth: 2)
                             }
                             
                             Spacer()
@@ -273,8 +293,8 @@ struct FinalVideoToPostView: View {
                                 Image("CategorieLogo")
                                 
                                 Button {
-                                    
-                                    
+                                    isFocused = false
+                                    self.postModel.description = description
                                     showTopicView.toggle()
                                 } label: {
                                     Text("Category")
@@ -314,6 +334,9 @@ struct FinalVideoToPostView: View {
                                 showTopicView.toggle()
                             })
                         }
+                        .sheet(isPresented: $videoCreditsView) {
+                            VideoCreditsView(userNames: $videoCredits, videoCreditsView: $videoCreditsView, videoCreditsVisible: $videoCreditsVisible, videoCreditsText: $videoCreditsText)
+                        }
                         
                         
                         
@@ -321,517 +344,416 @@ struct FinalVideoToPostView: View {
                             .frame(height: 1)
                             .foregroundColor(Color("GrayThree"))
                             .padding(.top)
-                        
-                        VStack(spacing: 20) {
-                            HStack {
-                                Image("ProfileLogo")
-                                
-                                Button {
+                        if isListView {
+                            ScrollView{
+                                VStack(spacing: 20){
                                     
-                                } label: {
-                                    Text("Tag People")
-                                        .font(.custom("Urbanist-SemiBold", size: 18))
-                                        .foregroundColor(.black)
+                                    ForEach (userNames, id: \.self){ user in
+                                        HStack{
+                                            Button{
+                                                isListView = false
+                                                if let lastIndex = description.lastIndex(of: "@") {
+                                                    let range = lastIndex..<description.endIndex
+                                                    description = description.replacingOccurrences(of: self.subString, with: user + " ", options: [], range: range)
+                                                }
+                                            }label: {
+                                                Text(user)
+                                                    .font(.custom("Urbanist-SemiBold", size: 18))
+                                                    .foregroundColor(.black)
+                                            }
+                                            Spacer()
+                                        }
+                                    }
                                 }
-                                .padding(.leading, 12)
-                                
-                                Spacer()
-                                
-                                Image("ArrowLogo")
-                                
+                                .padding(.horizontal)
                             }
-                            
-                            HStack {
-                                Image("LocationLogo")
-                                
-                                Button {
+                        }else{
+                            VStack{
+                                VStack(spacing: 20) {
+                                    HStack {
+                                        Image("ProfileLogo")
+                                        
+                                        Button {
+                                            
+                                        } label: {
+                                            Text("Tag People")
+                                                .font(.custom("Urbanist-SemiBold", size: 18))
+                                                .foregroundColor(.black)
+                                        }
+                                        .padding(.leading, 12)
+                                        
+                                        Spacer()
+                                        
+                                        Image("ArrowLogo")
+                                        
+                                    }
                                     
-                                } label: {
-                                    Text("Location")
-                                        .font(.custom("Urbanist-SemiBold", size: 18))
-                                        .foregroundColor(.black)
-                                }
-                                .padding(.leading, 12)
-                                
-                                Spacer()
-                                
-                                Image("ArrowLogo")
-                                
-                            }
-                            
-                            HStack {
-                                Image("VisibalLogo")
-                                
-                                Button {
-                                    bottomSheetShown.toggle()
-                                } label: {
-                                    Text("Visible to Everyone")
-                                        .font(.custom("Urbanist-SemiBold", size: 18))
-                                        .foregroundColor(.black)
-                                }
-                                .padding(.leading, 12)
-                                
-                                Spacer()
-                                
-                                Image("ArrowLogo")
-                                
-                            }
-                            
-                            HStack {
-                                Image("AllowComment")
-                                
-                                Button {
+                                    HStack {
+                                        Image("LocationLogo")
+                                        
+                                        Button {
+                                            
+                                        } label: {
+                                            Text("Location")
+                                                .font(.custom("Urbanist-SemiBold", size: 18))
+                                                .foregroundColor(.black)
+                                        }
+                                        .padding(.leading, 12)
+                                        
+                                        Spacer()
+                                        
+                                        Image("ArrowLogo")
+                                        
+                                    }
                                     
-                                } label: {
-                                    Text("Allow Comments")
-                                        .font(.custom("Urbanist-SemiBold", size: 18))
-                                        .foregroundColor(.black)
-                                }
-                                .padding(.leading, 12)
-                                
-                                Spacer()
-                                
-                                ZStack {
-                                    Capsule()
-                                        .frame(width:44,height:24)
-                                        .foregroundColor(.clear)
-                                        .background(toggleOn ?
-                                                    LinearGradient(colors: [
-                                                        Color("buttionGradientTwo"),
-                                                        Color("buttionGradientOne"),
-                                                    ], startPoint: .topLeading, endPoint: .bottomTrailing) :  LinearGradient(colors: [
-                                                        Color("grayOne"),
-                                                        Color("grayOne"),
-                                                    ], startPoint: .topLeading, endPoint: .bottomTrailing)
-                                        )
-                                        .cornerRadius(16)
-                                    ZStack{
-                                        Circle()
-                                            .strokeBorder(Color("buttionGradientOne"), lineWidth: 2)
-                                            .frame(width:22, height:22)
-                                            .overlay(
+                                    HStack {
+                                        Image("VisibalLogo")
+                                        
+                                        Button {
+                                            //                                    bottomSheetShown.toggle()
+                                            showPrivacySettings.toggle()
+                                        } label: {
+                                            Text("Visible to \(self.postModel.visibility.rawValue.prefix(1).capitalized + self.postModel.visibility.rawValue.dropFirst())")
+                                                .font(.custom("Urbanist-SemiBold", size: 18))
+                                                .foregroundColor(.black)
+                                        }
+                                        .padding(.leading, 12)
+                                        
+                                        Spacer()
+                                        
+                                        Image("ArrowLogo")
+                                        
+                                    }
+                                    
+                                    HStack {
+                                        Image("AllowComment")
+                                        
+                                        Button {
+                                            
+                                        } label: {
+                                            Text("Allow Comments")
+                                                .font(.custom("Urbanist-SemiBold", size: 18))
+                                                .foregroundColor(.black)
+                                        }
+                                        .padding(.leading, 12)
+                                        
+                                        Spacer()
+                                        
+                                        ZStack {
+                                            Capsule()
+                                                .frame(width:44,height:24)
+                                                .foregroundColor(.clear)
+                                                .background(toggleOn ?
+                                                            LinearGradient(colors: [
+                                                                Color("buttionGradientTwo"),
+                                                                Color("buttionGradientOne"),
+                                                            ], startPoint: .topLeading, endPoint: .bottomTrailing) :  LinearGradient(colors: [
+                                                                Color("grayOne"),
+                                                                Color("grayOne"),
+                                                            ], startPoint: .topLeading, endPoint: .bottomTrailing)
+                                                )
+                                                .cornerRadius(16)
+                                            ZStack{
                                                 Circle()
-                                                    .fill(Color.white))
+                                                    .strokeBorder(Color("buttionGradientOne"), lineWidth: 2)
+                                                    .frame(width:22, height:22)
+                                                    .overlay(
+                                                        Circle()
+                                                            .fill(Color.white))
+                                            }
+                                            .shadow(color: .black.opacity(0.14), radius: 4, x: 0, y: 2)
+                                            .offset(x:toggleOn ? 9.5 : -9.5)
+                                        }
+                                        .onTapGesture {
+                                            self.toggleOn.toggle()
+                                            self.postModel.allowComments = self.toggleOn
+                                        }
+                                        
                                     }
-                                    .shadow(color: .black.opacity(0.14), radius: 4, x: 0, y: 2)
-                                    .offset(x:toggleOn ? 9.5 : -9.5)
-                                }
-                                .onTapGesture {
-                                    self.toggleOn.toggle()
-                                    self.postModel.allowComments = self.toggleOn
-                                }
-                                
-                            }
-                            
-                            
-                            HStack {
-                                Image("AllowDuet")
-                                
-                                Button {
                                     
-                                } label: {
-                                    Text("Allow Duet")
-                                        .font(.custom("Urbanist-SemiBold", size: 18))
-                                        .foregroundColor(.black)
-                                }
-                                .padding(.leading, 12)
-                                
-                                Spacer()
-                                
-                                ZStack {
-                                    Capsule()
-                                        .frame(width:44,height:24)
-                                        .foregroundColor(.clear)
-                                        .background(toggleOnTwo ?
-                                                    LinearGradient(colors: [
-                                                        Color("buttionGradientTwo"),
-                                                        Color("buttionGradientOne"),
-                                                    ], startPoint: .topLeading, endPoint: .bottomTrailing) :  LinearGradient(colors: [
-                                                        Color("grayOne"),
-                                                        Color("grayOne"),
-                                                    ], startPoint: .topLeading, endPoint: .bottomTrailing)
-                                        )
-                                        .cornerRadius(16)
-                                    ZStack{
-                                        Circle()
-                                            .strokeBorder(Color("buttionGradientOne"), lineWidth: 2)
-                                            .frame(width:22, height:22)
-                                            .overlay(
-                                                Circle()
-                                                    .fill(Color.white))
-                                    }
-                                    .shadow(color: .black.opacity(0.14), radius: 4, x: 0, y: 2)
-                                    .offset(x:toggleOnTwo ? 9.5 : -9.5)
-                                }
-                                .onTapGesture {
-                                    self.toggleOnTwo.toggle()
-                                    self.postModel.allowDuet = self.toggleOnTwo
-                                }
-                                
-                            }
-                            
-                            
-                            HStack {
-                                Image("AllowStitchLogo")
-                                
-                                Button {
                                     
-                                } label: {
-                                    Text("Allow Stitch")
-                                        .font(.custom("Urbanist-SemiBold", size: 18))
-                                        .foregroundColor(.black)
-                                }
-                                .padding(.leading, 12)
-                                
-                                Spacer()
-                                
-                                ZStack {
-                                    Capsule()
-                                        .frame(width:44,height:24)
-                                        .foregroundColor(.clear)
-                                        .background(toggleOnThree ?
-                                                    LinearGradient(colors: [
-                                                        Color("buttionGradientTwo"),
-                                                        Color("buttionGradientOne"),
-                                                    ], startPoint: .topLeading, endPoint: .bottomTrailing) :  LinearGradient(colors: [
-                                                        Color("grayOne"),
-                                                        Color("grayOne"),
-                                                    ], startPoint: .topLeading, endPoint: .bottomTrailing)
-                                        )
-                                        .cornerRadius(16)
-                                    ZStack{
-                                        Circle()
-                                            .strokeBorder(Color("buttionGradientOne"), lineWidth: 2)
-                                            .frame(width:22, height:22)
-                                            .overlay(
+                                    HStack {
+                                        Image("AllowDuet")
+                                        
+                                        Button {
+                                            
+                                        } label: {
+                                            Text("Allow Duo")
+                                                .font(.custom("Urbanist-SemiBold", size: 18))
+                                                .foregroundColor(.black)
+                                        }
+                                        .padding(.leading, 12)
+                                        
+                                        Spacer()
+                                        
+                                        ZStack {
+                                            Capsule()
+                                                .frame(width:44,height:24)
+                                                .foregroundColor(.clear)
+                                                .background(toggleOnTwo ?
+                                                            LinearGradient(colors: [
+                                                                Color("buttionGradientTwo"),
+                                                                Color("buttionGradientOne"),
+                                                            ], startPoint: .topLeading, endPoint: .bottomTrailing) :  LinearGradient(colors: [
+                                                                Color("grayOne"),
+                                                                Color("grayOne"),
+                                                            ], startPoint: .topLeading, endPoint: .bottomTrailing)
+                                                )
+                                                .cornerRadius(16)
+                                            ZStack{
                                                 Circle()
-                                                    .fill(Color.white))
+                                                    .strokeBorder(Color("buttionGradientOne"), lineWidth: 2)
+                                                    .frame(width:22, height:22)
+                                                    .overlay(
+                                                        Circle()
+                                                            .fill(Color.white))
+                                            }
+                                            .shadow(color: .black.opacity(0.14), radius: 4, x: 0, y: 2)
+                                            .offset(x:toggleOnTwo ? 9.5 : -9.5)
+                                        }
+                                        .onTapGesture {
+                                            self.toggleOnTwo.toggle()
+                                            self.postModel.allowDuet = self.toggleOnTwo
+                                        }
+                                        
                                     }
-                                    .shadow(color: .black.opacity(0.14), radius: 4, x: 0, y: 2)
-                                    .offset(x:toggleOnThree ? 9.5 : -9.5)
-                                }
-                                .onTapGesture {
-                                    self.toggleOnThree.toggle()
-                                    self.postModel.allowStitch = self.toggleOnThree
-                                }
-                                
-                            }
-                            
-                            
-                            HStack {
-                                Image("MoreOptionLogo")
-                                
-                                Button {
-                                    bottomSheetMoreOption.toggle()
-                                } label: {
-                                    Text("More Option")
-                                        .font(.custom("Urbanist-SemiBold", size: 18))
-                                        .foregroundColor(.black)
-                                }
-                                .padding(.leading, 12)
-                                
-                                Spacer()
-                                
-                                Image("ArrowLogo")
-                                
-                            }
-                            
-                        }
-                        .padding(.top)
-                        
-                        HStack {
-                            Text("Automatically share to:")
-                                .font(.custom("Urbanist-Bold", size: 18))
-                            Spacer()
-                            
-                        }
-                        .padding(.top)
-                        
-                        HStack{
-                            VStack {
-                                if isWhatsApp {
-                                    Circle()
-                                        .strokeBorder(Color.black, lineWidth: 2)
-                                        .frame(width: 50, height: 50)
-                                        .overlay(
-                                            Circle()
-                                                .foregroundColor(.white) // Add a contrasting background color
-                                                .frame(width: 46, height: 46) // Slightly smaller than the main circle
-                                                .overlay(
-                                                    Image("WhatsAppLogo") // Replace "yourImageName" with the actual name of your image asset
-                                                        .resizable()
-                                                        .scaledToFit()
+                                    
+                                    
+                                    HStack {
+                                        Image("AllowStitchLogo")
+                                        
+                                        Button {
+                                            
+                                        } label: {
+                                            Text("Allow Knit")
+                                                .font(.custom("Urbanist-SemiBold", size: 18))
+                                                .foregroundColor(.black)
+                                        }
+                                        .padding(.leading, 12)
+                                        
+                                        Spacer()
+                                        
+                                        ZStack {
+                                            Capsule()
+                                                .frame(width:44,height:24)
+                                                .foregroundColor(.clear)
+                                                .background(toggleOnThree ?
+                                                            LinearGradient(colors: [
+                                                                Color("buttionGradientTwo"),
+                                                                Color("buttionGradientOne"),
+                                                            ], startPoint: .topLeading, endPoint: .bottomTrailing) :  LinearGradient(colors: [
+                                                                Color("grayOne"),
+                                                                Color("grayOne"),
+                                                            ], startPoint: .topLeading, endPoint: .bottomTrailing)
                                                 )
-                                        )
-                                        .onTapGesture {
-                                            isWhatsApp.toggle()
+                                                .cornerRadius(16)
+                                            ZStack{
+                                                Circle()
+                                                    .strokeBorder(Color("buttionGradientOne"), lineWidth: 2)
+                                                    .frame(width:22, height:22)
+                                                    .overlay(
+                                                        Circle()
+                                                            .fill(Color.white))
+                                            }
+                                            .shadow(color: .black.opacity(0.14), radius: 4, x: 0, y: 2)
+                                            .offset(x:toggleOnThree ? 9.5 : -9.5)
                                         }
-                                } else {
-                                    Image("WhatsAppLogo")
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .opacity(tapGestureState ? 0.5 : 1.0)
-                                        .animation(.easeInOut)
                                         .onTapGesture {
-                                            isWhatsApp.toggle()
+                                            self.toggleOnThree.toggle()
+                                            self.postModel.allowStitch = self.toggleOnThree
                                         }
+                                        
+                                    }
+                                    
+                                    
+                                    HStack {
+                                        Image("MoreOptionLogo")
+                                        
+                                        Button {
+                                            bottomSheetMoreOption.toggle()
+                                        } label: {
+                                            Text("More Option")
+                                                .font(.custom("Urbanist-SemiBold", size: 18))
+                                                .foregroundColor(.black)
+                                        }
+                                        .padding(.leading, 12)
+                                        
+                                        Spacer()
+                                        
+                                        Image("ArrowLogo")
+                                        
+                                    }
+                                    
                                 }
-                            }
-                            .frame(width: 50, height: 50)
-                            .gesture(
-                                TapGesture()
-                                    .updating($tapGestureState) { value, state, _ in
-                                        state = true
-                                    }
-                                    .onEnded { _ in
-                                        isWhatsApp.toggle()
-                                    }
-                            )
-                            VStack {
-                                if isInstagram {
-                                    Circle()
-                                        .strokeBorder(Color.black, lineWidth: 2)
-                                        .frame(width: 50, height: 50)
-                                        .overlay(
-                                            Circle()
-                                                .foregroundColor(.white) // Add a contrasting background color
-                                                .frame(width: 46, height: 46) // Slightly smaller than the main circle
-                                                .overlay(
-                                                    Image("InstagramLogo") // Replace "yourImageName" with the actual name of your image asset
-                                                        .resizable()
-                                                        .scaledToFit()
-                                                )
-                                        )
-                                        .onTapGesture {
-                                            isInstagram.toggle()
-                                        }
-                                } else {
-                                    Image("InstagramLogo")
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .opacity(tapGestureState ? 0.5 : 1.0)
-                                        .animation(.easeInOut)
-                                        .onTapGesture {
-                                            isInstagram.toggle()
-                                        }
-                                }
-                            }
-                            .frame(width: 50, height: 50)
-                            .gesture(
-                                TapGesture()
-                                    .updating($tapGestureState) { value, state, _ in
-                                        state = true
-                                    }
-                                    .onEnded { _ in
-                                        isInstagram.toggle()
-                                    }
-                            )
-                            VStack {
-                                if isFacebook {
-                                    Circle()
-                                        .strokeBorder(Color.black, lineWidth: 2)
-                                        .frame(width: 50, height: 50)
-                                        .overlay(
-                                            Circle()
-                                                .foregroundColor(.white) // Add a contrasting background color
-                                                .frame(width: 46, height: 46) // Slightly smaller than the main circle
-                                                .overlay(
-                                                    Image("FacebookLogo") // Replace "yourImageName" with the actual name of your image asset
-                                                        .resizable()
-                                                        .scaledToFit()
-                                                )
-                                        )
-                                        .onTapGesture {
-                                            isFacebook.toggle()
-                                        }
-                                } else {
-                                    Image("FacebookLogo")
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .opacity(tapGestureState ? 0.5 : 1.0)
-                                        .animation(.easeInOut)
-                                        .onTapGesture {
-                                            isFacebook.toggle()
-                                        }
-                                }
-                            }
-                            .frame(width: 50, height: 50)
-                            .gesture(
-                                TapGesture()
-                                    .updating($tapGestureState) { value, state, _ in
-                                        state = true
-                                    }
-                                    .onEnded { _ in
-                                        isFacebook.toggle()
-                                    }
-                            )
-                            VStack {
-                                if isTwetter {
-                                    Circle()
-                                        .strokeBorder(Color.black, lineWidth: 2)
-                                        .frame(width: 50, height: 50)
-                                        .overlay(
-                                            Circle()
-                                                .foregroundColor(.white) // Add a contrasting background color
-                                                .frame(width: 46, height: 46) // Slightly smaller than the main circle
-                                                .overlay(
-                                                    Image("TwetterLogo") // Replace "yourImageName" with the actual name of your image asset
-                                                        .resizable()
-                                                        .scaledToFit()
-                                                )
-                                        )
-                                        .onTapGesture {
-                                            isTwetter.toggle()
-                                        }
-                                } else {
-                                    Image("TwetterLogo")
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .opacity(tapGestureState ? 0.5 : 1.0)
-                                        .animation(.easeInOut)
-                                        .onTapGesture {
-                                            isTwetter.toggle()
-                                        }
-                                }
-                            }
-                            .frame(width: 50, height: 50)
-                            .gesture(
-                                TapGesture()
-                                    .updating($tapGestureState) { value, state, _ in
-                                        state = true
-                                    }
-                                    .onEnded { _ in
-                                        isTwetter.toggle()
-                                    }
-                            )
-//                                .onTapGesture {
-//                                    twetterImage =
-//                                }
-                            Spacer()
-                        }
-                        .padding(.top)
-                        
-                        HStack {
-                            Button {
+                                .padding(.top)
                                 
-                            } label: {
-                                Spacer()
                                 HStack {
+                                    Text("Automatically share to:")
+                                        .font(.custom("Urbanist-Bold", size: 18))
+                                    Spacer()
                                     
-                                    Image("DraftLogo")
+                                }
+                                .padding(.top)
+                                
+                                HStack {
+                                    ForEach(SocialMediaType.allCases, id: \.self) { type in
+                                        SocialMediaIconView(type: type, selectedType: $selectedType)
+                                    }
+                                    Spacer()
+                                }
+                                .padding(.top)
+                                
+                                HStack {
+                                    Button {
+                                        loadingVideo = true
+                                        simulateVideoDownload()
+                                        
+                                    } label: {
+                                        Spacer()
+                                        HStack {
+                                            
+                                            Image("DraftLogo")
+                                            
+                                            Text("Drafts")
+                                                .font(.custom("Urbanist-Bold", size: 16))
+                                                .foregroundStyle(
+                                                    LinearGradient(colors: [
+                                                        Color("buttionGradientTwo"),
+                                                        Color("buttionGradientOne"),
+                                                    ], startPoint: .topLeading, endPoint: .bottomTrailing))
+                                                .padding()
+                                        }
+                                        Spacer()
+                                    }
+                                    .background(Color("SkipButtonBackground"))
+                                    .cornerRadius(40)
                                     
-                                    Text("Drafts")
-                                        .font(.custom("Urbanist-Bold", size: 16))
-                                        .foregroundStyle(
-                                            LinearGradient(colors: [
-                                                Color("buttionGradientTwo"),
-                                                Color("buttionGradientOne"),
-                                            ], startPoint: .topLeading, endPoint: .bottomTrailing))
-                                        .padding()
-                                }
-                                Spacer()
-                            }
-                            .background(Color("SkipButtonBackground"))
-                            .cornerRadius(40)
-                            
-                            Spacer()
-                            Spacer()
-                            
-                            Button {
-                                loader = true
-                                if (postModel.description == ""){
-                                    print("Description should not be nil")
-                                    loader = false
-                                    showMessagePopup(messages: "Description Needed")
-                                    return
-                                }
-
-                                guard let selectedCat = selectedCat, selectedCat != 0 else {
-                                    print("Category should be selected")
-                                    loader = false
-                                    showMessagePopup(messages: "Category Needed")
-                                    return
-                                }
-                                uploadReelss { isSuccess in
-                                    if isSuccess {
-                                        print("success=========")
-                                        navigateToNextView = true
-                                        if (self.saveToDevice){
-                                            print("Should save to device: " + self.saveToDevice.description)
-                                            if (self.autoCaption) {
-                                                Task {
-                                                    downloadAndSaveWithCaptionVideo()
+                                    Spacer()
+                                    Spacer()
+                                    
+                                    Button {
+                                        loader = true
+                                        if (postModel.description == ""){
+                                            print("Description should not be nil")
+                                            loader = false
+                                            showMessagePopup(messages: "Description Needed")
+                                            return
+                                        }
+                                        
+                                        guard let selectedCat = selectedCat, selectedCat != 0 else {
+                                            print("Category should be selected")
+                                            loader = false
+                                            showMessagePopup(messages: "Category Needed")
+                                            return
+                                        }
+                                        uploadReelss { isSuccess in
+                                            if isSuccess {
+                                                if (self.saveToDevice){
+                                                    print("Should save to device: " + self.saveToDevice.description)
+                                                    Task {
+                                                        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                                                            downloadAndSaveWithCaptionVideo()
+                                                        }
+                                                        homeView = true
+                                                        loader = false
+                                                        print("Video downloaded into gallery")
+                                                    }
+                                                }else{
                                                     loader = false
+                                                    print("success=========")
+                                                    homeView = true
+                                                }
+                                                if (selectedType != nil){
+                                                    DispatchQueue.main.async{
+                                                        print("Facebook is true")
+                                                        let fileName = UserDefaults.standard.string(forKey: "imageName") ?? ""
+                                                        let videoURL =  URL(string: getImageVideoMarkedBaseURL + fileName)
+                                                        print("shareable Url \(videoURL)")
+                                                        shareToFacebook(videoURL: videoURL!)
+                                                    }
                                                 }
                                             } else {
-                                                Task{
-                                                    downloadAncdSaveVideo()
-                                                    loader = false
-                                                }
+                                                print("failed==========")
+                                                loader = false
                                             }
                                         }
-                                        if (isFacebook == true){
-                                            DispatchQueue.main.async{
-                                                print("Facebook is true")
-                                                let fileName = UserDefaults.standard.string(forKey: "imageName") ?? ""
-                                                let videoURL =  URL(string: getImageVideoMarkedBaseURL + fileName)
-                                                    print("shareable Url \(videoURL)")
-                                                shareToFacebook(videoURL: videoURL!)
+                                        
+                                    } label: {
+                                        Spacer()
+                                        HStack {
+                                            
+                                            Image("PostLogo")
+                                            
+                                            Text("Post")
+                                                .font(.custom("Urbanist-Bold", size: 16))
+                                                .foregroundColor(.white)
+                                                .padding()
+                                        }
+                                        Spacer()
+                                        NavigationLink(destination: HomePageView()
+                                            .navigationBarBackButtonHidden(true).navigationBarHidden(true), isActive: $homeView) {
+                                                EmptyView()
                                             }
-                                        }
-                                        } else {
-                                            print("failed==========")
-                                            loader = false
-                                        }
                                     }
-                                
-                                } label: {
-                                    Spacer()
-                                    HStack {
-                                        
-                                        Image("PostLogo")
-                                        
-                                        Text("Post")
-                                            .font(.custom("Urbanist-Bold", size: 16))
-                                            .foregroundColor(.white)
-                                            .padding()
-                                    }
-                                    Spacer()
-                                    NavigationLink(destination: HomePageView()
-                                        .navigationBarBackButtonHidden(true).navigationBarHidden(true), isActive: $navigateToNextView) {
-                                            EmptyView()
-                                        }
+                                    .background(
+                                        LinearGradient(colors: [
+                                            Color("buttionGradientTwo"),
+                                            Color("buttionGradientOne"),
+                                        ], startPoint: .topLeading, endPoint: .bottomTrailing)
+                                    )
+                                    .cornerRadius(40)
+                                    
                                 }
-                                .background(
-                                    LinearGradient(colors: [
-                                        Color("buttionGradientTwo"),
-                                        Color("buttionGradientOne"),
-                                    ], startPoint: .topLeading, endPoint: .bottomTrailing)
-                                )
-                                .cornerRadius(40)
+                                .padding(.top, 20)
                                 
-                            }
-                            .padding(.top, 20)
+                            }}
+                            //                    .toolbar(content: {
+                            //                        ToolbarItem(placement: .keyboard) {
+                            //                            Spacer()
+                            //                        }
+                            //                        ToolbarItem(placement: .keyboard) {
+                            //                            Button("Done") {
+                            //                                focusedField = nil
+                            //                            }
+                            //                        }
+                            //                    })
                             
                         }
-                        //                    .toolbar(content: {
-                        //                        ToolbarItem(placement: .keyboard) {
-                        //                            Spacer()
-                        //                        }
-                        //                        ToolbarItem(placement: .keyboard) {
-                        //                            Button("Done") {
-                        //                                focusedField = nil
-                        //                            }
-                        //                        }
-                        //                    })
-                        
-                    }
-                    .padding(.horizontal)
-                    //                .navigationBarHidden(true)
-                    //            } CustomeSheetMoreOtptions
-                
-
+                        .padding(.horizontal)
+                        //                .navigationBarHidden(true)
+                        //            } CustomeSheetMoreOtptions
                     
+
+                        .overlay{
+                            if loadingVideo {
+                                Color.black.opacity(0.3)
+                                    .edgesIgnoringSafeArea(.all)
+                                    .overlay(
+                                        ZStack {
+                                            CircularProgressView(progress: progress)
+                                            Text("\(Int(progress * 100))%")
+                                                .font(.custom("Urbanist-Regular", size: 22))
+                                                .bold()
+                                        }
+                                        .frame(width: 60, height: 60)
+                                    )
+                            }
+                            if(self.showPrivacySettings)
+                            {
+                                PostVisibilityView(
+                                    currentVisibility: self.postModel.visibility,
+                                    callback:{type in
+                                        self.showPrivacySettings = false
+                                        self.postModel.visibility = type
+                                    }
+                                )
+                            }
+                        }
+                    }
+                    .onTapGesture{
+                        isFocused = false
+                        self.postModel.description = description
+                    }
                     if bottomSheetShown {
                         Rectangle()
                             .fill(Color.black)
@@ -851,18 +773,25 @@ struct FinalVideoToPostView: View {
                         )
                 }
                     
-                    GeometryReader { geometry in
-                        BottomSheetView(
-                            isOpen: self.$bottomSheetShown,
-                            maxHeight: geometry.size.height * 0.5
-                        ) {
-                            CustomeSheetView(callback: {type in
-                                self.postModel.visibility = type
-                                print("type of visibility")
-                                print(self.postModel.visibility)
-                            })
-                        }
-                    }.edgesIgnoringSafeArea(.all)
+//                    GeometryReader { geometry in
+//                        BottomSheetView(
+//                            isOpen: self.$bottomSheetShown,
+//                            maxHeight: geometry.size.height * 0.5
+//                        ) {
+//                            PostVisibilityView(
+//                                currentVisibility: self.postModel.visibility,
+//                                callback:{type in
+//                                    self.showPrivacySettings = false
+//                                    self.postModel.visibility = type
+//                                }
+//                            )
+//                            CustomeSheetView(callback: {type in
+//                                self.postModel.visibility = type
+//                                print("type of visibility")
+//                                print(self.postModel.visibility)
+//                            })
+//                        }
+//                    }.edgesIgnoringSafeArea(.all)
                 if self.isShowPopup {
                     GeometryReader { geometry in
                         VStack {
@@ -923,8 +852,58 @@ struct FinalVideoToPostView: View {
                 .navigationBarHidden(true)
             }
         }
+    
+    
+    func simulateVideoDownload() {
+        DispatchQueue.global(qos: .background).async {
+            let totalProgressSteps = 100
+            
+            for i in 0..<totalProgressSteps {
+                usleep(100_000) // Simulating delay in video download
+                
+                DispatchQueue.main.async {
+                    progress = Double(i + 1) / Double(totalProgressSteps)
+                    
+                    if i == totalProgressSteps - 1 {
+                        // Download completed
+                        loadingVideo = false
+                        print("Video download completed")
+                        
+                        // Call the function to save the video or image to the gallery here
+                        saveVideoToGallery()
+                    }
+                }
+            }
+        }
+        }
+    
+    func saveVideoToGallery(){
+        print("Should save to device: "+self.saveToDevice.description)
+            guard let renderUrl = self.renderUrl else{
+                print("incorrect url, can't save to gallery")
+                return
+            }
+            print("saving to device, url: " + renderUrl.absoluteString)
+            if(self.postModel.isImageContent())
+            {
+                let data = try? Data(contentsOf: renderUrl)
+                let image = UIImage(data: data!)
+                UIImageWriteToSavedPhotosAlbum(image!, nil, nil, nil)
+            }
+            else{
+                PHPhotoLibrary.shared().performChanges({
+                    PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: renderUrl)
+                }) { complete, error in
+                    if complete {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2){
+                            print("Saved to gallery")
+                        }
+                    }
+                }
+            }
+    }
     func shareToFacebook(videoURL: URL) {
-        let activityItems: [Any] = [videoURL, self.postModel.description]
+        let activityItems: [Any] = [videoURL, self.description]
                 let activityViewController = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
                 UIApplication.shared.windows.first?.rootViewController?.present(activityViewController, animated: true, completion: nil)
     }
@@ -987,7 +966,14 @@ struct FinalVideoToPostView: View {
         
         private func uploadReelss(complitionHandler : @escaping(Bool) -> Void) {
             self.postModel.contentUrl = self.renderUrl
-            uploadReels.uploadReels(imageUploadRequest: self.postModel.contentUrl!, paramName: "asset", fileName: renderUrl?.lastPathComponent ?? "default.\(postModel.isImageContent() ? "png" : "mp4")") { responsee, errorMessage in
+            
+            if (autoCaption == true){
+                self.subAllow = "true"
+                self.subLang = captionLang
+            } else{
+                self.subAllow = "false"
+            }
+            uploadReels.uploadReels(imageUploadRequest: self.postModel.contentUrl!, paramName: "asset", fileName: renderUrl?.lastPathComponent ?? "default.\(postModel.isImageContent() ? "png" : "mp4")", subtitleLang: self.subLang, subtitle_apply: subAllow) { responsee, errorMessage in
                 if(!responsee || errorMessage == nil)
                 {
                     
@@ -995,6 +981,7 @@ struct FinalVideoToPostView: View {
                     complitionHandler(false)
                     return
                 }
+                print("image url \(self.postModel.contentUrl!)")
                 let uuid = UserDefaults.standard.string(forKey: "uuid") ?? ""
                 let reelsSize = UserDefaults.standard.string(forKey: "reelSize") ?? ""
                 let fileName = UserDefaults.standard.string(forKey: "imageName") ?? ""
@@ -1004,11 +991,12 @@ struct FinalVideoToPostView: View {
                 }
                 let content = ContentDetail(name: fileName, size: reelsSize)
                 print("caption and lan:  ", self.captionLang, self.autoCaption)
-                let postRes = ReelsPostRequest(userUUID: uuid, title: "This is title", description: self.postModel.description, contentType: postModel.isImageContent() ? "image" : "video", category: self.selectedCat, musicTrack: postModel.songModel?.title, location: postModel.location.id, visibility: "public", musicURL: postModel.songModel?.preview, content: [content], allowComment: self.postModel.allowComments, allowDuet: self.postModel.allowDuet, allowStitch: self.postModel.allowStitch, subtitle_apply: self.autoCaption, subtitleLang: self.captionLang, tags: tag )
+                let postRes = ReelsPostRequest(userUUID: uuid, title: postModel.description, description: self.postModel.description, contentType: postModel.isImageContent() ? "image" : "video", category: self.selectedCat, musicTrack: postModel.songModel?.title, location: postModel.location.id, visibility: "public", musicUUID: postModel.songModel?.id, musicURL: postModel.songModel?.preview, content: [content], allowComment: self.postModel.allowComments, allowDuet: self.postModel.allowDuet, allowStitch: self.postModel.allowStitch, tags: tag )
                 uploadReels.uploadPost(post: postRes, complitionHandler: {response, error in
                     DispatchQueue.main.async {
                         if(responsee == true) {
                             print("Sucessss......")
+                            print("")
                             complitionHandler(true)
                         } else {
                             print("Errror.....")
@@ -1021,12 +1009,39 @@ struct FinalVideoToPostView: View {
         }
     }
 
-//struct FinalVideoToPostView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        FinalVideoToPostView(url: URL (string: "http://www.example.com/image.jpg")!)
-//    }
-//}
-//getImageVideoBaseURL + "/marked" + fileName
+enum SocialMediaType: String, CaseIterable {
+    case WhatsApp
+    case Instagram
+    case Facebook
+    case Twetter
+}
+struct SocialMediaIconView: View {
+    let type: SocialMediaType
+    @Binding var selectedType: SocialMediaType?
+    
+    var isSelected: Bool {
+        selectedType == type
+    }
+    
+    var body: some View {
+        Image("\(type.rawValue)Logo")
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .frame(width: 50, height: 50)
+            .opacity(isSelected ? 1.0 : 0.5)
+            .overlay(
+                Circle()
+                    .strokeBorder(isSelected ? LinearGradient(colors: [Color("buttionGradientTwo"), Color("buttionGradientOne")], startPoint: .topLeading, endPoint: .bottomTrailing) : LinearGradient(colors: [Color.clear], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 2)
+            )
+            .onTapGesture {
+                if isSelected {
+                    selectedType = nil
+                } else {
+                    selectedType = type
+                }
+            }
+    }
+}
 
 struct ExtractedImageView: View {
     let image: UIImage
@@ -1037,5 +1052,62 @@ struct ExtractedImageView: View {
             .aspectRatio(contentMode: .fit)
             .scaledToFill()
             .frame(width: 100, height: 132)
+    }
+}
+struct CircularProgressView: View {
+    let progress: Double
+    var body: some View {
+        ZStack {
+            Circle()
+                .stroke(
+                    Color.gray.opacity(0.5),
+                    lineWidth: 5
+                )
+            Circle()
+                .trim(from: 0, to: progress)
+                .stroke(
+                    LinearGradient(
+                        gradient: Gradient(colors: [
+                            Color("buttionGradientTwo"),
+                            Color("buttionGradientOne"),
+                        ]),
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    style: StrokeStyle(
+                        lineWidth: 5,
+                        lineCap: .round
+                    )
+                )
+                .rotationEffect(.degrees(-90))
+                .animation(.easeOut, value: progress)
+            
+        }
+    }
+}
+
+
+struct CircularProgressCameraView: View {
+    let progress: Double
+    var body: some View {
+        ZStack {
+            Circle()
+                .stroke(
+                    Color.white,
+                    lineWidth: 6
+                )
+            Circle()
+                .trim(from: 0, to: progress)
+                .stroke(
+                    Color.red,
+                    style: StrokeStyle(
+                        lineWidth: 6,
+                        lineCap: .round
+                    )
+                )
+                .rotationEffect(.degrees(-90))
+                .animation(.easeOut, value: progress)
+            
+        }
     }
 }

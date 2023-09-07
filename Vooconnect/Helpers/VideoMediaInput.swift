@@ -15,7 +15,7 @@ protocol VideoMediaInputDelegate: AnyObject {
     func videoFrameRefresh(sampleBuffer: CMSampleBuffer) //could be audio or video
 }
 
-class VideoMediaInput: NSObject {
+class VideoMediaInput: NSObject, ObservableObject {
     private let queue = DispatchQueue(label: "com.GenerateMetal.VideoMediaInput")
     
     var videoURL: URL!
@@ -51,7 +51,7 @@ class VideoMediaInput: NSObject {
             self?.player.rate = speed
         }
         
-        setupProcessingTap()
+//        setupProcessingTap()
         
         
         player.replaceCurrentItem(with: playerItem)
@@ -88,7 +88,7 @@ class VideoMediaInput: NSObject {
             self?.playerItemObserver = nil
             self?.player.play()
             self?.player.currentItem?.audioTimePitchAlgorithm = .timeDomain
-            self?.player.rate = 1
+            self?.player.rate = self!.speed
         }
         player.replaceCurrentItem(with: playerItem)
         player.currentItem!.add(videoOutput)
@@ -140,6 +140,7 @@ class VideoMediaInput: NSObject {
             print("Pausing playback!")
             player.pause()
             player.rate = speed
+            self.player.isMuted = true
         }
     }
     
@@ -173,16 +174,17 @@ class VideoMediaInput: NSObject {
         
         print("tracks? \(playerItem.asset.tracks)\n")
         
-        let audioTrack = playerItem.asset.tracks(withMediaType: AVMediaType.audio).first!
-        let inputParams = AVMutableAudioMixInputParameters(track: audioTrack)
-        inputParams.audioTapProcessor = tap?.takeRetainedValue()//tap?.takeUnretainedValue()
-//        tap?.release()
-        
-        // print("inputParms: \(inputParams), \(inputParams.audioTapProcessor)\n")
-        let audioMix = AVMutableAudioMix()
-        audioMix.inputParameters = [inputParams]
-        
-        playerItem.audioMix = audioMix
+        if let audioTrack = playerItem.asset.tracks(withMediaType: AVMediaType.audio).first {
+            let inputParams = AVMutableAudioMixInputParameters(track: audioTrack)
+            inputParams.audioTapProcessor = tap?.takeRetainedValue()
+            // print("inputParms: \(inputParams), \(inputParams.audioTapProcessor)\n")
+            let audioMix = AVMutableAudioMix()
+            audioMix.inputParameters = [inputParams]
+            
+            playerItem.audioMix = audioMix
+        } else {
+            print("No audio track found.")
+        }
     }
     
     //MARK: TAP CALLBACKS
@@ -217,7 +219,7 @@ class VideoMediaInput: NSObject {
         (tap, numberFrames, flags, bufferListInOut, numberFramesOut, flagsOut) in
 //        print("callback \(bufferListInOut)\n")
 
-        let selfMediaInput = Unmanaged<VideoMediaInput>.fromOpaque(MTAudioProcessingTapGetStorage(tap)).takeUnretainedValue()
+    let selfMediaInput = Unmanaged<VideoMediaInput>.fromOpaque(MTAudioProcessingTapGetStorage(tap)).takeUnretainedValue()
         
         let status = MTAudioProcessingTapGetSourceAudio(tap, numberFrames, bufferListInOut, flagsOut, nil, numberFramesOut)
         //print("get audio: \(status)\n")

@@ -259,7 +259,7 @@ struct SoundsView: View {
                                     RoundedRectangle(cornerRadius: 100)
                                         .fill(Color.gray.opacity(0.15))
                                 }
-                            Text(song.title)
+                            Text(song.title ?? "")
                                 .foregroundColor(.black)
                                 
                             Spacer()
@@ -268,7 +268,7 @@ struct SoundsView: View {
                         .padding(.horizontal,20)
                         .frame(width:UIScreen.main.screenWidth())
                         .button {
-                            self.userName = song.title
+                            self.userName = song.title!
                             self.focusTextField = false
 //                            self.soundsViewBloc.searchSong(query: song.title)
                         }

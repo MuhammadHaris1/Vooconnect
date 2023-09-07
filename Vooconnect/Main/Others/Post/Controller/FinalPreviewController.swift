@@ -18,6 +18,7 @@ import MobileCoreServices
 class FinalPreviewController :  NSObject , ObservableObject , AVAudioPlayerDelegate, VideoMediaInputDelegate
 {
     @Published var videoPlayer = VideoMediaInput()
+    @Published var audioPlayer = AudioMediaInput()
     @Published var isRecording : Bool = false
     var audioRecorder : AVAudioRecorder!
     @Published var isPlaying: Bool = false
@@ -27,37 +28,68 @@ class FinalPreviewController :  NSObject , ObservableObject , AVAudioPlayerDeleg
     @Published var captioning: String = ""
     private var isImage : Bool
     private var speed : Float
+    @Published var audio: URL?
     init(url : URL, isImage : Bool, speed : Float)
     {
         self.isImage = isImage
         self.speed = speed
         super.init()
+    }
+    ///Load data in to the player when appear
+    
+    func loadData(url: URL){
         DispatchQueue.global(qos: .background).async{ [self] in
-            if(!isImage)
-            {
-                self.videoPlayer = VideoMediaInput(url: url,speed: speed)
-                videoPlayer.delegate = self
-                setupRecognition()
-                videoPlayer.onEndVideo = {
-                    self.captioning = ""
-//                    self.setupRecognition()
+            if (self.audio != nil){
+                if(!isImage){
+                    self.videoPlayer = VideoMediaInput(url: url,speed: speed)
+                    self.audioPlayer = AudioMediaInput(url: audio!)
+                    videoPlayer.player.addPeriodicTimeObserver(forInterval: CMTime(seconds: 1, preferredTimescale: 1), queue: .main) { time in
+                        if let duration = self.videoPlayer.player.currentItem?.duration, time >= duration {
+                            self.audioPlayer.player.pause()
+                        }
+                    }
+                    videoPlayer.delegate = self
+                    setupRecognition()
+                }else{
+                    videoPlayer = VideoMediaInput()
                 }
                 
             }else{
-                videoPlayer = VideoMediaInput()
+                if(!isImage){
+                    self.videoPlayer = VideoMediaInput(url: url,speed: speed)
+                    videoPlayer.delegate = self
+                    setupRecognition()
+                    videoPlayer.onEndVideo = {
+                        self.audioPlayer.player.pause()
+//                        self.captioning = ""
+                        self.setupRecognition()
+                    }
+                    
+                }else{
+                    videoPlayer = VideoMediaInput()
+                }
             }
         }
     }
-    
     ///Play video from [videoPlayer] player
     func play(){
         videoPlayer.playVideo()
+        audioPlayer.playAudio()
+        videoPlayer.player.seek(to: CMTime(seconds: 0, preferredTimescale: 1))
+        audioPlayer.player.seek(to: CMTime(seconds: 0, preferredTimescale: 1))
+        videoPlayer.player.addPeriodicTimeObserver(forInterval: CMTime(seconds: 1, preferredTimescale: 1), queue: .main) { time in
+            if let duration = self.videoPlayer.player.currentItem?.duration, time >= duration {
+                self.audioPlayer.player.pause()
+            }
+        }
         isPlaying = true
     }
     
     ///Pause video from [videoPlayer] player
     func pause(){
         videoPlayer.pauseVideo()
+        audioPlayer.pauseAudio()
+        
         isPlaying = false
     }
     
@@ -94,7 +126,7 @@ class FinalPreviewController :  NSObject , ObservableObject , AVAudioPlayerDeleg
             if let result = result {
                 self?.captioning = result.bestTranscription.formattedString
             }else{
-                print("captioning is nil")
+                print("captioning is nil and error is \(String(describing: error?.localizedDescription))")
             }
 
             // if connected to internet, then once in about every minute recognition task finishes
@@ -114,6 +146,112 @@ class FinalPreviewController :  NSObject , ObservableObject , AVAudioPlayerDeleg
     func editAudio(){
         
     }
+    
+    
+    
+    func removeAudioFromVideo(videoURL: URL, completion: @escaping (URL?, Error?) -> Void) {
+        let fileManager = FileManager.default
+        let composition = AVMutableComposition()
+
+        guard let sourceAsset = AVURLAsset(url: videoURL) as AVAsset? else {
+            completion(nil, NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid video asset"]))
+            return
+        }
+
+        guard let compositionVideoTrack = composition.addMutableTrack(withMediaType: .video, preferredTrackID: kCMPersistentTrackID_Invalid) else {
+            completion(nil, NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed to add video track"]))
+            return
+        }
+
+        guard let sourceVideoTrack = sourceAsset.tracks(withMediaType: .video).first else {
+            completion(nil, NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Video track not found"]))
+            return
+        }
+
+        let timeRange = CMTimeRange(start: .zero, duration: sourceAsset.duration)
+
+        do {
+            try compositionVideoTrack.insertTimeRange(timeRange, of: sourceVideoTrack, at: .zero)
+        } catch {
+            completion(nil, error)
+            return
+        }
+
+        // Create a layer instruction for the video track
+        let videoLayerInstruction = AVMutableVideoCompositionLayerInstruction(assetTrack: compositionVideoTrack)
+
+        // Get the track's natural size
+        let naturalSize = sourceVideoTrack.naturalSize
+
+        // Check if the video track's dimensions need to be swapped
+        let shouldSwapDimensions = needsSwapDimensions(for: sourceVideoTrack.preferredTransform)
+
+        // Swap the dimensions if necessary
+        let renderSize: CGSize = shouldSwapDimensions ? CGSize(width: naturalSize.height, height: naturalSize.width) : naturalSize
+
+        // Create a transform to rotate the video
+        let transform = sourceVideoTrack.preferredTransform
+
+        // Apply the transform to the layer instruction
+        videoLayerInstruction.setTransform(transform, at: .zero)
+
+        let videoCompositionInstruction = AVMutableVideoCompositionInstruction()
+        videoCompositionInstruction.timeRange = CMTimeRange(start: .zero, duration: composition.duration)
+        videoCompositionInstruction.layerInstructions = [videoLayerInstruction]
+
+        // Create a video composition and set the instructions
+        let videoComposition = AVMutableVideoComposition()
+        videoComposition.renderSize = renderSize
+        videoComposition.frameDuration = CMTime(value: 1, timescale: 30)
+        videoComposition.instructions = [videoCompositionInstruction]
+
+        // Export the video
+        let exportPath = NSTemporaryDirectory().appending("\(Date()).mp4")
+        let exportURL = URL(fileURLWithPath: exportPath)
+
+        if fileManager.fileExists(atPath: exportPath) {
+            do {
+                try fileManager.removeItem(at: exportURL)
+            } catch {
+                completion(nil, NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed to remove existing export file"]))
+                return
+            }
+        }
+
+        guard let exporter = AVAssetExportSession(asset: composition, presetName: AVAssetExportPresetHighestQuality) else {
+            completion(nil, NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed to create AVAssetExportSession"]))
+            return
+        }
+
+        // Set the video composition for the exporter
+        exporter.videoComposition = videoComposition
+
+        // Rotate the video track to its original size
+        compositionVideoTrack.preferredTransform = transform.inverted()
+
+        exporter.outputURL = exportURL
+        exporter.outputFileType = .mp4
+
+        exporter.exportAsynchronously {
+            DispatchQueue.main.async {
+                if exporter.status == .completed {
+                    completion(exportURL, nil)
+                } else {
+                    completion(nil, exporter.error)
+                }
+            }
+        }
+    }
+
+    // Function to check if video track's dimensions need to be swapped
+    func needsSwapDimensions(for transform: CGAffineTransform) -> Bool {
+        return transform.a == 0 && transform.d == 0 && (transform.b == 1.0 || transform.b == -1.0) && (transform.c == 1.0 || transform.c == -1.0)
+    }
+    
+    ///add record audio to video
+    
+    
+    
     
     ///Calling text to speech GCP API
     func textToSpeech(post : PostModel, callback : @escaping (URL) -> ()){
@@ -326,7 +464,6 @@ class FinalPreviewController :  NSObject , ObservableObject , AVAudioPlayerDeleg
                     print("merge video error - " + error.localizedDescription)
                 }
         }
-
     
     
     ///AUDIO SECTION
@@ -368,6 +505,29 @@ class FinalPreviewController :  NSObject , ObservableObject , AVAudioPlayerDeleg
     func stopRecording(){
         audioRecorder?.stop()
     }
+    
+//    ///refresh videoplayer
+//    
+//    private func refreshVideoPlayer() {
+//            // Remove any existing player and playerLayer
+//            player?.pause()
+//            player = nil
+//            playerLayer?.removeFromSuperlayer()
+//            playerLayer = nil
+//            
+//            // Create a new AVPlayer with the updated URL
+//            if let videoURL = videoURL {
+//                player = AVPlayer(url: videoURL)
+//                playerLayer = AVPlayerLayer(player: player)
+//                
+//                // Configure the playerLayer to fit the view's bounds
+//                playerLayer?.frame = view.bounds
+//                view.layer.addSublayer(playerLayer!)
+//                
+//                // Start playing the video
+//                player?.play()
+//            }
+//        }
     
     //Get the audio from video, callback the url of the file
     
@@ -581,58 +741,149 @@ class FinalPreviewController :  NSObject , ObservableObject , AVAudioPlayerDeleg
 
     }
     
-//    func cropVideo(sourceURL1: URL, startTime:Float, endTime:Float)
-//    {
-//        let manager = FileManager.default
-//
-//        guard let documentDirectory = try? manager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true) else {return}
-//        let mediaType = "mp4"
-//        if mediaType == kUTTypeMovie as String || mediaType == "mp4" as String {
-//            let asset = AVAsset(url: sourceURL1 as URL)
-//            let length = Float(asset.duration.value) / Float(asset.duration.timescale)
-//            print("video length: \(length) seconds")
-//
-//            let start = startTime
-//            let end = endTime
-//
-//            var outputURL = documentDirectory.appendingPathComponent("output")
-//            do {
-//                try manager.createDirectory(at: outputURL, withIntermediateDirectories: true, attributes: nil)
-//                outputURL = outputURL.appendingPathComponent("\(UUID().uuidString).\(mediaType)")
-//            }catch let error {
-//                print(error)
-//            }
-//
-//            //Remove existing file
-//            _ = try? manager.removeItem(at: outputURL)
-//
-//
-//            guard let exportSession = AVAssetExportSession(asset: asset, presetName: AVAssetExportPresetHighestQuality) else {return}
-//            exportSession.outputURL = outputURL
-//            exportSession.outputFileType = .mp4
-//
-//            let startTime = CMTime(seconds: Double(start ), preferredTimescale: 1000)
-//            let endTime = CMTime(seconds: Double(end ), preferredTimescale: 1000)
-//            let timeRange = CMTimeRange(start: startTime, end: endTime)
-//
-//            exportSession.timeRange = timeRange
-//            exportSession.exportAsynchronously{
-//                switch exportSession.status {
-//                case .completed:
-//                    print("exported at \(outputURL)")
-//                case .failed:
-//                    print("failed \(exportSession.error)")
-//
-//                case .cancelled:
-//                    print("cancelled \(exportSession.error)")
-//
-//                default: break
-//                }
-//            }
-//        }
-//    }
     
     
+    ///AVAssetReader to read video frames
+
+    
+    func setupAssetReader(asset: AVAsset) -> (AVAssetReader, CGSize)? {
+        do {
+            let reader = try AVAssetReader(asset: asset)
+            
+            // Define the video track to read
+            guard let videoTrack = asset.tracks(withMediaType: .video).first else {
+                return nil
+            }
+            
+            let naturalSize = videoTrack.naturalSize
+            
+            let outputSettings: [String: Any] = [
+                kCVPixelBufferPixelFormatTypeKey as String: NSNumber(value: kCVPixelFormatType_420YpCbCr8BiPlanarFullRange)
+            ]
+            
+            let readerOutput = AVAssetReaderTrackOutput(track: videoTrack, outputSettings: outputSettings)
+            readerOutput.alwaysCopiesSampleData = false
+            reader.add(readerOutput)
+            
+            return (reader, naturalSize)
+        } catch {
+            print("Error setting up AVAssetReader: \(error.localizedDescription)")
+            return nil
+        }
+    }
+
+    
+    ///AVAssetWriter to write the processed video
     
     
+    func setupAssetWriter(url: URL, width: Int, height: Int) -> AVAssetWriter? {
+        do {
+            let writer = try AVAssetWriter(outputURL: url, fileType: .mp4)
+            
+            let outputSettings: [String: Any] = [
+                AVVideoCodecKey: AVVideoCodecType.h264,
+                AVVideoWidthKey: width,
+                AVVideoHeightKey: height
+            ]
+            
+            let writerInput = AVAssetWriterInput(mediaType: .video, outputSettings: outputSettings)
+            writerInput.expectsMediaDataInRealTime = false
+            writer.add(writerInput)
+            
+            return writer
+        } catch {
+            print("Error setting up AVAssetWriter: \(error.localizedDescription)")
+            return nil
+        }
+    }
+    
+    
+    ///noise reduction function using a CIFilter
+
+    func applyNoiseReduction(to pixelBuffer: CVPixelBuffer) -> CVPixelBuffer? {
+        let inputImage = CIImage(cvPixelBuffer: pixelBuffer)
+        guard let noiseReductionFilter = CIFilter(name: "CINoiseReduction") else {
+            return nil
+        }
+        
+        noiseReductionFilter.setValue(inputImage, forKey: kCIInputImageKey)
+        noiseReductionFilter.setValue(0.02, forKey: "inputNoiseLevel")
+        noiseReductionFilter.setValue(0.4, forKey: "inputSharpness")
+        
+        guard let outputImage = noiseReductionFilter.outputImage else {
+            return nil
+        }
+        
+        let context = CIContext()
+        var outputPixelBuffer: CVPixelBuffer?
+        CVPixelBufferCreate(nil, CVPixelBufferGetWidth(pixelBuffer), CVPixelBufferGetHeight(pixelBuffer), kCVPixelFormatType_32BGRA, nil, &outputPixelBuffer)
+        context.render(outputImage, to: outputPixelBuffer!)
+        
+        return outputPixelBuffer
+    }
+
+    ///Process and denoise the video frames
+    
+    func denoiseVideo(inputURL: URL, outputURL: URL, completion: @escaping (URL?) -> Void) {
+        let videoAsset = AVAsset(url: inputURL)
+
+        guard let (reader, videoSize) = setupAssetReader(asset: videoAsset) else {
+            print("Error setting up AVAssetReader.")
+            completion(nil) // Call completion with nil to indicate an error
+            return
+        }
+
+        guard let writer = setupAssetWriter(url: outputURL, width: Int(videoSize.width), height: Int(videoSize.height)) else {
+            print("Error setting up AVAssetWriter.")
+            completion(nil) // Call completion with nil to indicate an error
+            return
+        }
+
+        let writerInput = writer.inputs.first!
+        writer.startWriting()
+        reader.startReading()
+        writer.startSession(atSourceTime: CMTime.zero)
+
+        let videoProcessingQueue = DispatchQueue(label: "com.yourapp.videoProcessingQueue")
+        writerInput.requestMediaDataWhenReady(on: videoProcessingQueue) {
+            while writerInput.isReadyForMoreMediaData {
+                if let sampleBuffer = reader.outputs.first?.copyNextSampleBuffer() {
+                    // Perform noise reduction on the sampleBuffer's video frame
+                    if let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) {
+                        let denoisedPixelBuffer = self.applyNoiseReduction(to: pixelBuffer)
+                        if let denoisedBuffer = denoisedPixelBuffer {
+                            // Create a new CMSampleBuffer with the denoised pixel buffer
+                            var newSampleBuffer: CMSampleBuffer?
+                            var timingInfo = CMSampleTimingInfo()
+                            CMSampleBufferGetSampleTimingInfo(sampleBuffer, at: 0, timingInfoOut: &timingInfo)
+
+                            // Create CMVideoFormatDescription for the denoised pixel buffer
+                            var formatDescription: CMVideoFormatDescription?
+                            CMVideoFormatDescriptionCreateForImageBuffer(allocator: kCFAllocatorDefault, imageBuffer: denoisedBuffer, formatDescriptionOut: &formatDescription)
+
+                            // Create the new sample buffer with the format description and timing info
+                            CMSampleBufferCreateReadyWithImageBuffer(allocator: kCFAllocatorDefault,
+                                                                     imageBuffer: denoisedBuffer,
+                                                                     formatDescription: formatDescription!,
+                                                                     sampleTiming: &timingInfo,
+                                                                     sampleBufferOut: &newSampleBuffer)
+
+                            // Append the denoised sample buffer to the writerInput
+                            if let newSampleBuffer = newSampleBuffer {
+                                writerInput.append(newSampleBuffer)
+                            }
+                        }
+                    }
+                } else {
+                    writerInput.markAsFinished()
+                    writer.finishWriting {
+                        // Call the completion handler with the output URL once the writing is finished
+                        completion(outputURL)
+                    }
+                    break
+                }
+            }
+        }
+    }
+
 }

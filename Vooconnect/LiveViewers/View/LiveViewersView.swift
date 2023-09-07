@@ -482,16 +482,16 @@ struct LiveViewersView: View {
                         self.setupLocalVideo()
                         self.toggleLocalSession()
                     }
-                    .blurredSheet(.init(.white), show: $creatorDetaiSheet) {
-                        
-                    } content: {
-                        if #available(iOS 16.0, *) {
-                            ViewerProfileDetailSheet()
-                                .presentationDetents([.large,.medium,.height(500)])
-                        } else {
-                            // Fallback on earlier versions
-                        }
-                    }
+//                    .blurredSheet(.init(.white), show: $creatorDetaiSheet) {
+//                        
+//                    } content: {
+//                        if #available(iOS 16.0, *) {
+//                            ViewerProfileDetailSheet()
+//                                .presentationDetents([.large,.medium,.height(500)])
+//                        } else {
+//                            // Fallback on earlier versions
+//                        }
+//                    }
                     
                     .blurredSheet(.init(.white), show: $weeklyRanking) {
                         

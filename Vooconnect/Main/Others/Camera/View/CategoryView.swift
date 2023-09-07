@@ -352,21 +352,19 @@ struct CatButtonStyle : ButtonStyle {
  
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(.system(size: 14))
+            .font(.custom("Urbanist-Bold", size: 18))
+            .foregroundColor(isSelected ? .white : Color("buttionGradientOne"))
             .padding(.horizontal, 22)
             .padding(.vertical, 10)
-            .padding(.top, 5)
-            .background(
-                RoundedRectangle(cornerRadius: 25)
-                    .fill(isSelected ? LinearGradient(colors: [
-                        Color("buttionGradientTwo"),
-                        Color("buttionGradientOne"),
-                        Color("buttionGradientOne"),
-                    ], startPoint: .topLeading, endPoint: .bottomTrailing) : LinearGradient(colors: [
-                        Color.clear,
-                    ], startPoint: .topLeading, endPoint: .bottomTrailing))
+            .background(isSelected ? LinearGradient(colors: [
+                Color("buttionGradientTwo"),
+                Color("buttionGradientOne"),
+                Color("buttionGradientOne"),
+            ], startPoint: .topLeading, endPoint: .bottomTrailing) : LinearGradient(colors: [
+                Color.clear,
+            ], startPoint: .topLeading, endPoint: .bottomTrailing)
             )
-            .foregroundColor(isSelected ? .white : .black)
+            .cornerRadius(25)
             .overlay(isSelected ? RoundedRectangle(cornerRadius: 25).stroke(Color.clear, lineWidth: 0) : RoundedRectangle(cornerRadius: 25).stroke(Color("buttionGradientOne"), lineWidth: 1.5))
     }
 }

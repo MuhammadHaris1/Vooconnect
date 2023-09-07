@@ -6,25 +6,63 @@
 //
 
 import SwiftUI
+import AVFoundation
+
+
+import UIKit
 
 struct CustomeCameraForPhoto: View {
     
     @StateObject var camera = CameraModelPhoto()
+    @StateObject var cameraModel = CameraViewModel()
     
     @State private var timerImage: Bool = false
-    @State var countdownTimerText = 3
-    @State var countdownTimer = 3
-    @State var countdownTimer2 = 3
+    @State private var preview: Bool = false
+    @State var countdownTimerText = 0
+    @State var countdownTimer = 0
+    @State var countdownTimer2 = 0
     @State var timerRunning = false
     @State private var cameraFlip: Bool = false
     @State private var flashOn: Bool = false
     @State private var flash: Bool = false
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-    var preview : (URL) -> () = {val in}
-    @Binding var soundView: Bool
+//    var preview : (URL) -> () = {val in}
+    @State private var soundView: Bool = false
+    @State private var videoURL: URL?
     @Binding var filtersSheeet: Bool
+//    @Binding var preview: Bool
+    
+    
     
     var body: some View {
+        if let url = cameraModel.previewURL ,cameraModel.showPreview {
+            let isImage = !(url.absoluteString.lowercased().contains(".mp4") || url.absoluteString.lowercased().contains(".mov"))
+            
+            NavigationLink(
+                destination: FinalPreview(
+                    
+                    controller: FinalPreviewController(url: url, isImage: isImage, speed: cameraModel.speed), songModel: cameraModel.songModel, speed: cameraModel.speed, showPreview: $cameraModel.showPreview,
+                    url: .constant(url))
+                .navigationBarBackButtonHidden(true)
+                .navigationBarHidden(true)
+                
+                ,
+                isActive: $preview) {
+                    EmptyView()
+                }
+        }
+        
+        NavigationLink(destination: SoundsView(
+            pickSong: {song in
+                cameraModel.songModel = song
+                print("new song added to video: "+(cameraModel.songModel?.preview ?? ""))
+            }
+        )
+            .navigationBarBackButtonHidden(true).navigationBarHidden(true), isActive: $soundView) {
+                EmptyView()
+            }
+        
+        
         ZStack{
             
             // Going to Be Camera preview...
@@ -101,7 +139,10 @@ struct CustomeCameraForPhoto: View {
                                     
                                     timerImage = true
                                     
-                                    if countdownTimer == 3 {
+                                    if countdownTimer == 0 {
+                                        countdownTimer = 3
+                                        countdownTimerText = 3
+                                    } else if countdownTimer == 3 {
                                         countdownTimer = 5
                                         countdownTimerText = 5
                                     } else if countdownTimer == 5 {
@@ -120,8 +161,8 @@ struct CustomeCameraForPhoto: View {
                                         countdownTimer = 30
                                         countdownTimerText = 30
                                     } else {
-                                        countdownTimer = 3
-                                        countdownTimerText = 3
+                                        countdownTimer = 0
+                                        countdownTimerText = 0
                                     }
                                     countdownTimer2 = countdownTimer
                                     
@@ -166,6 +207,11 @@ struct CustomeCameraForPhoto: View {
                                     .padding(.bottom, -5)
                                 Button {
                                     
+                                    if(cameraModel.songModel != nil)
+                                    {
+                                        cameraModel.songModel = nil
+                                    }
+                                    flash = false
                                     soundView.toggle()
                                     
                                     print("AddSound2===========")
@@ -289,11 +335,16 @@ struct CustomeCameraForPhoto: View {
                             .offset(x: 8)
                     }
                     
-                    if camera.isTaken{
+                    if (camera.VideoUrl != nil){
                         Spacer()
                         Button {
-                            countdownTimer = self.countdownTimer2
-                            self.preview(self.camera.url!)
+                            cameraModel.previewURL = camera.VideoUrl
+                            DispatchQueue.main.async {
+                                print(("video recorded"))
+                                countdownTimer = self.countdownTimer2
+                                cameraModel.showPreview.toggle()
+                                preview.toggle()
+                            }
                         } label: {
                             Group{
                                 Label {
@@ -303,20 +354,6 @@ struct CustomeCameraForPhoto: View {
                                     Text("Preview")
                                 }
                                 .foregroundColor(.black)
-//                                        if cameraModel.previewURL == nil && !cameraModel.recordedURLs.isEmpty{
-//                                            // Merging Videos
-//                                            ProgressView()
-//                                                .tint(.black)
-//                                        }
-//                                        else{
-//                                            Label {
-//                                                Image(systemName: "chevron.right")
-//                                                    .font(.callout)
-//                                            } icon: {
-//                                                Text("Preview")
-//                                            }
-//                                            .foregroundColor(.black)
-//                                        }
                             }
                             .padding(.horizontal,20)
                             .padding(.vertical,8)
@@ -335,15 +372,18 @@ struct CustomeCameraForPhoto: View {
         
         .onAppear(perform: {
             camera.Check(isBackCamera: camera.isBackCameraPhoto)
+            print("camera switch")
         })
         .alert(isPresented: $camera.alert) {
             Alert(title: Text("Please Enable Camera Access"))
         }
     }
+    
+    
 }
 
 struct CustomeCameraForPhoto_Previews: PreviewProvider {
     static var previews: some View {
-        CustomeCameraForPhoto(soundView: .constant(false), filtersSheeet: .constant(false))
+        CustomeCameraForPhoto(filtersSheeet: .constant(false))
     }
 }

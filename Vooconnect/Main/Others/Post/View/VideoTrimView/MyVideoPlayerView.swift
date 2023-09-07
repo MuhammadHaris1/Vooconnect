@@ -1,56 +1,45 @@
 //
-//  AdjustVideoView.swift
+//  MyVideoPlayerView.swift
 //  Vooconnect
 //
 //  Created by Mac on 16/06/2023.
 //
 
 import SwiftUI
+import AVFoundation
 
 struct MyVideoPlayerView: View {
-//    @Binding var fullScreen: Bool
     @ObservedObject var playerVM: PlayerViewModel
+    @ObservedObject var audioPlayerVM: AudioPlayerViewModel
     @State private var isMuted = false
+    @Binding var speed: Float
     var filter_hex: String?
     var body: some View {
         ZStack {
+            AVPlayerControllerRepresented(player: $audioPlayerVM.player)
             AVPlayerControllerRepresented(player: $playerVM.player)
-//            if let filter_hex = filter_hex {
-//                Rectangle()
-////                    .foregroundColor(Color(filter_hex, alfa: 0.2))
-//            }
-            VStack {
-//                HStack {
-//                    Button {
-//                        isMuted.toggle()
-//                    } label: {
-//                        Image(systemName: isMuted ? "speaker.slash.fill": "speaker.wave.2.fill")
-//                            .foregroundColor(.white)
-//                            .frame(width: 20, height: 20)
-//                            .padding()
-//                    }
-//                    Spacer()
-//                    Text("\(playerVM.currentTime)")
-//                        .foregroundColor(.white)
-//                        .font(.system(size: 10))
-//                        .padding()
-//                }
-//                .padding(.top, fullScreen ? 80 : 0)
-                Spacer()
-                Button {
-                    playerVM.playPause()
-                } label: {
-                    Image(systemName: playerVM.isPlaying ? "pause.circle.fill": "play.circle.fill")
-                        .font(.system(size: 56))
-                        .foregroundColor(.black.opacity(0.3))
-                }
-                Spacer()
+        }
+//        .onAppear {
+//            playerVM.player.rate = speed
+//        }
+        .onTapGesture {
+            print("Tapped view with speed: \(speed)")
+            if playerVM.player.timeControlStatus == .playing{
+                playerVM.player.pause()
+                audioPlayerVM.player.pause()
+            }else{
+                playerVM.player.rate = speed
+                playerVM.player.play()
+                audioPlayerVM.player.play()
             }
-            Spacer()
+            playerVM.player.seek(to: CMTime(seconds: 0, preferredTimescale: 1))
+            audioPlayerVM.player.seek(to: CMTime(seconds: 0, preferredTimescale: 1))
+            playerVM.player.addPeriodicTimeObserver(forInterval: CMTime(seconds: 1, preferredTimescale: 1), queue: .main) { time in
+                if let duration = self.playerVM.player.currentItem?.duration, time >= duration {
+                    self.audioPlayerVM.player.pause()
+                }
+            }
         }
         .ignoresSafeArea()
-        .onChange(of: isMuted) { value in
-            playerVM.player.isMuted = value
-        }
     }
 }

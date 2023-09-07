@@ -35,10 +35,14 @@ struct Post: Codable, Hashable {
     let contentType: String?
     let musicTrack: String?
     let musicURL: String?
+    let musicUUID: String?;
     let allowComment, allowDuet, allowStitch: String?
     let creatorUUID: String?
     let creatorFirstName, creatorLastName, creatorUsername, creatorProfileImage: String?
-    let likeCount, shareCount, bookmarkCount, commentCount: Int?
+    let isBookmarked: Int
+    let isLiked: Int
+    let reactionType: Int?
+    var likeCount, shareCount, bookmarkCount, commentCount: Int?
     var player: AVPlayer?
 
     enum CodingKeys: String, CodingKey {
@@ -48,6 +52,7 @@ struct Post: Codable, Hashable {
         case location
         case contentURL = "content_url"
         case contentType = "content_type"
+        case musicUUID = "music_uuid"
         case musicTrack = "music_track"
         case musicURL = "music_url"
         case allowComment = "allow_comment"
@@ -58,6 +63,9 @@ struct Post: Codable, Hashable {
         case creatorLastName = "creator_last_name"
         case creatorUsername = "creator_username"
         case creatorProfileImage = "creator_profile_image"
+        case isBookmarked = "is_bookmarked"
+        case isLiked = "is_liked"
+        case reactionType = "reaction_type"
         case likeCount = "like_count"
         case shareCount = "share_count"
         case bookmarkCount = "bookmark_count"
@@ -67,6 +75,12 @@ struct Post: Codable, Hashable {
     var likeCountt: Int {
         return Int(likeCount ?? 0)
     }
+    mutating func incrementLikeCount() {
+        likeCount = likeCount! + 1
+        }
+    mutating func decrementLikeCount() {
+        likeCount = likeCount! - 1
+        }
     
 }
 
@@ -79,6 +93,10 @@ struct LikeRequest: Encodable {
 struct BlockPostRequest: Encodable {
     let uuid: String
     let post_id: Int
+}
+struct BlockUserRequest: Encodable {
+    let uuid: String
+    let user_uuid: String
 }
 
 struct ReportPostRequest: Encodable {

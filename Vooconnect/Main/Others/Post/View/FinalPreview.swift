@@ -13,102 +13,62 @@ import AVFoundation
 import CoreImage
 import CoreImage.CIFilterBuiltins
 import NavigationStack
+import PencilKit
 
 // MARK: Final Video Preview
 struct FinalPreview: View{
     @Environment(\.presentationMode) var presentaionMode
-    @EnvironmentObject private var navigationModel: NavigationModel
-    @ObservedObject private var controller : FinalPreviewController
+    @Environment(\.scenePhase) var scenePhase
+    @EnvironmentObject  var navigationModel: NavigationModel
+    @State var controller : FinalPreviewController
     @StateObject var speechRecognizer = SpeechRecognizerHelper()
-    @State private var postModel : PostModel
-    @State var songModel : DeezerSongModel?
-    @State var speed : Float
-    @State private var renderUrl : URL?
+    @State  var postModel : PostModel = PostModel()
+    @State var songModel : DeezerSongModel? = DeezerSongModel()
+    @State var speed : Float = 1.0
+    @State  var renderUrl : URL?
     @State var trimRenderUrl = URL(string: "")
     @Binding var showPreview: Bool
-    @State private var finalVideoPost: Bool = false
-    private let uploadReels: UploadReelsResource = UploadReelsResource()
-    @State private var isPlaying: Bool = false;
-    @State private var loading: Bool = false
-    @State private var stickerOffset = CGSize.zero
-    @State private var textOffset = CGSize.zero
-    @State private var accumulatedTextOffset = CGSize.zero
-    @State private var accumulatedstickerOffset = CGSize.zero
-    @State private var stickerScale : CGFloat = 1.0
-    @State private var textScale : CGFloat = 1.0
-    @State private var enableSticker : Bool = false
-    @State private var enableText : Bool = false
-    @State private var showTextAlert = false
-    @State private var showStickerView = false
-    @State private var showPrivacySettings = false
-    @State private var text = ""
-    @State private var isRecording = false
-    @State private var textView : AnyView?
-    @State private var stickerTextName = ""
-    @State private var navigateToNextView = false
+    @State  var finalVideoPost: Bool = false
+     let uploadReels: UploadReelsResource = UploadReelsResource()
+    @State  var isPlaying: Bool = false;
+    @State  var loading: Bool = false
+    @State  var stickerOffset = CGSize.zero
+    @State  var textOffset = CGSize.zero
+    @State  var accumulatedTextOffset = CGSize.zero
+    @State  var accumulatedstickerOffset = CGSize.zero
+    @State  var stickerScale : CGFloat = 1.0
+    @State  var textScale : CGFloat = 1.0
+    @State  var enableSticker : Bool = false
+    @State  var markerStack : Bool = false
+    @State  var markerHeader : Bool = false
+    @State  var enableText : Bool = false
+    @State  var showTextAlert = false
+    @State  var showStickerView = false
+    @State  var showPrivacySettings = false
+    @State  var text = ""
+    @State  var isRecording = false
+    @State  var textView : AnyView?
+    @State  var stickerTextName = ""
+    @State  var adjustmentView = false
+    @State  var voiceOverView = false
+    @StateObject var cameraModel = CameraViewModel()
+    @Binding var url: URL
+    @State var changeURL = URL(string: "")
+    @StateObject var drawingDocument = DrawingDocument()
+    @State private var deletedLines = [Line]()
+    
+    @State private var selectedColor: Color = .black
+    @State private var selectedLineWidth: CGFloat = 1
+    
+    let engine = DrawingEngine()
+    @State private var showConfirmation: Bool = false
+    @State var isTapped = false
+    @State var generatedImage: UIImage?
+    
+    
     
 //    @State var playermanager = PlayerViewModel()
-    
-    init(url:URL, showPreview: Binding<Bool>,songModel : DeezerSongModel?, speed : Float = 1){
-        _songModel = State(initialValue: songModel)
-        _showPreview = showPreview
-        _postModel = State(initialValue: PostModel())
-        _speed = State(initialValue: speed)
-        let isImage = !(url.absoluteString.lowercased().contains(".mp4") || url.absoluteString.lowercased().contains(".mov"))
-        controller = FinalPreviewController(url: url, isImage:  isImage ,speed: speed)
-        self.postModel.contentUrl = url
-        self.postModel.speed = speed
-        self.postModel.songModel = songModel
-       
-        print("URL FINAL PREVIEW1: " + (url.absoluteString ))
-//        playermanager.videoUrl = url
-    }
-    ///add deezer audio to video
-    func addSongAudio(){
-        
-        if(self.postModel.isImageContent() == false){
-        }else{
-            return
-        }
-        if(songModel == nil)
-        {
-            print("song not present on video")
-            controller.play()
-            loading = false
-            return
-        }
-        loading = true
-        controller.mergeVideoAndAudio(videoUrl: self.postModel.contentUrl!, audioUrl: URL(string: songModel?.preview ?? "")!, completion:{error, url in
-            guard let url = url else{
-                print("error merging video and audio")
-                return
-            }
-            print("video and audio merge, new url: "+url.absoluteString)
-            print("last url: "+self.postModel.contentUrl!.absoluteString)
-            self.postModel.contentUrl = url
-            loading = false
-            DispatchQueue.main.async {
-                self.controller.setNewUrl(url: url)
-                self.controller.play()
-            }
-        })
-    }
-    
-    ///add record audio to video
-    func mergeRecordAudioWithVideo(){
-        let audioURL = controller.audioRecorder.url
-        controller.mergeVideoAndAudio(videoUrl: self.postModel.contentUrl!, audioUrl: audioURL, completion: {error, url in
-            guard let url = url else{
-                print("error merging video and audio")
-                return
-            }
-            DispatchQueue.main.async {
-                self.controller.setNewUrl(url: url)
-                self.postModel.contentUrl = url
-                controller.play()
-            }
-        })
-    }
+
     
     var body: some View{
         
@@ -119,19 +79,23 @@ struct FinalPreview: View{
                 let stickerView = stickerView(cameraSize: size)
                 contentView(size:size)
                     .disabled(true)
-                    .onAppear{
-                        addSongAudio()
+                    .onDisappear{
+//                        controller.videoPlayer.stopAllProcesses()
+                         print("final preview disappear---------------------")
                     }
                     .onTapGesture {
-                        if(controller.isPlaying)
-                        {
+                        if(controller.isPlaying) {
+//                            controller.audioPlayer.pauseAudio()
                             controller.pause()
-                        }else
-                        {
+                        }else {
+//                            controller.audioPlayer.playAudio()
                             controller.play()
                         }
                     }
                     .overlay {
+                        if(markerStack){
+                            markerView(cameraSize: size)
+                        }
                         if(enableText && textView != nil){
                             textView(cameraSize: size)
                         }
@@ -156,6 +120,58 @@ struct FinalPreview: View{
                         if(loading){
                             ProgressView()
                                 .foregroundColor(.white)
+                        }
+                    }
+                    .overlay(alignment: .top){
+                        if markerHeader {
+                            HStack {
+                                ColorPicker("line color", selection: $selectedColor)
+                                    .labelsHidden()
+                                Slider(value: $selectedLineWidth, in: 1...20) {
+                                    Text("linewidth")
+                                }.frame(maxWidth: 100)
+                                Text(String(format: "%.0f", selectedLineWidth))
+                                
+                                Spacer()
+                                
+//                                Button {
+//                                    let last = drawingDocument.lines.removeLast()
+//                                    deletedLines.append(last)
+//                                } label: {
+//                                    Image(systemName: "arrow.uturn.backward.circle")
+//                                        .imageScale(.large)
+//                                }.disabled(drawingDocument.lines.count == 0)
+//
+//                                Button {
+//                                    let last = deletedLines.removeLast()
+//
+//                                    drawingDocument.lines.append(last)
+//                                } label: {
+//                                    Image(systemName: "arrow.uturn.forward.circle")
+//                                        .imageScale(.large)
+//                                }.disabled(deletedLines.count == 0)
+                                
+                                Button(action: {
+                                    markerHeader = false
+                                    
+                                }) {
+                                    Text("Done")
+                                }.foregroundColor(.white)
+                                Button(action: {
+                                    showConfirmation = true
+                                }) {
+                                    Text("Delete")
+                                }.foregroundColor(.red)
+                                    .confirmationDialog(Text("Are you sure you want to delete everything?"), isPresented: $showConfirmation) {
+                                        
+                                        Button("Delete", role: .destructive) {
+                                            drawingDocument.lines = [Line]()
+                                            deletedLines = [Line]()
+                                        }
+                                    }
+                                
+                            }.padding(.top, 30)
+                                .padding()
                         }
                     }
                 
@@ -202,6 +218,30 @@ struct FinalPreview: View{
                                         {
                                             Image("addText")
                                             Text("Text")
+                                                .font(.custom("Urbanist-Medium", size: 12))
+                                                .foregroundColor(.white)
+                                                .padding(.top, -5)
+                                        }
+                                    }
+                                    
+                                }
+                                Button {
+                                    markerStack = true
+                                    markerHeader = true
+                                } label: {
+                                    VStack{
+                                        if(self.markerStack)
+                                        {
+                                            
+                                            Image("editPurple")
+                                            Text("Marker")
+                                                .font(.custom("Urbanist-Medium", size: 12))
+                                                .foregroundColor(ColorsHelper.deepPurple)
+                                                .padding(.top, -5)
+                                        }else
+                                        {
+                                            Image("edit")
+                                            Text("Marker")
                                                 .font(.custom("Urbanist-Medium", size: 12))
                                                 .foregroundColor(.white)
                                                 .padding(.top, -5)
@@ -287,24 +327,9 @@ struct FinalPreview: View{
                                     .padding(.top, -5)
                                 
                                 Button {
-//                                    if(speechRecognizer.transcript != "")
-//                                    {
-//                                        speechRecognizer.reset()
-//                                        self.postModel.enableCaptions = false
-//                                        self.postModel.audioContentUrl = nil
-//                                        print("reset transcript")
-//                                        return
-//                                    }
-                                    
                                     self.postModel.enableCaptions.toggle()
                                     self.postModel = self.postModel
-                                    self.controller.play()
-                                    //                                    controller.getAudioFromVideoUrl(url: self.postModel.contentUrl!.absoluteString, callback: {val in
-//                                        DispatchQueue.main.async {
-////                                            self.controller.videoPlayer.player = vmInput.player
-//
-//                                        }
-//                                    })
+                                    self.controller.forcePlay()
                                 } label: {
                                     VStack{
                                         if(!self.postModel.enableCaptions)
@@ -330,7 +355,7 @@ struct FinalPreview: View{
                             VStack {
                                 
                                 Button {
-                                    navigateToNextView = true
+                                    adjustmentView = true
                                     controller.pause()
                                     
                                 } label: {
@@ -345,14 +370,15 @@ struct FinalPreview: View{
                                 }
                                 
                                 let url = self.postModel.contentUrl
+                                let audioURL = URL(string: songModel?.preview ?? "")
 //                                let pathUrl = url?.path
                                 let asset = AVURLAsset(url: url!, options: nil)
-                                let playermanager = PlayerViewModel(videoUrl: url!)
-                                
+                                let playermanager = PlayerViewModel(videoUrl: url!, speed: speed)
+                                let audioPlayermanager = AudioPlayerViewModel(videoUrl: audioURL)
                                 
                                 NavigationLink(destination:
-                                                AdjustVideoView(slider: CustomSlider(start: 1, end: asset.duration.seconds), playerVM: playermanager, renderUrl:$renderUrl, postModel: $postModel, callWhenBack: callWithBack)
-                                    .navigationBarBackButtonHidden(true).navigationBarHidden(true), isActive: $navigateToNextView) {
+                                                AdjustVideoView(url: url, slider: CustomSlider(start: 1, end: asset.duration.seconds), playerVM: playermanager, audioPlayerVM: audioPlayermanager, renderUrl: $changeURL, postModel: $postModel, callWhenBack: callWithBack, speed: $speed)
+                                    .navigationBarBackButtonHidden(true).navigationBarHidden(true), isActive: $adjustmentView) {
                                         EmptyView()
                                     }
                                 
@@ -363,13 +389,13 @@ struct FinalPreview: View{
                                         {
                                             self.postModel.audioContentUrl = nil
                                             self.postModel = self.postModel
-                                            self.controller.play()
+                                            self.controller.forcePlay()
                                             return
                                         }
                                         self.controller.textToSpeech(post: self.postModel, callback: {val in
                                             self.postModel.audioContentUrl = val
                                             self.postModel = self.postModel
-                                            self.controller.play()
+                                            self.controller.forcePlay()
                                             let _ = SoundsManagerHelper.instance.playAudioFromUrl(url: val.absoluteString)
                                             
     //                                        #if DEBUG
@@ -396,63 +422,82 @@ struct FinalPreview: View{
                                             if(self.postModel.audioContentUrl != nil)
                                             {
                                                 Image("speechPurple")
-                                                Text("Speech")
-                                                    .font(.custom("Urbanist-Medium", size: 12))
-                                                    .foregroundColor(ColorsHelper.deepPurple)
                                             }else{
                                                 Image("speechIcon")
-                                                Text("Speech")
-                                                    .font(.custom("Urbanist-Medium", size: 12))
-                                                    .foregroundColor(.white)
-                                                    
                                             }
+                                            Text("Text To\nSpeech")
+                                                .font(.custom("Urbanist-Medium", size: 12))
+                                                .foregroundColor(.white)
                                             
                                             
     //                                            .padding(.top, -5)
                                         }
                                     }
                                 }
-                                
-                                
+//                                let playermanager = PlayerViewModel(videoUrl: url!)
+                                NavigationLink(destination:
+                                                SoundEditView(url: url,playerVM: playermanager, audioPlayerVM: audioPlayermanager, postModel: $postModel, songModel: songModel, speed: $speed, callWhenBack: callWithBack)
+                                    .navigationBarBackButtonHidden(true).navigationBarHidden(true), isActive: $voiceOverView) {
+                                        EmptyView()
+                                    }
                                 
                                 Button {
-                                    if(!isRecording){
-                                        controller.startRecording()
-                                    }else
-                                    {
-                                        controller.stopRecording()
-                                        mergeRecordAudioWithVideo()
-                                    }
-                                    isRecording.toggle()
+                                    
+                                    voiceOverView.toggle()
+                                    
+//                                    if(!isRecording){
+//                                        controller.startRecording()
+//                                    }else
+//                                    {
+//                                        controller.stopRecording()
+//                                        mergeRecordAudioWithVideo()
+//                                    }
+//                                    isRecording.toggle()
                                     
                                     
                                 } label: {
-                                    if(!self.isRecording)
-                                    {
+                                    VStack{
                                         Image("PreviewVoice")
-                                    }else{
-                                        Image("microphonePurple")
+                                        Text("Audio")
+                                            .font(.custom("Urbanist-Medium", size: 12))
+                                            .foregroundColor(.white)
+                                            .padding(.top, -5)
+                                        
+                                        Text("Editing")
+                                            .font(.custom("Urbanist-Medium", size: 12))
+                                            .foregroundColor(.white)
+                                            .padding(.top, -10)
                                     }
                                 }
-                                Text("Audio")
-                                    .font(.custom("Urbanist-Medium", size: 12))
-                                    .foregroundColor(.white)
-                                    .padding(.top, -5)
                                 
-                                Text("Editing")
-                                    .font(.custom("Urbanist-Medium", size: 12))
-                                    .foregroundColor(.white)
-                                    .padding(.top, -10)
                                 
                                 Button {
                                     loading = true
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 5.0){
-                                        controller.noiseReductionToVideo(videoUrl: self.postModel.contentUrl!.absoluteString,callback: {val in
-                                            self.postModel.contentUrl = val
-                                            self.controller.setNewUrl(url: self.postModel.contentUrl!)
-                                            self.controller.play()
-                                            loading = false
-                                        })
+                                        controller.denoiseVideo(inputURL: self.postModel.contentUrl!, outputURL: self.postModel.contentUrl!){ outputUrll in
+                                            if (outputUrll != nil){
+                                                if let outputURL = outputUrll {
+                                                    self.renderUrl = outputURL
+                                                    self.postModel.contentUrl = outputURL
+                                                    // Denoising process completed successfully, use the denoised video at "outputURL"
+                                                    print("Denoised video saved at: \(outputURL)")
+                                                    let isImage = !(renderUrl!.absoluteString.lowercased().contains(".mp4") || renderUrl!.absoluteString.lowercased().contains(".mov"))
+                                                    controller = FinalPreviewController(url: renderUrl!, isImage: isImage, speed: speed)
+                                                    loading = false
+                                                    // Perform further actions, like displaying the denoised video or saving it to the camera roll
+                                                } else {
+                                                    // Error occurred during denoising process
+                                                    print("Error: Noise reduction failed.")
+                                                    // Handle the error if noise reduction fails
+                                                }
+                                            }
+                                            //                                        controller.noiseReductionToVideo(videoUrl: self.postModel.contentUrl!.absoluteString,callback: {val in
+                                            //                                            self.postModel.contentUrl = val
+                                            //                                            self.controller.setNewUrl(url: self.postModel.contentUrl!)
+                                            //                                            self.controller.play()
+                                            //                                            loading = false
+                                            //                                        })
+                                        }
                                     }
                                 } label: {
                                     Image("PreviewReduceNoise")
@@ -503,11 +548,18 @@ struct FinalPreview: View{
                             
                             
                         }
+                        .onDisappear{
+                            DispatchQueue.main.async {
+                                controller.pause()
+                                print("Player Stoped")
+                            }
+                        }
                         
                         .padding(.top, 100)
                         .padding(.trailing, 20)
                         
                     }
+                
                 
                 // MARK: Next and Draft Button
                 
@@ -549,48 +601,11 @@ struct FinalPreview: View{
                                         loading = false
                                         self.renderUrl = url
                                         DispatchQueue.main.async {
-                                            if(self.postModel.isImageContent()){
-                                                let data = try? Data(contentsOf: self.renderUrl!)
-                                                let uiImage = UIImage(data: data!)!
-                                                let image = Image(uiImage: uiImage)
-                                                    .resizable()
-                                                    .scaledToFit()
-                                                    .frame(width: UIScreen.main.screenWidth() ,height:UIScreen.main.screenHeight() )
-            //                                        .rotationEffect(.degrees(90))
-                                                    .overlay{
-                                                        if(enableText && textView != nil){
-                                                            textView(cameraSize: size)
-                                                        }
-                                                        if(enableSticker){
-                                                            stickerView
-                                                        }
-                                                    }
-                                                    .snapshot()
-            //                                    UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
-                                                self.controller.storeImage(image, callback: {url in
-                                                    loading = false
-                                                    if(enableSticker){
-                                                        let model = postModel.contentOverlay.first(where: {val in val.type == .sticker})
-                                                        if(model == nil){
-                                                            self.postModel.contentOverlay.append(ContentOverlayModel(type: .sticker, size: stickerOffset, scale: stickerScale, value: self.stickerTextName, color: .black, fontSize: 0, enableBackground: false, font: .system ))
-                                                        }
-                                                    }
-                                                    if(enableText){
-                                                        var model = postModel.contentOverlay.first(where: {val in val.type == TypeOfOverlay.text})
-                                                        if(model != nil){
-                                                            self.postModel.contentOverlay.removeAll(where: {val in val.type == TypeOfOverlay.text})
-                                                            model!.size = textOffset
-                                                            self.postModel.contentOverlay.append(model!)
-                                                        }
-                                                    }
-                                                    self.renderUrl = url
-                                                    finalVideoPost.toggle()
-                                                })
-                                            }else{
                                                 loading = true
                                                 render(size: size,callback: {url in
                                                     loading = false
                                                     self.renderUrl = url
+                                                    self.cameraModel.previewURL = url
                                                     if(enableSticker){
                                                         let model = postModel.contentOverlay.first(where: {val in val.type == .sticker})
                                                         if(model == nil){
@@ -607,49 +622,10 @@ struct FinalPreview: View{
                                                     }
                                                     finalVideoPost.toggle()
                                                 })
-                                            }
                                             loading = true
                                         }
                                     })
                                 }else{
-                                    if(self.postModel.isImageContent()){
-                                        let data = try? Data(contentsOf: self.renderUrl!)
-                                        let uiImage = UIImage(data: data!)!
-                                        let image = Image(uiImage: uiImage)
-                                            .resizable()
-                                            .scaledToFit()
-                                            .frame(width: UIScreen.main.screenWidth() ,height:UIScreen.main.screenHeight() )
-    //                                        .rotationEffect(.degrees(90))
-                                            .overlay{
-                                                if(enableText && textView != nil){
-                                                    textView(cameraSize: size)
-                                                }
-                                                if(enableSticker){
-                                                    stickerView
-                                                }
-                                            }
-                                            .snapshot()
-    //                                    UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
-                                        self.controller.storeImage(image, callback: {url in
-                                            loading = false
-                                            if(enableSticker){
-                                                let model = postModel.contentOverlay.first(where: {val in val.type == .sticker})
-                                                if(model == nil){
-                                                    self.postModel.contentOverlay.append(ContentOverlayModel(type: .sticker, size: stickerOffset, scale: stickerScale, value: self.stickerTextName, color: .black, fontSize: 0, enableBackground: false, font: .system))
-                                                }
-                                            }
-                                            if(enableText){
-                                                var model = postModel.contentOverlay.first(where: {val in val.type == TypeOfOverlay.text})
-                                                if(model != nil){
-                                                    self.postModel.contentOverlay.removeAll(where: {val in val.type == TypeOfOverlay.text})
-                                                    model!.size = textOffset
-                                                    self.postModel.contentOverlay.append(model!)
-                                                }
-                                            }
-                                            self.renderUrl = url
-                                            finalVideoPost.toggle()
-                                        })
-                                    }else{
                                         loading = true
                                         render(size: size,callback: {url in
                                             loading = false
@@ -670,24 +646,8 @@ struct FinalPreview: View{
                                             }
                                             finalVideoPost.toggle()
                                         })
-                                    }
                                     loading = true
                                 }
-                                
-                                
-                                
-                                
-                            
-                                
-                                
-//                                    uploadReelss { isSuccess in
-//                                        if isSuccess {
-//                                            print("success=========")
-//                                        } else {
-//                                            print("failed==========")
-//                                        }
-//                                    }
-                                
                             } label: {
                                 Spacer()
                                 Text("Next")
@@ -771,14 +731,26 @@ struct FinalPreview: View{
             .ignoresSafeArea(.all)
             .navigationBarHidden(true)
         }
-        .onDisappear{
-            controller.pause()
+        .onAppear {
+            print("final preview appear----------------")
+            self.postModel.contentUrl = url
+            self.postModel.speed = speed
+            self.postModel.songModel = songModel
+            controller.loadData(url: url)
+            controller.audio = URL(string: songModel?.preview ?? "")
+            print("URL FINAL PREVIEW1: " + url.absoluteString)
         }
     }
     
+    
     func callWithBack()  {
         if let url = postModel.contentUrl {
-            controller.videoPlayer.onChange(for: url )
+            self.url = url
+            for _ in 0...2{
+                controller.loadData(url: url)
+                controller.audio = URL(string: songModel?.preview ?? "")
+                print("URL FINAL PREVIEW1: " + url.absoluteString)
+            }
         }
     }
     
@@ -789,6 +761,9 @@ struct FinalPreview: View{
             }
             if(enableSticker){
                 stickerView(cameraSize: cameraSize)
+            }
+            if(markerStack){
+                markerView(cameraSize: cameraSize)
             }
         }
     }
@@ -804,37 +779,27 @@ struct FinalPreview: View{
             let view = textView(cameraSize: size).offset(CGSize(width: -textOffset.width, height: -textOffset.height))
             array.append((view.asUIImage(),textOffset))
         }
-        if(!enableText && !enableSticker){
+        if(markerStack){
+            let view = markerView(cameraSize: size).offset(x: 0,y: 0)
+            array.append((view.asUIImage(),textOffset))
+        }
+        if(!enableText && !enableSticker && !markerStack){
             self.renderUrl = self.postModel.contentUrl
             callback(self.renderUrl!)
             return
         }
         print("CAMERA SIZE: "+size.debugDescription)
-        if(postModel.isImageContent()){
-            
-        }else{
-            controller.mergeVideoAndImage(video: self.renderUrl!, withForegroundImages: array, completion: {val in
+        controller.mergeVideoAndImage(video: self.renderUrl!, withForegroundImages: array, completion: {val in
                 guard let url = val else{
                     print("merge url not correct")
                     return
                 }
-    //            PHPhotoLibrary.shared().performChanges({
-    //                        PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: url)
-    //            }) { complete, error in
-    //                if complete {
-    //                    print("Saved to gallery")
-    //                }
-    //            }
                 DispatchQueue.main.async {
-    //                self.enableSticker = false
-    //                self.enableText = false
-    //                self.controller.videoPlayer = AVPlayer(url: url)
-    //                self.postModel.contentUrl = url
                     
                     callback(url)
                 }
             })
-        }
+        
         
     }
     
@@ -896,6 +861,37 @@ struct FinalPreview: View{
 //
 //
 //    }
+    
+    
+    func markerView(cameraSize: CGSize) -> some View{
+        ZStack {
+            Image(uiImage: UIImage.from(color: .clear, size: CGSize(width: cameraSize.width, height: cameraSize.height)))
+                .opacity(0.1)
+                .gesture(markerHeader ?
+                         DragGesture(minimumDistance: 0, coordinateSpace: .local)
+                    .onChanged { value in
+                        let newPoint = value.location
+                        if value.translation.width + value.translation.height == 0 {
+                            // TODO: use selected color and linewidth
+                            drawingDocument.lines.append(Line(points: [newPoint], color: selectedColor, lineWidth: selectedLineWidth))
+                        } else {
+                            let index = drawingDocument.lines.count - 1
+                            drawingDocument.lines[index].points.append(newPoint)
+                        }
+                    }
+                    .onEnded { value in
+                        if let last = drawingDocument.lines.last?.points, last.isEmpty {
+                            drawingDocument.lines.removeLast()
+                        }
+                    }
+                         : nil  // Do nothing when markerHeader is false
+                )
+            ForEach(drawingDocument.lines){ line in
+                DrawingShape(points: line.points)
+                    .stroke(line.color, style: StrokeStyle(lineWidth: line.lineWidth, lineCap: .round, lineJoin: .round))
+            }
+        }
+    }
     
     func stickerView(cameraSize : CGSize) -> some View{
         Image(uiImage: stickerTextName.image()!)
@@ -971,6 +967,7 @@ struct FinalPreview: View{
             .animation(.linear, value: textOffset)
     }
     
+    
 //    struct AVPlayerView: UIViewControllerRepresentable {
 //
 //        @Binding var videoController: AVPlayerViewController
@@ -1006,6 +1003,15 @@ struct FinalPreview: View{
     
 }
 
+extension UIImage {
+    static func from(color: UIColor, size: CGSize) -> UIImage {
+        let renderer = UIGraphicsImageRenderer(size: size)
+        return renderer.image { context in
+            color.setFill()
+            context.fill(CGRect(origin: .zero, size: size))
+        }
+    }
+}
 //struct FinalPreview_Previews: PreviewProvider {
 //    static var previews: some View {
 //        FinalPreview(url: URL(string: "")!, showPreview: .constant(true), songModel: nil)

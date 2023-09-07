@@ -164,7 +164,7 @@ enum NetworkConstants {
             case .getProfileViewers:
                 return "/get-profile-viewers"
             case .getFilterData:
-                return "/32b9a480a21fb7f45ccf5275?dev=true"
+                return "/605d8f982a3b640e638894d0?dev=true"
             }
         }
         

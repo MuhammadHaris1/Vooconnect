@@ -158,7 +158,6 @@ extension ARGCamera: AVCaptureVideoDataOutputSampleBufferDelegate {
             let sampleBufferHandler = sampleBufferHandler,
             connection == cameraConnection
             else { return }
-        
         sampleBufferHandler(output, sampleBuffer, connection)
     }
 }

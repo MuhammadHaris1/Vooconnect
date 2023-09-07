@@ -7,6 +7,8 @@
 
 import SwiftUI
 import ARGear
+import ARKit
+//import DeepAR
 
 struct CustomeCameraHome: View {
     
@@ -29,9 +31,11 @@ struct CustomeCameraHome: View {
     
     @StateObject var camera = CameraModelPhoto()
     
-    @State var countdownTimerText = 3
-    @State var countdownTimer : Int = 3
-    @State private var countdownTimer2 = 3
+    @State var countdownTimerText = 0
+    @State var countdownTimer : Int = 0
+    @State var countdownText : Int = 0
+    @State private var countdownTimer2 = 0
+    @State private var progress: Double = 0
     
     @State var timerRunning = false
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
@@ -43,23 +47,6 @@ struct CustomeCameraHome: View {
     @State private var effectsSheet: Bool = false
     @State private var isShowPopup: Bool = false
     var toast_main_position = CGPoint(x: 0, y: 0)
-    
-    // MARK: - ARGearSDK properties
-    private var argConfig: ARGConfig?
-    @State private var argSession: ARGSession?
-    private var currentFaceFrame: ARGFrame?
-    private var nextFaceFrame: ARGFrame?
-    private var preferences: ARGPreferences = ARGPreferences()
-    
-    @State private var cameraPreviewCALayer = CALayer()
-    
-    // MARK: - Camera & Scene properties
-    private let serialQueue = DispatchQueue(label: "serialQueue")
-    private var currentCamera: CameraDeviceWithPosition = .front
-    
-    @State private var arCamera: ARGCamera!
-    @State private var arScene: ARGScene!
-//    private var arMedia: ARGMedia = ARGMedia()
     
     
     var body: some View {
@@ -93,13 +80,12 @@ struct CustomeCameraHome: View {
                 }
 
                 if let url = cameraModel.previewURL ,cameraModel.showPreview {
+                    let isImage = !(url.absoluteString.lowercased().contains(".mp4") || url.absoluteString.lowercased().contains(".mov"))
                     NavigationLink(
                         destination: FinalPreview(
-                            url: url,
-                            showPreview: $cameraModel.showPreview,
-                            songModel: cameraModel.songModel,
-                            speed: cameraModel.speed
-                        )
+                            
+                            controller: FinalPreviewController(url: url, isImage: isImage, speed: cameraModel.speed), songModel: cameraModel.songModel, speed: cameraModel.speed, showPreview: $cameraModel.showPreview,
+                            url: .constant(url))
                             .navigationBarBackButtonHidden(true)
                             .navigationBarHidden(true)
 
@@ -148,15 +134,10 @@ struct CustomeCameraHome: View {
                 ZStack {   // (alignment: .bottom)
 //                MARK: Camera View
 //                     Text("MARK: Camera View")
-//                    MyARView(arScene: $arScene, argConfig: argConfig, argSession: argSession, currentFaceFrame: currentFaceFrame, nextFaceFrame: nextFaceFrame, preferences: preferences, arCamera: $arCamera, cameraPreviewCALayer: $cameraPreviewCALayer)
+//                    MyARView(arScene: $arScene, argConfig: $argConfig, argSession: $argSession, currentFaceFrame: $currentFaceFrame, nextFaceFrame: $nextFaceFrame, preferences: $preferences, arCamera: $arCamera, cameraPreviewCALayer: $cameraPreviewCALayer)
 
                     if clickPhoto == true {
-                        CustomeCameraForPhoto(preview:{url in
-                            print("picture taked: "+url.absoluteString)
-                            self.cameraModel.previewURL = url
-                            self.cameraModel.showPreview = true
-                            self.preview.toggle()
-                        }, soundView: $soundView, filtersSheeet: $filersSheet)
+                        CustomeCameraForPhoto(filtersSheeet: $filersSheet)
                             .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous))
                             .padding(.top,10)
                             .padding(.bottom,30)
@@ -172,12 +153,13 @@ struct CustomeCameraHome: View {
 
                     if timerRunning == true {
 
-                        Text("\(countdownTimer)")
+                        Text("\(countdownText)")
                             .foregroundColor(.white)
                             .padding()
                             .onReceive(timer) { _ in
-                                if countdownTimer > 0 && timerRunning {
-                                    countdownTimer -= 1
+                                if countdownText < countdownTimer && timerRunning {
+                                    countdownTimer += 1
+                                    countdownText += 1
                                 } else {
                                     timerRunning = false
                                 }
@@ -207,12 +189,11 @@ struct CustomeCameraHome: View {
                                                 Button {
                                                     cameraFlip.toggle()
                                                     print("Flip===========")
-
-                                                    self.cameraModel.isBackCamera.toggle()
-
-                                                    if self.cameraModel.isBackCamera == false {
-                                                        self.cameraModel.switchCamera()
+                                                    if self.cameraFlip == true {
+                                                        self.cameraModel.isBackCamera = true
+                                                        cameraModel.switchCamera()
                                                     } else {
+                                                        self.cameraModel.isBackCamera = false
                                                         flash = false
                                                         self.cameraModel.checkPermission(isBackCamera: self.cameraModel.isBackCamera)
                                                     }
@@ -262,7 +243,10 @@ struct CustomeCameraHome: View {
 
                                                     timerImage = true
 
-                                                    if countdownTimer == 3 {
+                                                    if countdownTimer == 0 {
+                                                        countdownTimer = 3
+                                                        countdownTimerText = 3
+                                                    } else if countdownTimer == 3 {
                                                         countdownTimer = 5
                                                         countdownTimerText = 5
                                                     } else if countdownTimer == 5 {
@@ -281,8 +265,8 @@ struct CustomeCameraHome: View {
                                                         countdownTimer = 30
                                                         countdownTimerText = 30
                                                     } else {
-                                                        countdownTimer = 3
-                                                        countdownTimerText = 3
+                                                        countdownTimer = 0
+                                                        countdownTimerText = 0
                                                     }
                                                     countdownTimer2 = countdownTimer
 
@@ -393,8 +377,8 @@ struct CustomeCameraHome: View {
                                                                 .overlay {
                                                                     Text(
                                                                         cameraModel.speed < 1 ?
-                                                                        "\(String(format: "%.2f", cameraModel.speed))x":
-                                                                        "\(Int(cameraModel.speed))x")
+                                                                        "\(String(format: "%.2f", cameraModel.speed))":
+                                                                        "\(Int(cameraModel.speed))")
                                                                         .foregroundColor(.white)
                                                                         .font(.custom("Urbanist-Bold", size: 8))
                                                                 }
@@ -520,74 +504,56 @@ struct CustomeCameraHome: View {
                                     Spacer()
 
                                 } else {
-                                    Button {
-
-                                        print("click")
-
-                                        if cameraModel.isRecording{
-                                            cameraModel.stopRecording()
-                                            countdownTimer = countdownTimer2
-                                            countdownTimerText = countdownTimer2
-                                        }
-
-                                        else {
-                                            timerRunning = true
-                                            countdownTimer = countdownTimer2
-                                            countdownTimerText = countdownTimer2
-                                            let afterTime = DispatchTimeInterval.seconds(self.countdownTimer)
-                                            print("start recording in: " + self.countdownTimer.description)
-                                            DispatchQueue.main.asyncAfter(deadline: .now() + afterTime) {
-                                                timerRunning = false
-                                                cameraModel.startRecording()
-                                            }
-
-
-                                        }
-
-                                    } label: {
-
-                                        if cameraModel.isRecording {
-                                            Image("CameraRecording")
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fill)
-                                                .frame(width: 58, height: 58)
-
-//                                                .overlay(content: {
-//                                                    CircleeTwo(circleProgress: $circleProgress, widthAndHeight: widthAndHeight, progressColor: progressColor)
-//                                                })
-
-//                                                .overlay(
-//
-////                                                    circleee(percent: (cameraModel.recordedDuration / cameraModel.maxDuration))
-//
-//
-////                                                       RoundedRectangle(cornerRadius: 29)
-////                                                           .stroke(.blue, lineWidth: 4)
-//////                                                           .frame(width: 58, height: 58, alignment: .center)
-////                                                        .frame(width: 58 * (cameraModel.recordedDuration / cameraModel.maxDuration), height: 58 * (cameraModel.recordedDuration / cameraModel.maxDuration), alignment: .center)
-//
-//
-//                                                   )
-                                                
-//                                                .frame(width: size.width * (cameraModel.recordedDuration / cameraModel.maxDuration))
+                                        Button {
                                             
-                                                .offset(x: 10)
-
-                                        } else {
-                                            Image("VideoClick")
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fill)
-                                                .frame(width: 58, height: 58)
-                                                .offset(x: 10)
+                                            print("click")
+                                            
+                                            if cameraModel.isRecording{
+                                                cameraModel.stopRecording()
+                                                countdownTimer = countdownTimer2
+                                                countdownTimerText = countdownTimer2
+                                            }
+                                            
+                                            else {
+                                                timerRunning = true
+                                                countdownTimer = countdownTimer2
+                                                countdownTimerText = countdownTimer2
+                                                let afterTime = DispatchTimeInterval.seconds(self.countdownTimer)
+                                                print("start recording in: " + self.countdownTimer.description)
+                                                DispatchQueue.main.asyncAfter(deadline: .now() + afterTime) {
+                                                    timerRunning = false
+                                                    cameraModel.startRecording()
+                                                    simulateVideoProgress()
+                                                }
+                                            }
+                                        } label: {
+                                            if cameraModel.isRecording {
+                                                Image("CameraRecording")
+                                                    .resizable()
+                                                    .aspectRatio(contentMode: .fill)
+                                                    .frame(width: 58, height: 58)
+                                                    .offset(x: 10)
+                                                    .overlay(
+                                                        CircularProgressCameraView(progress: progress)
+                                                            .frame(height: 54)
+                                                            .offset(x: 10)
+                                                    )
                                                 
+                                            } else {
+                                                Image("CameraRecording")
+                                                    .resizable()
+                                                    .aspectRatio(contentMode: .fill)
+                                                    .frame(width: 58, height: 58)
+                                                    .offset(x: 10)
+                                                    .overlay(
+                                                        CircularProgressCameraView(progress: progress)
+                                                            .frame(height: 54)
+                                                            .offset(x: 10)
+                                                    )
+                                            }
                                         }
-                                        
-    
-                                        
+                                        .padding(.leading, 8) // 8
                                     }
-                                    .padding(.leading, 8) // 8
-//                                    Spacer()
-                                }
                                 
                                 Spacer()
                                                                     
@@ -596,11 +562,30 @@ struct CustomeCameraHome: View {
                                 if(cameraModel.previewURL != nil && !cameraModel.isRecording)
                                 {
                                     Button {
-                                        if let _ = cameraModel.previewURL{
-                                            DispatchQueue.main.async {
-                                                countdownTimer = self.countdownTimer2
-                                                cameraModel.showPreview.toggle()
-                                                preview.toggle()
+                                        if let videoURL = cameraModel.previewURL{
+                                            
+                                            if ((cameraModel.songModel?.preview) != nil){
+                                                self.cameraModel.removeAudioFromVideo(videoURL: videoURL){url, error in
+                                                    if let error = error {
+                                                        print("Failed to remove audio: \(error.localizedDescription)")
+                                                    } else {
+                                                        cameraModel.previewURL = url
+                                                        print("Audio removed video, new url: " + url!.absoluteString)
+                                                        DispatchQueue.main.async {
+                                                            print(("video recorded"))
+                                                            countdownTimer = self.countdownTimer2
+                                                            cameraModel.showPreview.toggle()
+                                                            preview.toggle()
+                                                        }
+                                                    }
+                                                }
+                                            } else {
+                                                DispatchQueue.main.async {
+                                                    print(("video recorded"))
+                                                    countdownTimer = self.countdownTimer2
+                                                    cameraModel.showPreview.toggle()
+                                                    preview.toggle()
+                                                }
                                             }
                                         }
                                     } label: {
@@ -705,34 +690,34 @@ struct CustomeCameraHome: View {
                 .padding(.horizontal)
                 .padding(.bottom, -5)
 
-                // Filters
-                .blurredSheet(.init(.white), show: $filersSheet) {
-
-                } content: {
-                    if #available(iOS 16.0, *) {
-                        FiltersSheet(cameraModel: cameraModel)
-                            .presentationDetents([.large,.medium,.height(300)])
-                            .onAppear {
-                                cameraModel.getFilterData()
-                            }
-                    } else {
-                        // Fallback on earlier versions
-                    }
-                }
-                .blurredSheet(.init(.white), show: $beautySheet) {
-
-                } content: {
-                    if #available(iOS 16.0, *) {
-                        BeautyView()
-
-                            .presentationDetents([.large,.medium,.height(140)])
-                            .onAppear {
-                                cameraModel.getFilterData()
-                            }
-                    } else {
-                        // Fallback on earlier versions
-                    }
-                }
+//                // Filters
+//                .blurredSheet(.init(.white), show: $filersSheet) {
+//
+//                } content: {
+//                    if #available(iOS 16.0, *) {
+//                        FiltersSheet(cameraModel: cameraModel, filters: cameraModel.filter)
+//                            .presentationDetents([.large,.medium,.height(300)])
+//                            .onAppear {
+//                                cameraModel.getFilterData()
+//                            }
+//                    } else {
+//                        // Fallback on earlier versions
+//                    }
+//                }
+//                .blurredSheet(.init(.white), show: $beautySheet) {
+//
+//                } content: {
+//                    if #available(iOS 16.0, *) {
+//                        BeautyView()
+//
+//                            .presentationDetents([.large,.medium,.height(140)])
+//                            .onAppear {
+//                                cameraModel.getFilterData()
+//                            }
+//                    } else {
+//                        // Fallback on earlier versions
+//                    }
+//                }
 
                 // Effects
                 .blurredSheet(.init(.white), show: $effectsSheet) {
@@ -750,118 +735,46 @@ struct CustomeCameraHome: View {
 
             .animation(.easeInOut, value: cameraModel.showPreview)
             .navigationBarHidden(true)
-            .onAppear {
+        }
+        
+        
+    }
+    
+    
+    func simulateVideoProgress() {
+        let stepFrequency = 13.899 // Number of steps per second (adjust as desired)
+        let totalProgressSteps = cameraModel.maxDuration * stepFrequency
+        let stepDuration = 1.0 / totalProgressSteps
+
+        DispatchQueue.global(qos: .background).async {
+            var shouldStop = false // Flag to indicate if the progress should be stopped
+            var i = 0.0
+            while i < totalProgressSteps {
+                i += 1.0
+                usleep(useconds_t(stepDuration * 1_000_000)) // Simulating delay in audio progress
                 
-                cameraModel.recordedDuration = 0
-                runARGSession()
-                initHelpers()
-//                cameraModel.previewURL = nil
-                setupARGearConfig()
-                cameraModel.recordedURLs.removeAll()
-            }
-            
-        }
-        
-        
-    }
-    
-    
-    
-    // MARK: - ARGearSDK setupConfig
-    private func setupARGearConfig() {
-        do {
-            let config = ARGConfig(
-                apiURL: API_HOST,
-                apiKey: API_KEY,
-                secretKey: API_SECRET_KEY,
-                authKey: API_AUTH_KEY
-            )
-            argSession = try ARGSession(argConfig: config, feature: [.faceMeshTracking])
-//            argSession?.delegate = self
-            
-            let debugOption: ARGInferenceDebugOption = self.preferences.showLandmark ? .optionDebugFaceLandmark2D : .optionDebugNON
-            argSession?.inferenceDebugOption = debugOption
-            
-        } catch let error as NSError {
-            print("Failed to initialize ARGear Session with error: %@", error.description)
-        } catch let exception as NSException {
-            print("Exception to initialize ARGear Session with error: %@", exception.description)
-        }
-    }
-//    private func setupCamera() {
-//        arCamera = ARGCamera()
-//
-//        arCamera.sampleBufferHandler = { [weak self] output, sampleBuffer, connection in
-//            guard let self = self else { return }
-//
-//            self.serialQueue.async {
-//
-//                self.argSession?.update(sampleBuffer, from: connection)
-//            }
-//        }
-//
-//        self.permissionCheck {
-//            self.arCamera.startCamera()
-//
-//            self.setCameraInfo()
-//        }
-//    }
- 
-    
-    private func connectAPI() {
-        
-        NetworkManager.shared.connectAPI { (result: Result<[String: Any], APIError>) in
-            switch result {
-            case .success(let data):
-                RealmManager.shared.setARGearData(data) { success in
-                    self.loadAPIData()
+                DispatchQueue.main.async {
+                    if !cameraModel.isRecording {
+                        shouldStop = true // Set the flag to stop the progress
+                    }
+
+                    if !shouldStop {
+                        progress = Double(i + 1) / Double(totalProgressSteps)
+                    }
+
+                    if shouldStop || i == totalProgressSteps - 1 {
+                        cameraModel.isRecording = false
+                        print("Video Recording completed")
+                        cameraModel.stopRecording()
+                    }
                 }
-            case .failure(.network):
-                self.loadAPIData()
-                break
-            case .failure(.data):
-                self.loadAPIData()
-                break
-            case .failure(.serializeJSON):
-                self.loadAPIData()
-                break
+
+                if shouldStop {
+                    break // Exit the loop if the progress should be stopped
+                }
             }
         }
     }
-    private func loadAPIData() {
-        DispatchQueue.main.async {
-            let categories = RealmManager.shared.getCategories()
-
-            // Assuming mainBottomFunctionView is a UIKit view
-//            mainBottomFunctionView.contentView.contentsCollectionView.contents = categories
-//            mainBottomFunctionView.contentView.contentTitleListScrollView.contents = categories
-//            mainBottomFunctionView.filterView.filterCollectionView.filters = RealmManager.shared.getFilters()
-        }
-    }
-    
-    private func initHelpers() {
-        NetworkManager.shared.argSession = self.argSession
-        BeautyManager.shared.argSession = self.argSession
-        FilterManager.shared.argSession = self.argSession
-        ContentManager.shared.argSession = self.argSession
-        BulgeManager.shared.argSession = self.argSession
-        
-        BeautyManager.shared.start()
-    }
-    
-
-    
-    private func runARGSession() {
-        argSession?.run()
-    }
-    
-    private func stopARGSession() {
-        argSession?.pause()
-    }
-    private func destroyARGSession() {
-        argSession?.destroy()
-    }
-    
 }
 
 
@@ -934,69 +847,238 @@ struct CircleeTwo: View {
 }
 
 
-struct MyARView: UIViewRepresentable {
-    @Binding var arScene: ARGScene?
-    
-    
-    var argConfig: ARGConfig?
-    @State  var argSession: ARGSession?
-    @State  var currentFaceFrame: ARGFrame?
-    @State  var nextFaceFrame: ARGFrame?
-    @State  var preferences: ARGPreferences = ARGPreferences()
-    @Binding  var arCamera: ARGCamera?
-    private let serialQueue = DispatchQueue(label: "serialQueue")
-    
-    @Binding var cameraPreviewCALayer: CALayer
-
-    func makeUIView(context: Context) -> UIView {
-        let view = UIView()
-        setupScene(view: view)
-        return view
-    }
-
-    func updateUIView(_ uiView: UIView, context: Context) {
-       
-    }
-    
-    private func setupScene(view: UIView) {
-        arScene = ARGScene(viewContainer: view)
-
-        arScene?.sceneRenderUpdateAtTimeHandler = {  renderer, time in
-//            guard let self = self else { return }
-            self.refreshARFrame()
-        }
-
-        arScene?.sceneRenderDidRenderSceneHandler = { renderer, scene, time in
-//            guard let _ = self else { return }
-        }
-
-        cameraPreviewCALayer.contentsGravity = .resizeAspect//.resizeAspectFill
-        cameraPreviewCALayer.frame = CGRect(x: 0, y: 0, width: arScene?.sceneView.frame.size.height ?? 0, height: arScene?.sceneView.frame.size.width ?? 0)
-        cameraPreviewCALayer.contentsScale = UIScreen.main.scale
-        view.layer.insertSublayer(cameraPreviewCALayer, at: 0)
-    }
-    private func refreshARFrame() {
-        
-        guard self.nextFaceFrame != nil && self.nextFaceFrame != self.currentFaceFrame else { return }
-        self.currentFaceFrame = self.nextFaceFrame
-    }
-    private func setupCamera() {
-        arCamera = ARGCamera()
-        
-        arCamera?.sampleBufferHandler = { output, sampleBuffer, connection in
-//            guard let self = self else { return }
-            
-            self.serialQueue.async {
-
-                self.argSession?.update(sampleBuffer, from: connection)
-            }
-        }
-        
+//struct MyARView: UIViewRepresentable {
+//    @Binding var arScene: ARGScene?
+//    @Binding var argConfig: ARGConfig?
+//    @Binding var argSession: ARGSession?
+//    @Binding var currentFaceFrame: ARGFrame?
+//    @Binding var nextFaceFrame: ARGFrame?
+//    @Binding var preferences: ARGPreferences
+//    @Binding var arCamera: ARGCamera?
+//    private let serialQueue = DispatchQueue(label: "serialQueue")
+//    var arMedia: ARGMedia = ARGMedia()
+//    @Binding var cameraPreviewCALayer: CALayer
+//
+//    func makeUIView(context: Context) -> UIView {
+//        let view = UIView()
+//        setupScene(view: view)
+//        return view
+//    }
+//
+//    func updateUIView(_ uiView: UIView, context: Context) {
+//       
+//    }
+//    
+//    private func setupScene(view: UIView) {
+//        arScene = ARGScene(viewContainer: view)
+//
+//        arScene?.sceneRenderUpdateAtTimeHandler = {  renderer, time in
+////            guard let self = self else { return }
+//            self.refreshARFrame()
+//        }
+//
+//        arScene?.sceneRenderDidRenderSceneHandler = { renderer, scene, time in
+////            guard let _ = self else { return }
+//        }
+//
+//        cameraPreviewCALayer.contentsGravity = .resizeAspect//.resizeAspectFill
+//        cameraPreviewCALayer.frame = CGRect(x: 0, y: 0, width: arScene?.sceneView.frame.size.height ?? 0, height: arScene?.sceneView.frame.size.width ?? 0)
+//        cameraPreviewCALayer.contentsScale = UIScreen.main.scale
+//        view.layer.insertSublayer(cameraPreviewCALayer, at: 0)
+////        setupCamera()
+//    }
+//    private func refreshARFrame() {
+//        
+//        guard self.nextFaceFrame != nil && self.nextFaceFrame != self.currentFaceFrame else { return }
+//        self.currentFaceFrame = self.nextFaceFrame
+//    }
+//    private func setupCamera() {
+////        arCamera = ARGCamera()
+//
+//        arCamera?.sampleBufferHandler = { output, sampleBuffer, connection in
+////            guard let self = self else { return }
+//
+//            self.serialQueue.async {
+//
+//                self.argSession?.update(sampleBuffer, from: connection)
+//            }
+//        }
+//
 //        self.permissionCheck {
-//            self.arCamera.startCamera()
+//            print("Asking for permissions")
+//            self.arCamera?.startCamera()
 //
 //            self.setCameraInfo()
 //        }
-    }
-    
-}
+//    }
+//    func setCameraInfo() {
+//
+//        if let device = arCamera?.cameraDevice, let connection = arCamera?.cameraConnection {
+//            self.arMedia.setVideoDevice(device)
+//            self.arMedia.setVideoDeviceOrientation(connection.videoOrientation)
+//            self.arMedia.setVideoConnection(connection)
+//        }
+////        arMedia.setMediaRatio(arCamera?.ratio)
+//        arMedia.setVideoBitrate(ARGMediaVideoBitrate(rawValue: self.preferences.videoBitrate) ?? ._4M)
+//    }
+//
+//   
+//    
+//    
+//    public func session(_ session: ARSession, didUpdate frame: ARFrame) {
+//
+////        let viewportSize = view.bounds.size
+//        var updateFaceAnchor: ARFaceAnchor? = nil
+//        var isFace = false
+//        if let faceAnchor = frame.anchors.first as? ARFaceAnchor {
+//            if faceAnchor.isTracked {
+////                updateFaceAnchor = self.currentARKitFaceAnchor
+//                isFace = true
+//            }
+//        } else {
+//            if let _ = frame.anchors.first as? ARPlaneAnchor {
+//            }
+//        }
+//
+//        let handler: ARGSessionProjectPointHandler = { (transform: simd_float3, orientation: UIInterfaceOrientation, viewport: CGSize) in
+//            return frame.camera.projectPoint(transform, orientation: orientation, viewportSize: viewport)
+//        }
+//            
+//        if isFace {
+//            if let faceAnchor = updateFaceAnchor {
+////                self.argSession?.applyAdditionalFaceInfo(withPixelbuffer: frame.capturedImage, transform: faceAnchor.transform, vertices: faceAnchor.geometry.vertices, viewportSize: viewportSize, convert: handler)
+//            } else {
+//                self.argSession?.feedPixelbuffer(frame.capturedImage)
+//            }
+//        } else {
+//            self.argSession?.feedPixelbuffer(frame.capturedImage)
+//                }
+//            }
+//    
+//    
+//    
+//    
+//    func permissionCheck(_ permissionCheckComplete: @escaping PermissionCheckComplete) {
+//        
+////        let permissionLevel = self.permissionView.permission.getPermissionLevel()
+////        self.permissionView.permission.grantedHandler = permissionCheckComplete
+////        self.permissionView.setPermissionLevel(permissionLevel)
+////
+////        switch permissionLevel {
+////        case .Granted:
+////            break
+////        case .Restricted:
+////            self.removeSplashAfter(1.0)
+////        case .None:
+////            self.removeSplashAfter(1.0)
+////        }
+//    }
+//    
+//    func makeCoordinator() -> Coordinator  {
+//        Coordinator(argSession: self.argSession ?? ARGSession(), currentFaceFrame: self.currentFaceFrame, nextFaceFrame: self.nextFaceFrame, preferences: self.preferences, arCamera: self.arCamera, cameraPreviewCALayer: self.cameraPreviewCALayer)
+//    }
+//    class Coordinator: NSObject, ARGSessionDelegate {
+//        var arScene: ARGScene?
+//        var argSession: ARGSession?
+//        var currentFaceFrame: ARGFrame?
+//        var nextFaceFrame: ARGFrame?
+//        var preferences: ARGPreferences?
+//        var arCamera: ARGCamera?
+//        var cameraPreviewCALayer: CALayer?
+//        
+//        init(arScene: ARGScene? = nil ,argSession: ARGSession? = nil, currentFaceFrame: ARGFrame? = nil, nextFaceFrame: ARGFrame? = nil, preferences: ARGPreferences? = nil, arCamera: ARGCamera? = nil, cameraPreviewCALayer: CALayer? = nil) {
+//            self.arScene = arScene
+//            self.argSession = argSession
+//            self.currentFaceFrame = currentFaceFrame
+//            self.nextFaceFrame = nextFaceFrame
+//            self.preferences = preferences
+//            self.arCamera = arCamera
+//            self.cameraPreviewCALayer = cameraPreviewCALayer
+//            super.init()
+//            self.setupARGearConfig()
+//        }
+//       
+//        
+//         func setupARGearConfig() {
+//            do {
+//                let config = ARGConfig(apiURL: API_HOST, apiKey: API_KEY, secretKey: API_SECRET_KEY, authKey: API_AUTH_KEY)
+//                argSession = try ARGSession(argConfig: config, feature: [.faceMeshTracking])
+//                argSession?.delegate = self
+//                
+//                let debugOption: ARGInferenceDebugOption = self.preferences?.showLandmark ?? ARGPreferences().showLandmark ? .optionDebugFaceLandmark2D : .optionDebugNON
+//                argSession?.inferenceDebugOption = debugOption
+//            } catch let error as NSError {
+//                print("Failed to initialize ARGear Session with error: %@", error.description)
+//            } catch let exception as NSException {
+//                print("Exception to initialize ARGear Session with error: %@", exception.description)
+//            }
+//            print("Session Started")
+//            DispatchQueue.main.async {
+//                self.argSession?.run()
+//            }
+//        }
+//        private func drawARCameraPreview() {
+//
+//            guard
+//                let frame = self.currentFaceFrame,
+//                let pixelBuffer = frame.renderedPixelBuffer
+//                else {
+//                return
+//            }
+//            
+//            var flipTransform = CGAffineTransform(scaleX: -1, y: 1)
+//            if self.arCamera?.currentCamera == .back {
+//                flipTransform = CGAffineTransform(scaleX: 1, y: 1)
+//            }
+//
+//            DispatchQueue.main.async {
+//
+//                CATransaction.flush()
+//                CATransaction.begin()
+//                CATransaction.setAnimationDuration(0)
+//                if #available(iOS 11.0, *) {
+//                    self.cameraPreviewCALayer?.contents = pixelBuffer
+//                } else {
+//                    self.cameraPreviewCALayer?.contents = self.pixelbufferToCGImage(pixelBuffer)
+//                }
+//                let angleTransform = CGAffineTransform(rotationAngle: .pi/2)
+//                let transform = angleTransform.concatenating(flipTransform)
+//                self.cameraPreviewCALayer?.setAffineTransform(transform)
+//    //            self.cameraPreviewCALayer.frame = CGRect(x: 0, y: -self.getPreviewY(), width: self.cameraPreviewCALayer.frame.size.width, height: self.cameraPreviewCALayer.frame.size.height)
+//    //            self.view.backgroundColor = .white
+//                CATransaction.commit()
+//            }
+//        }
+//        func didUpdate(_ arFrame: ARGFrame) {
+//         self.drawARCameraPreview()
+//
+//         for face in arFrame.faces.faceList {
+//            if face.isValid {
+//               NSLog("landmarkcount = %d", face.landmark.landmarkCount)
+//             
+////              get face information (landmarkCoordinates , rotation_matrix, translation_vector)
+////              let landmarkcount = face.landmark.landmarkCount
+////              let landmarkCoordinates = face.landmark.landmarkCoordinates
+////              let rotation_matrix = face.rotation_matrix
+////              let translation_vector = face.translation_vector
+//
+//            }
+//         }
+//         
+//         nextFaceFrame = arFrame
+//         
+//         if #available(iOS 11.0, *) {
+//         } else {
+//             self.arScene?.sceneView.sceneTime += 1
+//         }
+//     }
+//        private func pixelbufferToCGImage(_ pixelbuffer: CVPixelBuffer) -> CGImage? {
+//            let ciimage = CIImage(cvPixelBuffer: pixelbuffer)
+//            let context = CIContext()
+//            let cgimage = context.createCGImage(ciimage, from: CGRect(x: 0, y: 0, width: CVPixelBufferGetWidth(pixelbuffer), height: CVPixelBufferGetHeight(pixelbuffer)))
+//
+//            return cgimage
+//        }
+//    }
+//    
+//}

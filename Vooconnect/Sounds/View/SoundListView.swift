@@ -25,7 +25,7 @@ struct SoundListView: View {
 //            Image("MaskSound")
             BlocBuilderView(bloc: soundsViewBloc) { state in
                 ZStack{
-                    AsyncImage(url: URL(string: songModel.album.cover))
+                    AsyncImage(url: URL(string: songModel.album!.cover))
         //                .resizable()
         //                .scaledToFill()
                         .frame(width: 80, height: 80)
@@ -47,13 +47,13 @@ struct SoundListView: View {
             
             VStack(alignment: .leading, spacing: 6) {
                 
-                Text(songModel.title)
+                Text(songModel.title!)
                     .font(.custom("Urbanist-Bold", size: 18))
                     .foregroundColor(Color(#colorLiteral(red: 0.1726317704, green: 0.1726317704, blue: 0.1726317704, alpha: 0.901334851)))
                 
                 HStack {
                     
-                    Text(songModel.artist.name)  // Medium
+                    Text(songModel.artist!.name)  // Medium
                         .font(.custom("Urbanist-Medium", size: 14))
                         .foregroundColor(Color(#colorLiteral(red: 0.4560062289, green: 0.4560062289, blue: 0.4560062289, alpha: 0.6976148593)))
                     

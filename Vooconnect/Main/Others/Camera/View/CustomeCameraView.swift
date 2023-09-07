@@ -30,7 +30,9 @@ struct CustomeCameraView: View {
         .padding(.bottom,-110)
         .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous))
         .onAppear(perform: {
-            self.cameraModel.checkPermission(isBackCamera: self.cameraModel.isBackCamera)
+            if cameraModel.isBackCamera == false{
+                self.cameraModel.checkPermission(isBackCamera: self.cameraModel.isBackCamera)
+            }
         })
         .alert(isPresented: $cameraModel.alert) {
             Alert(title: Text("Please Enable cameraModel Access Or Microphone Access!!!"))

@@ -37,7 +37,7 @@ struct MyProfileView: View {
                 
                 VStack {
                     
-                    NavigationLink(destination: SettingView()
+                    NavigationLink(destination: SwiftUISettingView()
                         .navigationBarBackButtonHidden(true).navigationBarHidden(true), isActive: $settingView) {
                             EmptyView() // genderVM.genderDataModel.navigate
                         }

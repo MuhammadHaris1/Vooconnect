@@ -14,6 +14,10 @@ PODS:
   - Realm/Headers (10.39.1)
   - RealmSwift (10.39.1):
     - Realm (= 10.39.1)
+  - SDWebImage (5.17.0):
+    - SDWebImage/Core (= 5.17.0)
+  - SDWebImage/Core (5.17.0)
+  - Toast-Swift (5.0.1)
   - TwitterCore (3.2.0)
   - TwitterKit5 (5.2.0):
     - TwitterCore (>= 3.1.0)
@@ -23,6 +27,8 @@ DEPENDENCIES:
   - FBSDKLoginKit
   - FBSDKShareKit
   - RealmSwift
+  - SDWebImage (~> 5.0)
+  - Toast-Swift (~> 5.0.1)
   - TwitterKit5
 
 SPEC REPOS:
@@ -34,6 +40,8 @@ SPEC REPOS:
     - FBSDKShareKit
     - Realm
     - RealmSwift
+    - SDWebImage
+    - Toast-Swift
     - TwitterCore
     - TwitterKit5
 
@@ -45,9 +53,11 @@ SPEC CHECKSUMS:
   FBSDKShareKit: dbc6adab8c837275fa6e7f5f0992dbde4fea87eb
   Realm: 1f3157edf145f4d9036765ab550c8cb18f62b700
   RealmSwift: 8a69a1cb788cd5865966f49667b130567e07bceb
+  SDWebImage: 750adf017a315a280c60fde706ab1e552a3ae4e9
+  Toast-Swift: 9b6a70f28b3bf0b96c40d46c0c4b9d6639846711
   TwitterCore: 8cbc9ad34d91c63a0035ea05bfbfc0d7ca72a28c
   TwitterKit5: 64095dfefcf39be2355711ef27112d55e340d90e
 
-PODFILE CHECKSUM: f68ef2f700c50b12c8de4803013d87bc856a1f08
+PODFILE CHECKSUM: ace62f0ae1ecf90f508c00d34063c261c0da7cf3
 
 COCOAPODS: 1.12.1
