@@ -1,20 +1,23 @@
 PODS:
-  - FBAEMKit (16.0.1):
-    - FBSDKCoreKit_Basics (= 16.0.1)
-  - FBSDKCoreKit (16.0.1):
-    - FBAEMKit (= 16.0.1)
-    - FBSDKCoreKit_Basics (= 16.0.1)
-  - FBSDKCoreKit_Basics (16.0.1)
-  - FBSDKLoginKit (16.0.1):
-    - FBSDKCoreKit (= 16.0.1)
-  - FBSDKShareKit (16.0.1):
-    - FBSDKCoreKit (= 16.0.1)
-  - Realm (10.39.1):
-    - Realm/Headers (= 10.39.1)
-  - Realm/Headers (10.39.1)
-  - RealmSwift (10.39.1):
-    - Realm (= 10.39.1)
-  - Regift (1.6.0)
+  - FBAEMKit (16.1.3):
+    - FBSDKCoreKit_Basics (= 16.1.3)
+  - FBSDKCoreKit (16.1.3):
+    - FBAEMKit (= 16.1.3)
+    - FBSDKCoreKit_Basics (= 16.1.3)
+  - FBSDKCoreKit_Basics (16.1.3)
+  - FBSDKLoginKit (16.1.3):
+    - FBSDKCoreKit (= 16.1.3)
+  - FBSDKShareKit (16.1.3):
+    - FBSDKCoreKit (= 16.1.3)
+  - Realm (10.42.0):
+    - Realm/Headers (= 10.42.0)
+  - Realm/Headers (10.42.0)
+  - RealmSwift (10.42.0):
+    - Realm (= 10.42.0)
+  - SDWebImage (5.17.0):
+    - SDWebImage/Core (= 5.17.0)
+  - SDWebImage/Core (5.17.0)
+  - Toast-Swift (5.0.1)
   - TwitterCore (3.2.0)
   - TwitterKit5 (5.2.0):
     - TwitterCore (>= 3.1.0)
@@ -24,7 +27,8 @@ DEPENDENCIES:
   - FBSDKLoginKit
   - FBSDKShareKit
   - RealmSwift
-  - Regift
+  - SDWebImage (~> 5.0)
+  - Toast-Swift (~> 5.0.1)
   - TwitterKit5
 
 SPEC REPOS:
@@ -36,22 +40,24 @@ SPEC REPOS:
     - FBSDKShareKit
     - Realm
     - RealmSwift
-    - Regift
+    - SDWebImage
+    - Toast-Swift
     - TwitterCore
     - TwitterKit5
 
 SPEC CHECKSUMS:
-  FBAEMKit: daac7466b918752f020345be5c7d9787f98cfc07
-  FBSDKCoreKit: 2cb033464b2134af0138f87d20b859eb3f9be359
-  FBSDKCoreKit_Basics: d37280da2e65872f0e931d15f45d97ea324fec37
-  FBSDKLoginKit: c47a3b90920702487b10b647c63520dc2676dad9
-  FBSDKShareKit: dbc6adab8c837275fa6e7f5f0992dbde4fea87eb
-  Realm: 1f3157edf145f4d9036765ab550c8cb18f62b700
-  RealmSwift: 8a69a1cb788cd5865966f49667b130567e07bceb
-  Regift: a7c1a7e377c60bfc34301d6f532e099e5ae109a8
+  FBAEMKit: af2972f39bb0f3f7c45998f435b007833c32ffb2
+  FBSDKCoreKit: 19e2e18b3be578d7a51fed8fdd8c152bef0b9511
+  FBSDKCoreKit_Basics: dd9826ce3c9fd9f8cdf8dbbd0ef0a53e6c0c9e7e
+  FBSDKLoginKit: c395c63a1a6cf4a8a1e6103fd94b8c46329ee81c
+  FBSDKShareKit: de5c291ad414ec07048ab09bae1b1b74b3ed92fe
+  Realm: 490aad28f1360e58fc22256d5d686d3a36525346
+  RealmSwift: f6a9b56d747bbdd7931de1835896c5f024b6898a
+  SDWebImage: 750adf017a315a280c60fde706ab1e552a3ae4e9
+  Toast-Swift: 9b6a70f28b3bf0b96c40d46c0c4b9d6639846711
   TwitterCore: 8cbc9ad34d91c63a0035ea05bfbfc0d7ca72a28c
   TwitterKit5: 64095dfefcf39be2355711ef27112d55e340d90e
 
-PODFILE CHECKSUM: d58ead2279586b1f036922540864904beab66d6e
+PODFILE CHECKSUM: 6f478d5dc4773c49b8cbf0c09ad68a3ebb8750a0
 
 COCOAPODS: 1.12.1

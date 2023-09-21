@@ -28513,532 +28513,532 @@
   },
   "ConstValues": [
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Content\/AppInviteContent.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Content\/AppInviteContent.swift",
       "kind": "IntegerLiteral",
       "offset": 560,
       "length": 9,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Content\/AppInviteContent.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Content\/AppInviteContent.swift",
       "kind": "IntegerLiteral",
       "offset": 560,
       "length": 9,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Content\/AppInviteContent.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Content\/AppInviteContent.swift",
       "kind": "StringLiteral",
       "offset": 338,
       "length": 16,
       "value": "\"FBSDKShareKit.AppInviteContent\""
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Content\/ContentFlags.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Content\/ContentFlags.swift",
       "kind": "BooleanLiteral",
       "offset": 367,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Content\/ContentFlags.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Content\/ContentFlags.swift",
       "kind": "BooleanLiteral",
       "offset": 401,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Content\/ContentFlags.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Content\/ContentFlags.swift",
       "kind": "BooleanLiteral",
       "offset": 435,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Content\/Hashtag.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Content\/Hashtag.swift",
       "kind": "StringLiteral",
       "offset": 354,
       "length": 7,
       "value": "\"FBSDKShareKit.Hashtag\""
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/MessageDialog.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/MessageDialog.swift",
       "kind": "BooleanLiteral",
       "offset": 1367,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/MessageDialog.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/MessageDialog.swift",
       "kind": "BooleanLiteral",
       "offset": 1508,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Reporting\/ShareAppEventNames.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Reporting\/ShareAppEventNames.swift",
       "kind": "StringLiteral",
       "offset": 341,
       "length": 32,
       "value": "\"fb_messenger_dialog_share_show\""
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Reporting\/ShareAppEventNames.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Reporting\/ShareAppEventNames.swift",
       "kind": "StringLiteral",
       "offset": 432,
       "length": 34,
       "value": "\"fb_messenger_dialog_share_result\""
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Reporting\/ShareAppEventNames.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Reporting\/ShareAppEventNames.swift",
       "kind": "StringLiteral",
       "offset": 544,
       "length": 27,
       "value": "\"fb_send_button_impression\""
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Reporting\/ShareAppEventNames.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Reporting\/ShareAppEventNames.swift",
       "kind": "StringLiteral",
       "offset": 620,
       "length": 24,
       "value": "\"fb_send_button_did_tap\""
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Reporting\/ShareAppEventNames.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Reporting\/ShareAppEventNames.swift",
       "kind": "StringLiteral",
       "offset": 724,
       "length": 28,
       "value": "\"fb_share_button_impression\""
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Reporting\/ShareAppEventNames.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Reporting\/ShareAppEventNames.swift",
       "kind": "StringLiteral",
       "offset": 802,
       "length": 25,
       "value": "\"fb_share_button_did_tap\""
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Reporting\/ShareAppEventNames.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Reporting\/ShareAppEventNames.swift",
       "kind": "StringLiteral",
       "offset": 901,
       "length": 22,
       "value": "\"fb_dialog_share_show\""
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Reporting\/ShareAppEventNames.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Reporting\/ShareAppEventNames.swift",
       "kind": "StringLiteral",
       "offset": 973,
       "length": 24,
       "value": "\"fb_dialog_share_result\""
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Reporting\/ShareAppEventParameters.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Reporting\/ShareAppEventParameters.swift",
       "kind": "StringLiteral",
       "offset": 320,
       "length": 33,
       "value": "\"fb_dialog_outcome_error_message\""
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Reporting\/ShareAppEventParameters.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Reporting\/ShareAppEventParameters.swift",
       "kind": "StringLiteral",
       "offset": 402,
       "length": 19,
       "value": "\"fb_dialog_outcome\""
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Reporting\/ShareAppEventParameters.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Reporting\/ShareAppEventParameters.swift",
       "kind": "StringLiteral",
       "offset": 479,
       "length": 30,
       "value": "\"fb_dialog_share_content_type\""
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Reporting\/ShareAppEventParameters.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Reporting\/ShareAppEventParameters.swift",
       "kind": "StringLiteral",
       "offset": 555,
       "length": 16,
       "value": "\"fb_dialog_mode\""
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Reporting\/ShareAppEventParameters.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Reporting\/ShareAppEventParameters.swift",
       "kind": "StringLiteral",
       "offset": 631,
       "length": 33,
       "value": "\"fb_dialog_share_content_page_id\""
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Reporting\/ShareAppEventParameters.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Reporting\/ShareAppEventParameters.swift",
       "kind": "StringLiteral",
       "offset": 722,
       "length": 30,
       "value": "\"fb_dialog_share_content_uuid\""
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Reporting\/ShareAppEventParameters.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Reporting\/ShareAppEventParameters.swift",
       "kind": "StringLiteral",
       "offset": 844,
       "length": 11,
       "value": "\"Cancelled\""
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Reporting\/ShareAppEventParameters.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Reporting\/ShareAppEventParameters.swift",
       "kind": "StringLiteral",
       "offset": 883,
       "length": 11,
       "value": "\"Completed\""
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Reporting\/ShareAppEventParameters.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Reporting\/ShareAppEventParameters.swift",
       "kind": "StringLiteral",
       "offset": 919,
       "length": 8,
       "value": "\"Failed\""
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Reporting\/ShareAppEventParameters.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Reporting\/ShareAppEventParameters.swift",
       "kind": "StringLiteral",
       "offset": 983,
       "length": 8,
       "value": "\"Status\""
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Reporting\/ShareAppEventParameters.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Reporting\/ShareAppEventParameters.swift",
       "kind": "StringLiteral",
       "offset": 1015,
       "length": 7,
       "value": "\"Photo\""
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Reporting\/ShareAppEventParameters.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Reporting\/ShareAppEventParameters.swift",
       "kind": "StringLiteral",
       "offset": 1046,
       "length": 7,
       "value": "\"Video\""
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Reporting\/ShareAppEventParameters.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Reporting\/ShareAppEventParameters.swift",
       "kind": "StringLiteral",
       "offset": 1078,
       "length": 8,
       "value": "\"Camera\""
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Reporting\/ShareAppEventParameters.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Reporting\/ShareAppEventParameters.swift",
       "kind": "StringLiteral",
       "offset": 1112,
       "length": 9,
       "value": "\"Unknown\""
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Bridging\/ShareBridgeAPI.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Bridging\/ShareBridgeAPI.swift",
       "kind": "StringLiteral",
       "offset": 296,
       "length": 8,
       "value": "\"camera\""
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Bridging\/ShareBridgeAPI.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Bridging\/ShareBridgeAPI.swift",
       "kind": "StringLiteral",
       "offset": 328,
       "length": 7,
       "value": "\"share\""
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Bridging\/ShareBridgeAPI.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Bridging\/ShareBridgeAPI.swift",
       "kind": "StringLiteral",
       "offset": 389,
       "length": 19,
       "value": "\"completionGesture\""
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Bridging\/ShareBridgeAPI.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Bridging\/ShareBridgeAPI.swift",
       "kind": "StringLiteral",
       "offset": 438,
       "length": 8,
       "value": "\"cancel\""
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Bridging\/ShareBridgeAPI.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Bridging\/ShareBridgeAPI.swift",
       "kind": "StringLiteral",
       "offset": 496,
       "length": 8,
       "value": "\"postId\""
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Bridging\/ShareBridgeAPI.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Bridging\/ShareBridgeAPI.swift",
       "kind": "StringLiteral",
       "offset": 536,
       "length": 9,
       "value": "\"post_id\""
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Content\/ShareCameraEffectContent.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Content\/ShareCameraEffectContent.swift",
       "kind": "StringLiteral",
       "offset": 523,
       "length": 2,
       "value": "\"\""
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/ShareDialog.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/ShareDialog.swift",
       "kind": "StringLiteral",
       "offset": 676,
       "length": 6,
       "value": "\"feed\""
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/ShareDialog.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/ShareDialog.swift",
       "kind": "BooleanLiteral",
       "offset": 741,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/ShareDialog.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/ShareDialog.swift",
       "kind": "BooleanLiteral",
       "offset": 856,
       "length": 4,
       "value": "true"
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/ShareDialog.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/ShareDialog.swift",
       "kind": "BooleanLiteral",
       "offset": 1817,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/ShareDialog.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/ShareDialog.swift",
       "kind": "StringLiteral",
       "offset": 400,
       "length": 11,
       "value": "\"FBSDKShareKit.ShareDialog\""
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/ShareDialog.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/ShareDialog.swift",
       "kind": "Array",
       "offset": 22128,
       "length": 2,
       "value": "[]"
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/ShareDialog.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/ShareDialog.swift",
       "kind": "StringLiteral",
       "offset": 29908,
       "length": 8,
       "value": "\"app_id\""
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/ShareDialog.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/ShareDialog.swift",
       "kind": "StringLiteral",
       "offset": 29976,
       "length": 10,
       "value": "\"hashtags\""
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/ShareDialog.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/ShareDialog.swift",
       "kind": "StringLiteral",
       "offset": 30047,
       "length": 8,
       "value": "\"quotes\""
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/ShareDialogMode.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/ShareDialogMode.swift",
       "kind": "IntegerLiteral",
       "offset": 692,
       "length": 6,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/ShareDialogMode.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/ShareDialogMode.swift",
       "kind": "IntegerLiteral",
       "offset": 772,
       "length": 10,
       "value": "2"
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/ShareDialogMode.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/ShareDialogMode.swift",
       "kind": "IntegerLiteral",
       "offset": 832,
       "length": 7,
       "value": "3"
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/ShareDialogMode.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/ShareDialogMode.swift",
       "kind": "IntegerLiteral",
       "offset": 909,
       "length": 3,
       "value": "4"
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/ShareDialogMode.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/ShareDialogMode.swift",
       "kind": "IntegerLiteral",
       "offset": 967,
       "length": 11,
       "value": "5"
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/ShareDialogMode.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/ShareDialogMode.swift",
       "kind": "IntegerLiteral",
       "offset": 1053,
       "length": 7,
       "value": "6"
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/ShareDialogMode.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/ShareDialogMode.swift",
       "kind": "IntegerLiteral",
       "offset": 692,
       "length": 6,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/ShareDialogMode.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/ShareDialogMode.swift",
       "kind": "IntegerLiteral",
       "offset": 772,
       "length": 10,
       "value": "2"
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/ShareDialogMode.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/ShareDialogMode.swift",
       "kind": "IntegerLiteral",
       "offset": 832,
       "length": 7,
       "value": "3"
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/ShareDialogMode.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/ShareDialogMode.swift",
       "kind": "IntegerLiteral",
       "offset": 909,
       "length": 3,
       "value": "4"
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/ShareDialogMode.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/ShareDialogMode.swift",
       "kind": "IntegerLiteral",
       "offset": 967,
       "length": 11,
       "value": "5"
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/ShareDialogMode.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/ShareDialogMode.swift",
       "kind": "IntegerLiteral",
       "offset": 1053,
       "length": 7,
       "value": "6"
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Core\/ShareError.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Core\/ShareError.swift",
       "kind": "StringLiteral",
       "offset": 399,
       "length": 24,
       "value": "\"com.facebook.sdk.share\""
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Core\/ShareError.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Core\/ShareError.swift",
       "kind": "IntegerLiteral",
       "offset": 608,
       "length": 3,
       "value": "200"
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Core\/ShareError.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Core\/ShareError.swift",
       "kind": "IntegerLiteral",
       "offset": 687,
       "length": 9,
       "value": "201"
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Core\/ShareError.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Core\/ShareError.swift",
       "kind": "IntegerLiteral",
       "offset": 845,
       "length": 18,
       "value": "202"
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Core\/ShareError.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Core\/ShareError.swift",
       "kind": "IntegerLiteral",
       "offset": 913,
       "length": 7,
       "value": "203"
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Core\/ShareError.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Core\/ShareError.swift",
       "kind": "IntegerLiteral",
       "offset": 608,
       "length": 3,
       "value": "200"
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Core\/ShareError.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Core\/ShareError.swift",
       "kind": "IntegerLiteral",
       "offset": 687,
       "length": 9,
       "value": "201"
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Core\/ShareError.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Core\/ShareError.swift",
       "kind": "IntegerLiteral",
       "offset": 845,
       "length": 18,
       "value": "202"
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Core\/ShareError.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Core\/ShareError.swift",
       "kind": "IntegerLiteral",
       "offset": 913,
       "length": 7,
       "value": "203"
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Content\/SharePhoto.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Content\/SharePhoto.swift",
       "kind": "BooleanLiteral",
       "offset": 3009,
       "length": 5,
       "value": "false"
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Content\/SharePhoto.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Content\/SharePhoto.swift",
       "kind": "StringLiteral",
       "offset": 357,
       "length": 10,
       "value": "\"FBSDKShareKit.SharePhoto\""
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Content\/SharePhotoContent.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Content\/SharePhotoContent.swift",
       "kind": "IntegerLiteral",
       "offset": 3474,
       "length": 1,
       "value": "1"
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Content\/SharePhotoContent.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Content\/SharePhotoContent.swift",
       "kind": "IntegerLiteral",
       "offset": 3480,
       "length": 1,
       "value": "6"
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Content\/ShareVideo.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Content\/ShareVideo.swift",
       "kind": "StringLiteral",
       "offset": 344,
       "length": 10,
       "value": "\"FBSDKShareKit.ShareVideo\""
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/SocialComposeViewControllerFactory.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/UserInterface\/SocialComposeViewControllerFactory.swift",
       "kind": "StringLiteral",
       "offset": 367,
       "length": 27,
       "value": "\"com.apple.social.facebook\""
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Content\/_ShareUtility.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Content\/_ShareUtility.swift",
       "kind": "Array",
       "offset": 2340,
       "length": 2,
       "value": "[]"
     },
     {
-      "filePath": "\/Users\/kylinchang\/Workspace\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Content\/_ShareUtility.swift",
+      "filePath": "\/Users\/kylinchang\/Workspace\/internal\/facebook-ios-sdk\/FBSDKShareKit\/FBSDKShareKit\/Content\/_ShareUtility.swift",
       "kind": "Array",
       "offset": 5265,
       "length": 2,
