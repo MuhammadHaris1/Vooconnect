@@ -20,27 +20,27 @@ extension String {
         return image
     }
         
-        func localized() -> String {
-            return NSLocalizedString(self, comment: "")
-        }
-        
-        func appendLanguageCode() -> String {
-            
-            var code = ""
-            if #available(iOS 10.0, *) {
-                code = Locale.current.language.languageCode?.identifier.lowercased() ?? ""
-            } else {
-                code = Locale.preferredLanguages[0].prefix(2).lowercased()
-            }
-            
-            var resultString = self
-            if code == "ko" {
-                resultString.append(code)
-            } else {
-                resultString.append("en")
-            }
-            
-            return resultString
-        }
+//        func localized() -> String {
+//            return NSLocalizedString(self, comment: "")
+//        }
+//        
+//        func appendLanguageCode() -> String {
+//            
+//            var code = ""
+//            if #available(iOS 10.0, *) {
+//                code = Locale.current.language.languageCode?.identifier.lowercased() ?? ""
+//            } else {
+//                code = Locale.preferredLanguages[0].prefix(2).lowercased()
+//            }
+//            
+//            var resultString = self
+//            if code == "ko" {
+//                resultString.append(code)
+//            } else {
+//                resultString.append("en")
+//            }
+//            
+//            return resultString
+//        }
 
 }

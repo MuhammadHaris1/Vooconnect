@@ -27,7 +27,7 @@ struct CustomeCameraHome: View {
     @State private var timerImage: Bool = false
     @State private var durationImage: Bool = false
     
-    @State private var clickPhoto: Bool = false
+    @State private var clickPhoto: Bool = true
     
     @StateObject var camera = CameraModelPhoto()
     
@@ -48,10 +48,12 @@ struct CustomeCameraHome: View {
     @State private var isShowPopup: Bool = false
     var toast_main_position = CGPoint(x: 0, y: 0)
     
+    var Vm = ViewModel()
+    var cameraInfoData: ((_ content: Any) -> Void)?
     
     var body: some View {
         
-        NavigationView {
+        NavigationStack {
             
             VStack {
                 if self.isShowPopup {
@@ -136,20 +138,31 @@ struct CustomeCameraHome: View {
 //                     Text("MARK: Camera View")
 //                    MyARView(arScene: $arScene, argConfig: $argConfig, argSession: $argSession, currentFaceFrame: $currentFaceFrame, nextFaceFrame: $nextFaceFrame, preferences: $preferences, arCamera: $arCamera, cameraPreviewCALayer: $cameraPreviewCALayer)
 
-                    if clickPhoto == true {
-                        CustomeCameraForPhoto(filtersSheeet: $filersSheet)
-                            .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous))
-                            .padding(.top,10)
-                            .padding(.bottom,30)
-
-                    } else {
-                        CustomeCameraView()
-                            .environmentObject(cameraModel)
-                            .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous))
-                            .padding(.top,10)
-                            .padding(.bottom,30)
-
-                    }
+//                    if clickPhoto == true {
+//                        CustomeCameraForPhoto(filtersSheeet: $filersSheet)
+//                            .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous))
+//                            .padding(.top,10)
+//                            .padding(.bottom,30)
+//
+//                    } else {
+////                        CustomeCameraView()
+////                            .environmentObject(cameraModel)
+//                        MainViewRepresenter(Vm: Vm)
+//                            .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous))
+//                            .padding(.top,10)
+//                            .padding(.bottom,30)
+//
+//                    }
+                    MainViewRepresenter(Vm: Vm, cameraInfoData: { content in
+                        if let image = content as? UIImage {
+                            print(image)
+                        } else if let videoInfo = content as? [String: Any] {
+                            print(videoInfo)
+                        }
+                    })
+                        .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous))
+                        .padding(.top,10)
+                        .padding(.bottom,30)
 
                     if timerRunning == true {
 
@@ -187,16 +200,17 @@ struct CustomeCameraHome: View {
 
 
                                                 Button {
-                                                    cameraFlip.toggle()
-                                                    print("Flip===========")
-                                                    if self.cameraFlip == true {
-                                                        self.cameraModel.isBackCamera = true
-                                                        cameraModel.switchCamera()
-                                                    } else {
-                                                        self.cameraModel.isBackCamera = false
-                                                        flash = false
-                                                        self.cameraModel.checkPermission(isBackCamera: self.cameraModel.isBackCamera)
-                                                    }
+//                                                    cameraFlip.toggle()
+//                                                    print("Flip===========")
+//                                                    if self.cameraFlip == true {
+//                                                        self.cameraModel.isBackCamera = true
+//                                                        cameraModel.switchCamera()
+//                                                    } else {
+//                                                        self.cameraModel.isBackCamera = false
+//                                                        flash = false
+//                                                        self.cameraModel.checkPermission(isBackCamera: self.cameraModel.isBackCamera)
+//                                                    }
+                                                    Vm.cameraChannge = true
 
                                                 } label: {
                                                     VStack{
@@ -424,7 +438,8 @@ struct CustomeCameraHome: View {
                                                     .padding(.bottom, -5)
                                                 Button {
                                                     print("Beauty2===========")
-                                                    beautySheet.toggle()
+//                                                    beautySheet.toggle()
+                                                    Vm.openBeauty = true
 //                                                    isShowPopup.toggle()
                                                 } label: {
                                                     Image("Beauty2")
@@ -439,8 +454,8 @@ struct CustomeCameraHome: View {
                                                     .foregroundColor(.white)
                                                     .padding(.bottom, -5)
                                                 Button {
-                                                    filersSheet.toggle()
-
+//                                                    filersSheet.toggle()
+                                                    Vm.openFilter = true
                                                     print("Filter2===========")
 
                                                 } label: {
@@ -477,10 +492,12 @@ struct CustomeCameraHome: View {
                         VStack(alignment: .leading) {
 
                             Button {
-                                DispatchQueue.main.async {
-                                    clickPhoto = false
-                                    self.cameraModel.previewURL = nil
-                                }
+//                                DispatchQueue.main.async {
+//                                    clickPhoto = false
+//                                    self.cameraModel.previewURL = nil
+//                                }
+                                Vm.isVideo = true
+                                clickPhoto = false
                             } label: {
                                 Image(clickPhoto ? "VideoUnSlected" : "VideoSlected")
                             }
@@ -488,148 +505,149 @@ struct CustomeCameraHome: View {
                             HStack {
 
                                 Button {
+//                                    clickPhoto = true
+//                                    self.cameraModel.previewURL = nil
+                                    Vm.isPhoto = true
                                     clickPhoto = true
-                                    self.cameraModel.previewURL = nil
                                 } label: {
                                     Image(clickPhoto ? "PhotoSlected" : "PhotoUnSlected") // PhotoSlected
                                 }
 
                                 Spacer()
 
-                                if clickPhoto == true {  // CameraClick
-
-                                    Text("")
-                                        .frame(height: 58)
-                                    .padding(.leading, 8)
-                                    Spacer()
-
-                                } else {
-                                        Button {
-                                            
-                                            print("click")
-                                            
-                                            if cameraModel.isRecording{
-                                                cameraModel.stopRecording()
-                                                countdownTimer = countdownTimer2
-                                                countdownTimerText = countdownTimer2
-                                            }
-                                            
-                                            else {
-                                                timerRunning = true
-                                                countdownTimer = countdownTimer2
-                                                countdownTimerText = countdownTimer2
-                                                let afterTime = DispatchTimeInterval.seconds(self.countdownTimer)
-                                                print("start recording in: " + self.countdownTimer.description)
-                                                DispatchQueue.main.asyncAfter(deadline: .now() + afterTime) {
-                                                    timerRunning = false
-                                                    cameraModel.startRecording()
-                                                    simulateVideoProgress()
-                                                }
-                                            }
-                                        } label: {
-                                            if cameraModel.isRecording {
-                                                Image("CameraRecording")
-                                                    .resizable()
-                                                    .aspectRatio(contentMode: .fill)
-                                                    .frame(width: 58, height: 58)
-                                                    .offset(x: 10)
-                                                    .overlay(
-                                                        CircularProgressCameraView(progress: progress)
-                                                            .frame(height: 54)
-                                                            .offset(x: 10)
-                                                    )
-                                                
-                                            } else {
-                                                Image("CameraRecording")
-                                                    .resizable()
-                                                    .aspectRatio(contentMode: .fill)
-                                                    .frame(width: 58, height: 58)
-                                                    .offset(x: 10)
-                                                    .overlay(
-                                                        CircularProgressCameraView(progress: progress)
-                                                            .frame(height: 54)
-                                                            .offset(x: 10)
-                                                    )
-                                            }
-                                        }
-                                        .padding(.leading, 8) // 8
-                                    }
+//                                if clickPhoto == true {  // CameraClick
+//
+//                                    Text("")
+//                                        .frame(height: 58)
+//                                    .padding(.leading, 8)
+//                                    Spacer()
+//
+//                                } else {
+////                                        Button {
+////
+////                                            print("click")
+////
+////                                            if cameraModel.isRecording{
+////                                                cameraModel.stopRecording()
+////                                                countdownTimer = countdownTimer2
+////                                                countdownTimerText = countdownTimer2
+////                                            }
+////
+////                                            else {
+////                                                timerRunning = true
+////                                                countdownTimer = countdownTimer2
+////                                                countdownTimerText = countdownTimer2
+////                                                let afterTime = DispatchTimeInterval.seconds(self.countdownTimer)
+////                                                print("start recording in: " + self.countdownTimer.description)
+////                                                DispatchQueue.main.asyncAfter(deadline: .now() + afterTime) {
+////                                                    timerRunning = false
+////                                                    cameraModel.startRecording()
+////                                                    simulateVideoProgress()
+////                                                }
+////                                            }
+////                                        } label: {
+////                                            if cameraModel.isRecording {
+////                                                Image("CameraRecording")
+////                                                    .resizable()
+////                                                    .aspectRatio(contentMode: .fill)
+////                                                    .frame(width: 58, height: 58)
+////                                                    .offset(x: 10)
+////                                                    .overlay(
+////                                                        CircularProgressCameraView(progress: progress)
+////                                                            .frame(height: 54)
+////                                                            .offset(x: 10)
+////                                                    )
+////
+////                                            } else {
+////                                                Image("CameraRecording")
+////                                                    .resizable()
+////                                                    .aspectRatio(contentMode: .fill)
+////                                                    .frame(width: 58, height: 58)
+////                                                    .offset(x: 10)
+////                                                    .overlay(
+////                                                        CircularProgressCameraView(progress: progress)
+////                                                            .frame(height: 54)
+////                                                            .offset(x: 10)
+////                                                    )
+////                                            }
+////                                        }
+//                                        .padding(.leading, 8) // 8
+//                                    }
                                 
-                                Spacer()
-                                                                    
-                                
-                                // Preview Button
-                                if(cameraModel.previewURL != nil && !cameraModel.isRecording)
-                                {
-                                    Button {
-                                        if let videoURL = cameraModel.previewURL{
-                                            
-                                            if ((cameraModel.songModel?.preview) != nil){
-                                                self.cameraModel.removeAudioFromVideo(videoURL: videoURL){url, error in
-                                                    if let error = error {
-                                                        print("Failed to remove audio: \(error.localizedDescription)")
-                                                    } else {
-                                                        cameraModel.previewURL = url
-                                                        print("Audio removed video, new url: " + url!.absoluteString)
-                                                        DispatchQueue.main.async {
-                                                            print(("video recorded"))
-                                                            countdownTimer = self.countdownTimer2
-                                                            cameraModel.showPreview.toggle()
-                                                            preview.toggle()
-                                                        }
-                                                    }
-                                                }
-                                            } else {
-                                                DispatchQueue.main.async {
-                                                    print(("video recorded"))
-                                                    countdownTimer = self.countdownTimer2
-                                                    cameraModel.showPreview.toggle()
-                                                    preview.toggle()
-                                                }
-                                            }
-                                        }
-                                    } label: {
-                                        Group{
-                                            Label {
-                                                Image(systemName: "chevron.right")
-                                                    .font(.callout)
-                                            } icon: {
-                                                Text("Preview")
-                                            }
-                                            .foregroundColor(.black)
-    //                                        if cameraModel.previewURL == nil && !cameraModel.recordedURLs.isEmpty{
-    //                                            // Merging Videos
-    //                                            ProgressView()
-    //                                                .tint(.black)
-    //                                        }
-    //                                        else{
-    //                                            Label {
-    //                                                Image(systemName: "chevron.right")
-    //                                                    .font(.callout)
-    //                                            } icon: {
-    //                                                Text("Preview")
-    //                                            }
-    //                                            .foregroundColor(.black)
-    //                                        }
-                                        }
-                                        .padding(.horizontal,20)
-                                        .padding(.vertical,8)
-                                        .background{
-                                            Capsule()
-                                                .fill(.white)
-                                        }
-                                    }
-//                                    .opacity((cameraModel.previewURL == nil && cameraModel.recordedURLs.isEmpty) || cameraModel.isRecording ? 0 : 1)
-                                }else{
-                                    HStack{Text("                         ")}
-                                }
+//                                Spacer()
+//
+//
+//                                // Preview Button
+//                                if(cameraModel.previewURL != nil && !cameraModel.isRecording)
+//                                {
+//                                    Button {
+//                                        if let videoURL = cameraModel.previewURL{
+//
+//                                            if ((cameraModel.songModel?.preview) != nil){
+//                                                self.cameraModel.removeAudioFromVideo(videoURL: videoURL){url, error in
+//                                                    if let error = error {
+//                                                        print("Failed to remove audio: \(error.localizedDescription)")
+//                                                    } else {
+//                                                        cameraModel.previewURL = url
+//                                                        print("Audio removed video, new url: " + url!.absoluteString)
+//                                                        DispatchQueue.main.async {
+//                                                            print(("video recorded"))
+//                                                            countdownTimer = self.countdownTimer2
+//                                                            cameraModel.showPreview.toggle()
+//                                                            preview.toggle()
+//                                                        }
+//                                                    }
+//                                                }
+//                                            } else {
+//                                                DispatchQueue.main.async {
+//                                                    print(("video recorded"))
+//                                                    countdownTimer = self.countdownTimer2
+//                                                    cameraModel.showPreview.toggle()
+//                                                    preview.toggle()
+//                                                }
+//                                            }
+//                                        }
+//                                    } label: {
+//                                        Group{
+//                                            Label {
+//                                                Image(systemName: "chevron.right")
+//                                                    .font(.callout)
+//                                            } icon: {
+//                                                Text("Preview")
+//                                            }
+//                                            .foregroundColor(.black)
+//    //                                        if cameraModel.previewURL == nil && !cameraModel.recordedURLs.isEmpty{
+//    //                                            // Merging Videos
+//    //                                            ProgressView()
+//    //                                                .tint(.black)
+//    //                                        }
+//    //                                        else{
+//    //                                            Label {
+//    //                                                Image(systemName: "chevron.right")
+//    //                                                    .font(.callout)
+//    //                                            } icon: {
+//    //                                                Text("Preview")
+//    //                                            }
+//    //                                            .foregroundColor(.black)
+//    //                                        }
+//                                        }
+//                                        .padding(.horizontal,20)
+//                                        .padding(.vertical,8)
+//                                        .background{
+//                                            Capsule()
+//                                                .fill(.white)
+//                                        }
+//                                    }
+////                                    .opacity((cameraModel.previewURL == nil && cameraModel.recordedURLs.isEmpty) || cameraModel.isRecording ? 0 : 1)
+//                                }else{
+//                                    HStack{Text("                         ")}
+//                                }
 
 
                             }
                         }
                         .padding(.horizontal)
-                        .padding(.bottom)
-                        .frame(maxWidth: .infinity,maxHeight: .infinity,alignment: .bottomLeading)
+                        .frame(maxWidth: .infinity,maxHeight: .infinity,alignment: .center)
 
                     }
                     .frame(maxHeight: .infinity,alignment: .bottom)
@@ -652,15 +670,15 @@ struct CustomeCameraHome: View {
                     .opacity(!cameraModel.recordedURLs.isEmpty && cameraModel.previewURL != nil && !cameraModel.isRecording ? 1 : 0)
 
 
-                    if cameraModel.isRecording {
-                        Text("Recording")
-                            .font(.custom("Urbanist-Regular", size: 14))
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity,maxHeight: .infinity,alignment: .top)
-                            .padding(.top, 40)
-                    } else {
-
-                    }
+//                    if cameraModel.isRecording {
+//                        Text("Recording")
+//                            .font(.custom("Urbanist-Regular", size: 14))
+//                            .foregroundColor(.white)
+//                            .frame(maxWidth: .infinity,maxHeight: .infinity,alignment: .top)
+//                            .padding(.top, 40)
+//                    } else {
+//
+//                    }
 //                        .frame(maxWidth: .infinity,maxHeight: .infinity,alignment: .top)
 
                 }
@@ -679,7 +697,8 @@ struct CustomeCameraHome: View {
                     Spacer()
 
                     Button {
-                        effectsSheet.toggle()
+//                        effectsSheet.toggle()
+                        Vm.openCategory = true
                     } label: {
                         Image("CameraEffact")
                     }
@@ -688,7 +707,7 @@ struct CustomeCameraHome: View {
 
                 }
                 .padding(.horizontal)
-                .padding(.bottom, -5)
+                .padding(.bottom, 5)
 
 //                // Filters
 //                .blurredSheet(.init(.white), show: $filersSheet) {
@@ -780,7 +799,7 @@ struct CustomeCameraHome: View {
 
 struct CustomeCameraHome_Previews: PreviewProvider {
     static var previews: some View {
-        CustomeCameraHome()
+        CustomeCameraHome( Vm: ViewModel())
     }
 }
 

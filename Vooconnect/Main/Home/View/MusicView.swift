@@ -13,7 +13,6 @@ import SwiftUIBloc
 struct MusicView: View {
     @Environment(\.presentationMode) var presentaionMode
     @Binding var reelId: Int
-    @Binding var follow: Bool
     @State var uuid = ""
     @StateObject private var userVM: LogInViewModel = LogInViewModel()
     @StateObject private var reelVM: ReelsViewModel = ReelsViewModel()
@@ -23,7 +22,7 @@ struct MusicView: View {
 //    @State private var audioPlayer: AVPlayer?
     @State var player: AVPlayer!
     @State var isPlaying = false
-//    @State var follow: Bool = false
+    @State var follow: Bool = false
     @State var viewerProfile = false
     @State var songModel: DeezerSongModel?
     var soundsViewBloc = SoundsViewBloc(SoundsViewBlocState())
@@ -185,43 +184,27 @@ struct MusicView: View {
                                                     follow.toggle()
                                                     if (follow == true) {
                                                         likeVM.followApi(user_uuid: uuid)
-                                                        likeVM.UserFollowingUsers()
                                                     }else{
                                                         likeVM.unFollowApi(user_uuid: uuid)
-                                                        DispatchQueue.main.asyncAfter(deadline: .now() + 2){
-                                                            likeVM.UserFollowingUsers()
-                                                        }
                                                     }
                                                 } label: {
+                                                    
                                                     Text(follow ? "Following" : "Follow")
                                                         .font(.custom("Urbanist-Medium", size: 16))
                                                         .fontWeight(Font.Weight.medium)
+                                                    
                                                 }
-                                                .frame(width: 120,height: 40)
-                                                .overlay(
-                                                    RoundedRectangle(cornerRadius: 40)
-                                                        .strokeBorder(
-                                                            follow
-                                                            ? LinearGradient(colors: [
-                                                                Color("buttionGradientTwo"),
-                                                                Color("buttionGradientOne"),
-                                                            ], startPoint: .top, endPoint: .bottom)
-                                                            : LinearGradient(colors: [
-                                                                Color(.white),
-                                                            ], startPoint: .top, endPoint: .bottom),
-                                                            lineWidth: 2
-                                                        )
-                                                )
+                                                .padding(.vertical,6)
+                                                .padding(.horizontal,16)
                                                 .background(follow ? LinearGradient(colors: [
-                                                    Color(.white),
+                                                    Color(.lightGray),
                                                 ], startPoint: .topLeading, endPoint: .bottomTrailing) : LinearGradient(colors: [
                                                     Color("buttionGradientOne"),
                                                     Color("buttionGradientTwo"),
                                                 ], startPoint: .topLeading, endPoint: .bottomTrailing)
                                                 )
-                                                
-                                                .cornerRadius(40)
                                                 .foregroundColor(follow ? Color("buttionGradientOne") : .white)
+                                                .cornerRadius(30)
                                             }
                                         }
                                         
@@ -313,7 +296,7 @@ struct MusicView: View {
             
         } content: {
             if #available(iOS 16.0, *) {
-                ViewerProfileDetailSheet(reelId: reelId, follow: $follow, uuid: $uuid)
+                ViewerProfileDetailSheet(reelId: reelId)
                     .presentationDetents([.large,.medium,.height(500)])
             } else {
                 // Fallback on earlier versions

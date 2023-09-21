@@ -13,8 +13,6 @@ struct CommentSheet: View {
     @Binding var commentSheet: Bool
     @Binding var commentId: Int
     @Binding var reply_to_reply: String
-    @State var placeholder: String = "Add comment..."
-    @State var isReply: Bool = false
     var userVM: LogInViewModel = LogInViewModel()
     
     //    @State var commentText: String
@@ -26,7 +24,7 @@ struct CommentSheet: View {
         ZStack{
             VStack {
                 
-                Text("\(likeVM.postComment.count) Comments")
+                Text("\(likeVM.postComments.count) Comments")
                     .font(.custom("Urbanist-Bold", size: 24))
                     .foregroundColor(Color(#colorLiteral(red: 0.1726317704, green: 0.1726317704, blue: 0.1726317704, alpha: 0.9040511175)))
                     .padding(.top, 30)
@@ -37,41 +35,37 @@ struct CommentSheet: View {
                     .opacity(0.2)
                 
                 ScrollView(showsIndicators: false) {
-
+                    
                     LazyVGrid(columns: gridLayoutLS, alignment: .center, spacing: columnSpacingLS, pinnedViews: []) {
                         Section()
                         {
-                            ForEach(0..<likeVM.postComment.count, id: \.self) { index in
-                                if likeVM.postComment[index].replyToCommentID == 0 {
-                                    CommentList(commentReplySheet: $commentReplySheet, comment: likeVM.postComment[index], comments: likeVM.postComment, commentId: $commentId, placeholder: $placeholder, isReply: $isReply)
-
+                            ForEach(0..<likeVM.postComments.count, id: \.self) { index in
+                                if likeVM.postComments[index].reply_to_comment_id == 0 {
+                                    CommentList(commentSheet: $commentSheet, commentReplySheet: $commentReplySheet, comment: likeVM.postComments[index], comments: likeVM.postComments, users: userM.usersList, commentId: $commentId)
+                                    
                                 }
-//                                LazyVGrid(columns: gridLayoutLS, alignment: .center, spacing: columnSpacingLS, pinnedViews: []) {
-//                                    Section()
-//                                    {
-//                                        ForEach(0..<likeVM.postComment.count, id: \.self) { ind in
-//
-//                                            if likeVM.postComment[ind].replyToCommentID == likeVM.postComment[index].id {
-//
-//                                                CommentReplyList(commentSheet: $commentSheet, commentReplySheet: $commentReplySheet, comment: likeVM.postComments[ind], users: userM.usersList, commentId: $commentId, reply_to_reply: $reply_to_reply)
-//
-//                                            }
-//                                            //                                }
-//
-//                                        }
-//                                    }
-//                                }
-//                                .padding(.leading, 40)
+                                LazyVGrid(columns: gridLayoutLS, alignment: .center, spacing: columnSpacingLS, pinnedViews: []) {
+                                    Section()
+                                    {
+                                        ForEach(0..<likeVM.postComments.count, id: \.self) { ind in
+                                            
+                                            if likeVM.postComments[ind].reply_to_comment_id == likeVM.postComments[index].id {
+                                                
+                                                CommentReplyList(commentSheet: $commentSheet, commentReplySheet: $commentReplySheet, comment: likeVM.postComments[ind], users: userM.usersList, commentId: $commentId, reply_to_reply: $reply_to_reply)
+                                                
+                                            }
+                                            //                                }
+                                            
+                                        }
+                                    }
+                                }
+                                .padding(.leading, 40)
                             }
                         }
                     }
                     .padding(.top)
                 }
-                .onTapGesture{
-                    isReply = false
-                placeholder = "Add comment..."
-                }
-
+                
                 if likeVM.commentDataModel.showAtTheRate == true  {
                     ScrollView {
                         VStack(alignment: .trailing){
@@ -81,8 +75,8 @@ struct CommentSheet: View {
                                         .foregroundColor(.black)
                                         .font(.custom("Urbanist-Bold", size: 12))
                                         .frame(maxWidth:.infinity,alignment:.leading)
-
-
+                                    
+                                    
                                     Text("\(user.first_name ?? "") \(user.last_name ?? "")")
                                         .foregroundColor(.black)
                                         .font(.custom("Urbanist-Medium", size: 12))
@@ -103,19 +97,19 @@ struct CommentSheet: View {
                     //                    .background(.black)
                     .frame(height: 150)
                 }
-
+                
                 if likeVM.commentDataModel.showEmoji == true {
                     ScrollView {
                         VStack(alignment: .trailing){
                             ForEach(self.getEmojiList(), id: \.self) { i in
                                 HStack{
-
+                                    
                                     ForEach(i, id: \.self){ j in
                                         Button {
                                             likeVM.commentDataModel.commentText += String(UnicodeScalar(j)!)
                                             likeVM.commentDataModel.showEmoji.toggle()
                                         }label: {
-
+                                            
                                             if (UnicodeScalar(j)?.properties.isEmoji)! {
                                                 Text(String(UnicodeScalar(j)!))
                                                     .foregroundColor(.black)
@@ -127,7 +121,7 @@ struct CommentSheet: View {
                                                     .font(.custom("Urbanist-Bold", size: 12))
                                                     .frame(maxWidth:.infinity,alignment:.leading)
                                             }
-
+                                            
                                         }
                                     }
                                 }
@@ -145,44 +139,24 @@ struct CommentSheet: View {
                     //                    .background(.black)
                     .frame(height: 150)
                 }
+                
                 HStack {
-
-                    ReelsCommentTextField(text: $likeVM.commentDataModel.commentText, showEmoji: $likeVM.commentDataModel.showEmoji, showAtTheRate: $likeVM.commentDataModel.showAtTheRate, placeholder: $placeholder)
-
+                    
+                    ReelsCommentTextField(text: $likeVM.commentDataModel.commentText, showEmoji: $likeVM.commentDataModel.showEmoji, showAtTheRate: $likeVM.commentDataModel.showAtTheRate, placeholder: "Add comment...")
+                    
                     Button {
-                        if isReply == true {
-                            print("Reply To --- \(reply_to_reply)")
-                            if reply_to_reply.isEmpty {
-                                likeVM.replyToCommentApi(commentId: commentId){ isSuccess in
-                                    if isSuccess == true {
-                                        likeVM.commentDataModel.commentText = ""
-                                        commentSheet.toggle()
-                                    }
-                                }
-                            }else{
-                                likeVM.replyToReplyApi(commentId: commentId, reply_to_reply: reply_to_reply){ isSuccess in
-                                    if isSuccess == true {
-                                        likeVM.commentDataModel.commentText = ""
-                                        commentSheet.toggle()
-                                    }
-                                }
-                            }
-                        }else{
-                            likeVM.addCommentApi(){ isSuccess in
-                                if isSuccess == true {
-                                    likeVM.commentDataModel.commentText = ""
-                                    commentSheet.toggle()
-                                }
-                            }
-                        }
+                        likeVM.commentApi()
+                        likeVM.commentDataModel.commentText = ""
+                        
+                        commentSheet.toggle()
                     } label: {
                         Image("SendTwoLV")
                             .resizable()
                             .scaledToFill()
                             .frame(width: 56, height: 56)
                     }
-
-
+                    
+                    
                 }
                 
                 

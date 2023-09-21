@@ -26,13 +26,13 @@ class CreatorProfileViewModel: ObservableObject{
     /// User Stats
     @Published var userStats: Stats?
     /// User Posts
-    @Published var userPosts: [UserPost] = []
+    @Published var userPosts: [Post] = []
     /// Private Posts
-    @Published var privatePosts: [UserPost] = []
+    @Published var privatePosts: [Post] = []
     /// Bookmarked Posts
-    @Published var bookmarkedPosts: [UserPost] = []
+    @Published var bookmarkedPosts: [Post] = []
     /// Favourite Posts
-    @Published var favouritePosts: [UserPost] = []
+    @Published var favouritePosts: [Post] = []
     
     /// Navigate to creator search view
     @Published var navigateToCreatorSearchView: Bool = false
@@ -149,13 +149,10 @@ class CreatorProfileViewModel: ObservableObject{
         NetworkManager.makeEndpointCall(fromEndpoint: .getPosts, withDataType: PostsModel.self, parameters: params) { [weak self] result in
             switch result {
             case .success(let postModel):
-                self?.userPosts = postModel.posts
-//                print("===================User Posts: \(self!.userPosts)")
                 logger.error("Successfully fetched user posts!!!", category: .profile)
-//                guard let posts = postModel.posts else { return }
-//                self?.userPosts = posts
+                guard let posts = postModel.posts else { return }
+                self?.userPosts = posts
             case .failure(let error):
-                print("===================User Posts nilll")
                 logger.error("Error Fetching User Posts: \(error.localizedDescription)", category: .profile)
             }
         }
@@ -170,10 +167,8 @@ class CreatorProfileViewModel: ObservableObject{
             switch result {
             case .success(let postModel):
                 logger.error("Successfully fetched user bookmarked posts!!!", category: .profile)
-                self?.bookmarkedPosts = postModel.posts
-//                print("===================User bookmarkedPosts: \(self!.bookmarkedPosts)")
-//                guard let posts = postModel.posts else { return }
-//                self?.bookmarkedPosts = posts
+                guard let posts = postModel.posts else { return }
+                self?.bookmarkedPosts = posts
             case .failure(let error):
                 logger.error("Error Fetching User Bookmarked Posts: \(error.localizedDescription)", category: .profile)
             }
@@ -189,10 +184,8 @@ class CreatorProfileViewModel: ObservableObject{
             switch result {
             case .success(let postModel):
                 logger.error("Successfully fetched user favourite posts!!!", category: .profile)
-                self?.favouritePosts = postModel.posts
-//                print("===================User favouritePosts: \(self!.favouritePosts)")
-//                guard let posts = postModel.posts else { return }
-//                self?.favouritePosts = posts
+                guard let posts = postModel.posts else { return }
+                self?.favouritePosts = posts
             case .failure(let error):
                 logger.error("Error Fetching User Favourite Posts: \(error.localizedDescription)", category: .profile)
             }
@@ -208,10 +201,8 @@ class CreatorProfileViewModel: ObservableObject{
             switch result {
             case .success(let postModel):
                 logger.error("Successfully fetched user favourite posts!!!", category: .profile)
-                self?.privatePosts = postModel.posts
-//                print("===================User privatePosts: \(self!.privatePosts)")
-//                guard let posts = postModel.posts else { return }
-//                self?.privatePosts = posts
+                guard let posts = postModel.posts else { return }
+                self?.privatePosts = posts
             case .failure(let error):
                 logger.error("Error Fetching User Favourite Posts: \(error.localizedDescription)", category: .profile)
             }

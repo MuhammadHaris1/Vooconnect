@@ -29,22 +29,28 @@ struct ReelsData: Codable {
 // MARK: - Post
 struct Post: Codable, Hashable {
     let postID: Int?
-    let title, description, location, contentURL: String?
-    let thumbnailURL, contentType, musicUUID, musicTrack: String?
+    let title, postDescription: String?
+    let location: String?
+    let contentURL: String?
+    let contentType: String?
+    let musicTrack: String?
     let musicURL: String?
-    let allowComment, allowDuet, allowStitch, creatorUUID: String?
-    let forPlanID: Int?
+    let musicUUID: String?;
+    let allowComment, allowDuet, allowStitch: String?
+    let creatorUUID: String?
     let creatorFirstName, creatorLastName, creatorUsername, creatorProfileImage: String?
-    let isFollowed, isLiked: Int?
+    let isBookmarked: Int
+    let isLiked: Int
     let reactionType: Int?
-    let likeCount, shareCount, isBookmarked, bookmarkCount: Int?
-    let commentCount, viewCount: Int?
+    var likeCount, shareCount, bookmarkCount, commentCount: Int?
+    var player: AVPlayer?
 
     enum CodingKeys: String, CodingKey {
         case postID = "post_id"
-        case title, description, location
+        case title
+        case postDescription = "description"
+        case location
         case contentURL = "content_url"
-        case thumbnailURL = "thumbnail_url"
         case contentType = "content_type"
         case musicUUID = "music_uuid"
         case musicTrack = "music_track"
@@ -53,25 +59,28 @@ struct Post: Codable, Hashable {
         case allowDuet = "allow_duet"
         case allowStitch = "allow_stitch"
         case creatorUUID = "creator_uuid"
-        case forPlanID = "for_plan_id"
         case creatorFirstName = "creator_first_name"
         case creatorLastName = "creator_last_name"
         case creatorUsername = "creator_username"
         case creatorProfileImage = "creator_profile_image"
-        case isFollowed = "is_followed"
+        case isBookmarked = "is_bookmarked"
         case isLiked = "is_liked"
         case reactionType = "reaction_type"
         case likeCount = "like_count"
         case shareCount = "share_count"
-        case isBookmarked = "is_bookmarked"
         case bookmarkCount = "bookmark_count"
         case commentCount = "comment_count"
-        case viewCount = "view_count"
     }
     
     var likeCountt: Int {
-        return Int(likeCount!)
+        return Int(likeCount ?? 0)
     }
+    mutating func incrementLikeCount() {
+        likeCount = likeCount! + 1
+        }
+    mutating func decrementLikeCount() {
+        likeCount = likeCount! - 1
+        }
     
 }
 
@@ -79,10 +88,6 @@ struct Post: Codable, Hashable {
 struct LikeRequest: Encodable {
     let user_uuid: String
     let post_id, reaction_type: Int
-}
-struct CommentLikeRequest: Encodable {
-    let user_uuid: String
-    let comment_id, reaction_type: Int
 }
 
 struct BlockPostRequest: Encodable {
@@ -92,10 +97,6 @@ struct BlockPostRequest: Encodable {
 struct BlockUserRequest: Encodable {
     let uuid: String
     let user_uuid: String
-}
-
-struct FollowingUser: Encodable {
-    let uuid: String
 }
 
 struct ReportPostRequest: Encodable {
@@ -125,11 +126,6 @@ struct FollowRequest: Encodable {
     let uuid: String
 }
 
-struct ReplyToComment: Encodable {
-    let post_id: Int
-    let parent_comment_id: Int
-}
-
 struct ReplyToCommentRequest: Encodable {
     let user_uuid: String
     let post_id: Int
@@ -154,44 +150,6 @@ struct CommentResponse: Decodable {
     let reply_to_reply: String
 }
 
-struct CommentsModel: Codable {
-    let status: Bool
-    let data: [CommentsData]
-}
-
-// MARK: - Datum
-struct CommentsData: Codable {
-    let id: Int?
-    let userUUID: String?
-    let postID, replyToCommentID: Int?
-    let comment, createdAt, updatedAt: String?
-    let deletedAt: String?
-    let userFirstName, userLastName, userUsername: String?
-    let userProfileImage: String?
-    let isLiked: Int?
-    let reactionType: Int?
-    let likeCount, replyCount: Int?
-    
-    enum CodingKeys: String, CodingKey {
-        case id
-        case userUUID = "user_uuid"
-        case postID = "post_id"
-        case replyToCommentID = "reply_to_comment_id"
-        case comment
-        case createdAt = "created_at"
-        case updatedAt = "updated_at"
-        case deletedAt = "deleted_at"
-        case userFirstName = "user_first_name"
-        case userLastName = "user_last_name"
-        case userUsername = "user_username"
-        case userProfileImage = "user_profile_image"
-        case isLiked = "is_liked"
-        case reactionType = "reaction_type"
-        case likeCount = "like_count"
-        case replyCount = "reply_count"
-    }
-}
-
 struct InterestCateg: Decodable {
     let id: Int
     let category_name: String
@@ -202,70 +160,6 @@ struct UserInterestCateg: Decodable {
     let user_uuid: String
     let category_id: Int
 }
-
-
-// MARK: - Welcome
-struct Following: Codable {
-    let status: Bool
-    let data: [FollowingUsers]
-}
-
-// MARK: - Datum
-struct FollowingUsers: Codable {
-    let id: Int?
-    let uuid, username, firstName, lastName: String?
-    let middleName: String?
-    let gender: String
-    let birthdate: String?
-    let phone: String?
-    let phoneVerifiedAt: String?
-    let email, emailVerifiedAt, password: String
-    let profileImage, coverImage, bio: String?
-    let followerCount, lat, lon: Int?
-    let instagram, facebook, twitter: String?
-    let address: String
-    let otp: String?
-    let rememberMe, verifyType, status: String?
-    let isLive: Int?
-    let deviceType: String?
-    let deviceToken, city, state, country: String?
-    let deletedAt: String?
-    let createdAt, updatedAt: String?
-
-    enum CodingKeys: String, CodingKey {
-        case id = "id"
-        case uuid = "uuid"
-        case username = "username"
-        case firstName = "first_name"
-        case lastName = "last_name"
-        case middleName = "middle_name"
-        case gender = "gender"
-        case birthdate = "birthdate"
-        case phone = "phone"
-        case phoneVerifiedAt = "phone_verified_at"
-        case email = "email"
-        case emailVerifiedAt = "email_verified_at"
-        case password = "password"
-        case profileImage = "profile_image"
-        case coverImage = "cover_image"
-        case bio = "bio"
-        case followerCount = "follower_count"
-        case lat, lon, instagram, facebook, twitter, address, otp
-        case rememberMe = "remember_me"
-        case verifyType = "verify_type"
-        case status = "status"
-        case isLive = "is_live"
-        case deviceType = "device_type"
-        case deviceToken = "device_token"
-        case city = "city"
-        case state = "state"
-        case country = "country"
-        case deletedAt = "deleted_at"
-        case createdAt = "created_at"
-        case updatedAt = "updated_at"
-    }
-}
-
 
 //"user_uuid": "{{user_uuid}}",
 //    "post_id": 1,

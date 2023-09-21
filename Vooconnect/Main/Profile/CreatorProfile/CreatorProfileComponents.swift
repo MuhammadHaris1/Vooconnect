@@ -9,7 +9,6 @@ import SwiftUI
 import Swinject
 import SDWebImageSwiftUI
 import UniformTypeIdentifiers
-import Photos
 
 enum CreatorProfilePagerType: CaseIterable{
     case post
@@ -71,67 +70,8 @@ enum CreatorProfilePagerType: CaseIterable{
 }
 
 struct CreatorPostView: View {
-    
-    var posts: UserPost
-    @State private var extractedImage: UIImage?
     var body: some View {
-        ZStack(alignment: .bottomLeading){
-            if let image = extractedImage {
-                PostImageView(image: image)
-            } else {
-                WebImage(url: URL(string: "https://i0.wp.com/classicalguitarmagazine.com/wp-content/uploads/2020/10/Thu-Le-1-e1603561684425.jpg?fit=999%2C675&ssl=1")!)
-                    .resizable()
-                    .frame(width: (UIScreen.screenWidth/3) - 12, height: 200)
-                    .scaledToFill()
-                    .clipShape(Rectangle())
-            }
-            HStack {
-                Image("PlayS")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 16, height: 16)
-                
-                if let viewcount = posts.viewCount{
-                    Text("\(viewcount)")
-                        .foregroundColor(.white)
-                        .font(.custom("Urbanist-Regular", size: 10))
-                        .fontWeight(Font.Weight.medium)
-                }
-            }
-            .padding(.leading,10)
-            .padding(.bottom,12)
-        }
-//        .onAppear {
-//            extractImageFromVideo(url: URL(string: posts.contentURL!)!) { image in
-//                DispatchQueue.main.async {
-//                    extractedImage = image
-//                }
-//            }
-//        }
-    }
-    func extractImageFromVideo(url: URL, completion: @escaping (UIImage?) -> Void) {
-        let asset = AVAsset(url: url)
-        let generator = AVAssetImageGenerator(asset: asset)
-        
-        generator.appliesPreferredTrackTransform = true
-        let time = CMTime(seconds: 0, preferredTimescale: 1)
-        
-        generator.generateCGImagesAsynchronously(forTimes: [NSValue(time: time)]) { _, image, _, _, _ in
-            guard let cgImage = image else {
-                completion(nil)
-                return
-            }
-            
-            let uiImage = UIImage(cgImage: cgImage)
-            completion(uiImage)
-        }
-    }
-}
-struct PostImageView: View {
-    let image: UIImage
-    
-    var body: some View {
-        Image(uiImage: image)
+        WebImage(url: URL(string: "https://i0.wp.com/classicalguitarmagazine.com/wp-content/uploads/2020/10/Thu-Le-1-e1603561684425.jpg?fit=999%2C675&ssl=1")!)
             .resizable()
             .scaledToFill()
             .frame(width: (UIScreen.screenWidth/3) - 12, height: 200)
@@ -279,7 +219,7 @@ struct CreatorHeaderView: View{
     
     @StateObject var creatorProfileViewModel: CreatorProfileViewModel
     @Binding var presentActionSheet: Bool
-    @State private var isImageFullScreen = false
+    
     var body: some View{
         ZStack(alignment: .bottomTrailing){
             ZStack{
@@ -337,9 +277,6 @@ struct CreatorHeaderView: View{
                     Image("profileicon")
                         .resizable()
                         .scaledToFill()
-                        .onTapGesture {
-                            isImageFullScreen.toggle()
-                        }
                 }
             }
             .frame(width: 150, height: 150)
@@ -361,27 +298,6 @@ struct CreatorHeaderView: View{
                 }
                 .padding([.trailing, .bottom], 3)
             }
-        }
-    }
-}
-
-struct FullScreenImageView: View {
-    let image: UIImage
-    @Binding var isPresented: Bool
-    
-    var body: some View {
-        ZStack {
-            Color.black.edgesIgnoringSafeArea(.all)
-            
-            // Display the image in full screen
-            Image(uiImage: image)
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .onTapGesture {
-                    // Tap anywhere on the full-screen image to dismiss it
-                    isPresented.toggle()
-                }
         }
     }
 }

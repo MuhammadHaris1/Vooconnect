@@ -2189,13 +2189,13 @@
 import SwiftUI
 import AVKit
 import Photos
-import Regift
+import ARGear
 
 struct ReelsView: View {
     
     @State var currentReel: Int
     @StateObject private var reelsVM = ReelsViewModel()
-    @StateObject private var likeVM: ReelsLikeViewModel = ReelsLikeViewModel()
+    
     @Binding var topBar: Bool
     
     @State var reelId: Int = 0
@@ -2208,9 +2208,7 @@ struct ReelsView: View {
     @Binding var bottomSheetReport: Bool
     @Binding var myProfileView: Bool
     @Binding var creatorProfileView: Bool
-    @Binding var postedByUUID: String
     @Binding var musicView: Bool
-    @Binding var follow: Bool
     @Binding var liveViewer: Bool
     @Binding var commentSheet: Bool
     @Binding var commentReplySheet: Bool
@@ -2220,10 +2218,6 @@ struct ReelsView: View {
     @State var videoIndex: Int = 0
     @State private var removeReel: Bool = false
     @State private var userUUid: String = ""
-    @State private var currentTab: String = "recommended"
-    @State private var followRecommendedTextColor: Bool = false
-    @State private var show: Bool = false
-    @State private var showTwo: Bool = false
 
     
     var body: some View {
@@ -2236,183 +2230,64 @@ struct ReelsView: View {
             
             let size = proxy.size
             
-            if currentTab == "recommended"{
-                if reelsVM.allReels.count > 0 {
-                    // Vertical Page Tab View...
-                    TabView(selection: $reelTagIndex) {
-                        //                ForEach($reels) { $reel in
-                        ForEach(reelsVM.allReels.indices, id: \.self) { index in
-                                ReelsPlyer(commentSheet: $commentSheet, commentReplySheet: $commentReplySheet, reelsDetail: reelsVM.allReels[index], followingArray: likeVM.followingUsers, currentTab: $currentTab, showTwo: $bool, cameraView: $cameraView, live: $live, myProfileView: $myProfileView, creatorProfileView: $creatorProfileView, postedByUUID: $postedByUUID, musicView: $musicView, liveViewer: $liveViewer, postedBy: $postedBy, selectedReelId: $selectedReelId, currentReel: $currentReel, removeReel: $removeReel, userUUid: $userUUid, bottomSheetBlock: $bottomSheetBlock, bottomSheetReport: $bottomSheetReport, topBar: $topBar, follow: $follow)
-                            // setting width...
-                                .frame(width: size.width, height: size.height)
-                                .padding()
-                            // Rotating Content...
-                                .rotationEffect(.init(degrees: -90))
-                                .ignoresSafeArea(.all, edges: .top)
-                                .tag(index)
-                        }
+            if reelsVM.allReels.count > 0 {
+                // Vertical Page Tab View...
+                TabView(selection: $reelTagIndex) {
+                    //                ForEach($reels) { $reel in
+                    ForEach(reelsVM.allReels.indices, id: \.self) { index in
                         
-                    }
-                    .rotationEffect(.init(degrees: 90))
-                    // Since view is rotated setting height as width...
-                    .frame(width: size.height)
-                    .tabViewStyle(.page(indexDisplayMode: .never))
-                    // setting max width...
-                    .frame(width: size.width)
-                    .onChange(of: reelTagIndex) { index in
-                        print("Current Index \(index)")
-                        if index > videoIndex {
-                            withAnimation(.easeInOut) {
-                                print(videoIndex)
-                                topBar = false
-                                if removeReel{
-                                    DispatchQueue.main.async {
-                                        removeReels(withCreatorUUID: userUUid)
-                                    }
-                                }
-                                removeReel = false
-                            }
-                            videoIndex = index
-                        }else{
-                            withAnimation(.easeInOut){
-                                topBar = true
-                                print("else index \(videoIndex)")
-                                if removeReel{
-                                    DispatchQueue.main.async {
-                                        removeReels(withCreatorUUID: userUUid)
-                                    }
-                                }
-                                removeReel = false
-                            }
-                            videoIndex = index
-                        }
-                        likeVM.UserFollowingUsers()
-                        if index == (reelsVM.allReels.count - 3) {
-                            reelsVM.loadNext10Reels()
-                        }
-                    }
-
-                
-                }else{
-                    VStack {
-                            Image(systemName: "folder.badge.questionmark")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 80, height: 80)
-                        
-                            Text("Empty post bucket !")
-                            .padding(.top,10)
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(.gray.opacity(0.1))
-                }
-            }else{
-                if reelsVM.followingReels.count > 0 {
-                    // Vertical Page Tab View...
-                    TabView(selection: $reelTagIndex) {
-                        //                ForEach($reels) { $reel in
-                        ForEach(reelsVM.followingReels.indices, id: \.self) { index in
-                            ReelsPlyer(commentSheet: $commentSheet, commentReplySheet: $commentReplySheet, reelsDetail: reelsVM.followingReels[index], followingArray: likeVM.followingUsers, currentTab: $currentTab, showTwo: $bool, cameraView: $cameraView, live: $live, myProfileView: $myProfileView, creatorProfileView: $creatorProfileView, postedByUUID: $postedByUUID, musicView: $musicView, liveViewer: $liveViewer, postedBy: $postedBy, selectedReelId: $selectedReelId, currentReel: $currentReel, removeReel: $removeReel, userUUid: $userUUid, bottomSheetBlock: $bottomSheetBlock, bottomSheetReport: $bottomSheetReport, topBar: $topBar, follow: $follow)
-                            // setting width...
-                                .frame(width: size.width, height: size.height)
-                                .padding()
-                            // Rotating Content...
-                                .rotationEffect(.init(degrees: -90))
-                                .ignoresSafeArea(.all, edges: .top)
-                                .tag(index)
-                        }
-                        
-                    }
-                    .rotationEffect(.init(degrees: 90))
-                    // Since view is rotated setting height as width...
-                    .frame(width: size.height)
-                    .tabViewStyle(.page(indexDisplayMode: .never))
-                    // setting max width...
-                    .frame(width: size.width)
-                    .onChange(of: reelTagIndex) { index in
-                        print("Current Index \(index)")
-                        if index > videoIndex {
-                            withAnimation(.easeInOut) {
-                                print(videoIndex)
-                                topBar = false
-                                if removeReel{
-                                    DispatchQueue.main.async {
-                                        removeReels(withCreatorUUID: userUUid)
-                                    }
-                                }
-                                removeReel = false
-                            }
-                            videoIndex = index
-                        }else{
-                            withAnimation(.easeInOut){
-                                topBar = true
-                                print("else index \(videoIndex)")
-                                if removeReel{
-                                    DispatchQueue.main.async {
-                                        removeReels(withCreatorUUID: userUUid)
-                                    }
-                                }
-                                removeReel = false
-                            }
-                            videoIndex = index
-                        }
-                        if index == (reelsVM.allReels.count - 3) {
-                            print("allReels count\(reelsVM.allReels.count)")
-                            reelsVM.loadNext10FollowingReels()
-                        }
-                        likeVM.UserFollowingUsers()
-                    }
-
-                
-                }else{
-                    VStack {
-                            Image(systemName: "folder.badge.questionmark")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 80, height: 80)
-                        
-                            Text("Empty post bucket !")
-                            .padding(.top,10)
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(.gray.opacity(0.1))
-                }
-            }
-            // Recommended
-            VStack {
-
-                HStack {
-                    TabButton(
-                        title: "Recommended",
-                        isSelected: currentTab == "recommended",
-                        textColor: $followRecommendedTextColor
-                    ) {
-                        currentTab = "recommended"
-                        followRecommendedTextColor.toggle()
-                        show = false
-                        showTwo = false
+                        ReelsPlyer(commentSheet: $commentSheet, commentReplySheet: $commentReplySheet, reelsDetail: reelsVM.allReels[index], showTwo: $bool, cameraView: $cameraView, live: $live, myProfileView: $myProfileView, creatorProfileView: $creatorProfileView, musicView: $musicView, liveViewer: $liveViewer, postedBy: $postedBy, selectedReelId: $selectedReelId, currentReel: $currentReel, removeReel: $removeReel, userUUid: $userUUid, bottomSheetBlock: $bottomSheetBlock, bottomSheetReport: $bottomSheetReport, topBar: $topBar)
+                        // setting width...
+                            .frame(width: size.width, height: size.height)
+                            .padding()
+                        // Rotating Content...
+                            .rotationEffect(.init(degrees: -90))
+                            .ignoresSafeArea(.all, edges: .top)
+                            .tag(index)
                     }
                     
-                    TabButton(
-                        title: "Followers",
-                        isSelected: currentTab == "followers",
-                        textColor: $followRecommendedTextColor
-                    ) {
-                        currentTab = "followers"
-                        followRecommendedTextColor.toggle()
-                        show = false
-                        showTwo = false
+                }
+                .rotationEffect(.init(degrees: 90))
+                // Since view is rotated setting height as width...
+                .frame(width: size.height)
+                .tabViewStyle(.page(indexDisplayMode: .never))
+                // setting max width...
+                .frame(width: size.width)
+                .onChange(of: reelTagIndex) { index in
+                    print("Current Index \(index)")
+                    if index > videoIndex {
+                        withAnimation(.easeInOut) {
+                            print(videoIndex)
+                            topBar = false
+                            if removeReel{
+                                removeReels(withCreatorUUID: userUUid)
+                            }
+                            removeReel = false
+                        }
+                        videoIndex = index
+                    }else{
+                        withAnimation(.easeInOut){
+                            topBar = true
+                            print("else index \(videoIndex)")
+                        }
+                        videoIndex = index
                     }
                 }
-                .frame(width: 300, height: 45)
-                .background(Color(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 0.5)))
-                .cornerRadius(22.5)
-                .rotationEffect(.degrees(270))
 
+            
+            }else{
+                VStack {
+                        Image(systemName: "folder.badge.questionmark")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 80, height: 80)
+                    
+                        Text("Empty post bucket !")
+                        .padding(.top,10)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(.gray.opacity(0.1))
             }
-            .frame(maxWidth: .infinity, alignment: .topLeading)
-            .padding(.leading, -110)
-            .padding(.top, 200)
             
             HStack {
                 if self.bool {
@@ -2464,9 +2339,8 @@ struct ReelsPlyer: View {
     @StateObject private var reelsVM = ReelsViewModel()
     
     let reelsDetail: Post
-    let followingArray: [FollowingUsers]
     
-    @Binding var currentTab: String
+    @State var currentTab = "recommended"
     @Namespace var animation
     
     let url = URL(string: "reels/1671107665992-test.mp4")
@@ -2477,14 +2351,12 @@ struct ReelsPlyer: View {
     @State var longPressPopUp: Bool = false
     @State var selectedReaction: Int = 0
     @State var postID: Int = 0
-    @State var reelDescription: String = ""
     
     @Binding var showTwo: Bool
     @Binding var cameraView: Bool
     @Binding var live: Bool
     @Binding var myProfileView: Bool
     @Binding var creatorProfileView: Bool
-    @Binding var postedByUUID: String
     @Binding var musicView: Bool
     @Binding var liveViewer: Bool
     @Binding var postedBy: String
@@ -2522,68 +2394,36 @@ struct ReelsPlyer: View {
     @State var plusIcon: Bool = false
     
     @State private var doubleTapLikeCount: Bool = true
+    @State private var followRecommendedTextColor: Bool = false
     
     @Binding var topBar: Bool
     
     @State private var alert: Bool = false
     @State private var imagePause: Bool = false
     @State private var playAndPause: Bool = false
-    @State private var shareSheet: Bool = false
     @State private var playAndPauseOpacity: Double = 0.001
     
     @State var player = AVPlayer()
     @State private var image: UIImage?
     
-    @State private var urll: String = ""
+//    var urll: URL
     @State private var tapCount = 0
     @State private var singleTapTimer: Timer?
     @State private var showHeartAnimation = false
     @State private var isTappedBookmark = false
-    @State var isDownloading = false
-    @State var isGifDownloading = false
-    @State var isDuo = false
-    @Binding var follow: Bool
-    @StateObject var downloader = VideoDownloader()
+    @State private var follow = false
     @State private var iconSize: CGFloat = 30.0
-    
-    @State private var isShowPopup = false
-    @State private var message = ""
-    
-    
-    @State private var isConvertingToGif = false
-    @State private var progress: Double = 0.0
-    @State private var gifImage: UIImage?
     
     var body: some View {
         
         
         ZStack {
-            
-            NavigationLink(destination: DuoView(videoUrl: $urll)  //SearchView
-                .navigationBarBackButtonHidden(true).navigationBarHidden(true), isActive: $isDuo) {
-                    EmptyView()
-                }
-            
             CustomVideoPlayer(player: player)
                 .edgesIgnoringSafeArea(.all)
             
                 .onAppear {
-                    if let reelURL = reelsDetail.contentURL{
-                        self.urll = reelURL
-                        self.reelDescription = reelsDetail.description ?? ""
-                    }
-                    player.replaceCurrentItem(with: AVPlayerItem(url: URL(string: getImageVideoBaseURL + reelsDetail.contentURL!)!)) //<-- Her
-                    let user_uuid = reelsDetail.creatorUUID ?? nil
-                    print("user_uuid========",user_uuid as Any)
-                    UserDefaults.standard.set(user_uuid, forKey: "user_uuid")
-//                    likeVM.UserFollowingUsers()
-//                    follow = false
-                    for following in likeVM.followingUsers {
-                        if following.uuid == reelsDetail.creatorUUID {
-                            follow = true
-                            break // Exit the loop if a match is found
-                        }
-                    }
+                    player.replaceCurrentItem(with: AVPlayerItem(url: URL(string: getImageVideoBaseURL + reelsDetail.contentURL!)!)) //<-- Here
+                    player.play()
                     postID = reelsDetail.postID ?? 0
                     if reelsDetail.isLiked == 1{
                         if likeeeeCount == 0{
@@ -2629,15 +2469,17 @@ struct ReelsPlyer: View {
                         show = false
                         showTwo = false
                         print("Success ====== 2")
+                        likeAndUnlike = true
                         likeVM.reelsLikeDataModel.userUUID = reelsDetail.creatorUUID ?? ""
                         likeVM.reelsLikeDataModel.postID = reelsDetail.postID ?? 0
                         
-                        if likeAndUnlike == false {
-                            if likeeeeCount == 0 {
-                                likeeeeCount = likeeeeCount + 1
-                                likeCount = likeCount + 1
-                                likeImage = "HeartRedLV"
-                                likeVM.reelsLikeApi(reactionType: 1, postID: postID)
+                        if likeAndUnlike == true {
+                            if reelsDetail.isLiked == 0{
+                                if likeeeeCount == 0{
+                                    likeeeeCount = likeeeeCount + 1
+                                    likeCount = likeCount + 1
+                                    likeVM.reelsLikeApi(reactionType: 1, postID: postID)
+                                }
                             }
                             
                         }
@@ -2657,69 +2499,68 @@ struct ReelsPlyer: View {
             if showHeartAnimation {
                 HeartLike(isTapped: $showHeartAnimation, taps: 1)
             }
-            VStack{
-                VideoDownloadProgressView(downloader: downloader, isDownloading: $isDownloading, isGifDownloading: $isGifDownloading)
-                HStack {
-                    // Live
-                    
-                    Button {
+            HStack {
+                // Live
+                Button {
 
-                        //                        player.pause()
+                    //                        player.pause()
 
-                        show = false
-                        showTwo = false
+                    show = false
+                    showTwo = false
 
-                        liveViewer.toggle()
+                    liveViewer.toggle()
 
-                    } label: {
-                        Image("Live")
-
-                    }
-
-
-                    Spacer()
-                    if let uuid = UserDefaults.standard.string(forKey: "uuid"){
-                        if reelsDetail.creatorUUID != uuid{
-                            VStack (alignment: .trailing) {
-                                Button {
-                                    show = false
-                                    showTwo = false
-                                    bottomSheetReport.toggle()
-
-                                } label: {
-                                    Image("ReportIcon")
-                                        .resizable()
-                                        .scaledToFill()
-                                        .frame(width: 26, height: 26)
-
-                                }
-
-                                Button {
-
-                                    bottomSheetBlock.toggle()
-                                    removeReel = true
-                                    userUUid = reelsDetail.creatorUUID!
-
-                                } label: {
-                                    Image("BlockUserbutton")
-                                        .resizable()
-                                        .scaledToFill()
-                                        .frame(width: 26, height: 26)
-
-                                }
-
-                            }
-                        }
-                    }
-
-
+                } label: {
+                    Image("Live")
 
                 }
-                //                .padding(.leading)
-                .padding(.leading, -1)
-                .padding(.trailing, 10)
-                .frame(maxHeight: .infinity, alignment: .top)
+
+
+                Spacer()
+                if let uuid = UserDefaults.standard.string(forKey: "uuid"){
+                    if reelsDetail.creatorUUID != uuid{
+                        VStack (alignment: .trailing) {
+                            Button {
+                                show = false
+                                showTwo = false
+                                bottomSheetReport.toggle()
+
+                            } label: {
+                                Image("ReportIcon")
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 26, height: 26)
+
+                            }
+
+                            Button {
+
+                                let user_uuid = reelsDetail.creatorUUID ?? nil
+                                print("user_uuid========",user_uuid as Any)
+                                UserDefaults.standard.set(user_uuid, forKey: "user_uuid")
+                                bottomSheetBlock.toggle()
+                                removeReel = true
+                                userUUid = user_uuid!
+
+                            } label: {
+                                Image("BlockUserbutton")
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 26, height: 26)
+
+                            }
+
+                        }
+                    }
+                }
+
+
+
             }
+            //                .padding(.leading)
+            .padding(.leading, -1)
+            .padding(.trailing, 10)
+            .frame(maxHeight: .infinity, alignment: .top)
 
 
             // Center
@@ -2765,6 +2606,75 @@ struct ReelsPlyer: View {
             }
 
 
+            // Recommended
+            VStack {
+
+                HStack {
+
+                    Text("Recommended")
+                        .font(.custom("Urbanist-Bold", size: 16))
+                        .frame(width: 150, height: 42)
+                        .background(
+                            ZStack {
+                                if currentTab == "recommended" {
+                                    Color.white
+                                        .cornerRadius(21)
+                                        .matchedGeometryEffect(id: "TAB", in: animation)
+                                }
+                            }
+                                .padding(.leading, 6)
+                        )
+
+                        .foregroundColor(followRecommendedTextColor ? Color(#colorLiteral(red: 0.787740171, green: 0.787740171, blue: 0.787740171, alpha: 0.3994205298)) : .black)
+                        .onTapGesture {
+                            withAnimation(.interactiveSpring(response: 0.5, dampingFraction: 0.6, blendDuration: 0.6)) {
+                                currentTab = "recommended"
+                                followRecommendedTextColor.toggle()
+                                show = false
+                                showTwo = false
+
+                            }
+                        }
+
+
+                    Text("Followers")
+                        .font(.custom("Urbanist-Bold", size: 16))
+                        .frame(width: 150, height: 42)
+                    //                            .foregroundColor(currentTab ? .black : .red)
+                        .background(
+                            ZStack {
+                                if currentTab == "followers" {
+                                    Color.white
+                                        .cornerRadius(21)
+                                        .matchedGeometryEffect(id: "TAB", in: animation)
+                                }
+                            }
+                                .padding(.trailing, 6)
+
+                        )
+                        .foregroundColor(followRecommendedTextColor ? .black : Color(#colorLiteral(red: 0.787740171, green: 0.787740171, blue: 0.787740171, alpha: 0.3994205298)))
+                        .onTapGesture {
+                            withAnimation(.interactiveSpring(response: 0.5, dampingFraction: 0.6, blendDuration: 0.6)) {
+                                currentTab = "followers"
+                                followRecommendedTextColor.toggle()
+                                show = false
+                                showTwo = false
+                            }
+                        }
+
+                }
+
+                .frame(width: 300, height: 45)
+                .background(Color(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 0.5)))
+                .cornerRadius(22.5)
+                .rotationEffect(.degrees(270))
+
+            }
+            .frame(maxWidth: .infinity, alignment: .topLeading)
+            .padding(.leading, -110)
+            .padding(.top, -120)
+
+
             // Creator Detail
             VStack {
 
@@ -2775,7 +2685,6 @@ struct ReelsPlyer: View {
                         Button{
                             show = false
                             showTwo = false
-                            postedByUUID = reelsDetail.creatorUUID!
                             creatorProfileView.toggle()
                         }label: {
                             HStack(spacing: 10) {
@@ -2829,48 +2738,51 @@ struct ReelsPlyer: View {
                             .padding(.bottom, 1)
                         }
 
-                        if let uuid = UserDefaults.standard.string(forKey: "uuid") {
-                            if reelsDetail.creatorUUID != uuid {
-                                HStack{
-                                    Button {
-                                        follow.toggle()
-                                        if follow {
-                                            likeVM.followApi(user_uuid: reelsDetail.creatorUUID!)
-                                            likeVM.UserFollowingUsers()
-                                        } else {
-                                            likeVM.unFollowApi(user_uuid: reelsDetail.creatorUUID!)
-                                            DispatchQueue.main.asyncAfter(deadline: .now() + 2){
-                                                likeVM.UserFollowingUsers()
-                                            }
-                                        }
-                                    } label: {
-                                        HStack {
-                                            Image(follow ? "UserPrivacy" : "AddUserCP")
+                        // Title Custom View...
+
+                        if let uuid = UserDefaults.standard.string(forKey: "uuid"){
+                            if reelsDetail.creatorUUID != uuid{
+                                Button {
+                                    follow.toggle()
+                                    if (follow == true) {
+                                        likeVM.followApi(user_uuid: reelsDetail.creatorUUID!)
+                                    }else{
+                                        likeVM.unFollowApi(user_uuid: reelsDetail.creatorUUID!)
+                                    }
+                                } label: {
+                                    HStack {
+                                        if (follow == true){
+                                            Image("UserPrivacy")
                                                 .resizable()
                                                 .scaledToFill()
                                                 .frame(width: 16, height: 16)
-                                            Text(follow ? "Following" : "Follow")
-                                                .font(.custom("Urbanist-Bold", size: 16))
+                                        }else{
+                                            Image("AddUserCP")
+                                                .resizable()
+                                                .scaledToFill()
+                                                .frame(width: 16, height: 16)
                                         }
-                                        .padding(.horizontal, 20)
-                                        .padding(.vertical, 8)
+                                        
+                                        
+                                        Text(follow ? "Following" : "Follow")
+                                            .font(.custom("Urbanist-Bold", size: 16))
+                                        
+                                        
                                     }
-                                    .background(follow ? LinearGradient(colors: [Color.white], startPoint: .topLeading, endPoint: .bottomTrailing) : LinearGradient(colors: [Color("buttionGradientOne"), Color("buttionGradientTwo")], startPoint: .topLeading, endPoint: .bottomTrailing))
-                                    .foregroundColor(follow ? Color("buttionGradientOne") : .white)
-                                    .cornerRadius(30)
+                                    .padding(.horizontal,20)
+                                    .padding(.vertical,8)
                                 }
-                                .onAppear{
-                                    for following in likeVM.followingUsers {
-                                            if following.uuid == reelsDetail.creatorUUID {
-                                                follow = true
-                                                break // Exit the loop if a match is found
-                                            }
-                                        }
-                                }
+                                .background(follow ? LinearGradient(colors: [
+                                    Color.white,
+                                ], startPoint: .topLeading, endPoint: .bottomTrailing) : LinearGradient(colors: [
+                                    Color("buttionGradientOne"),
+                                    Color("buttionGradientTwo"),
+                                ], startPoint: .topLeading, endPoint: .bottomTrailing)
+                                )
+                                .foregroundColor(follow ? Color("buttionGradientOne") : .white)
+                                .cornerRadius(30)
                             }
                         }
-
-                        // Title Custom View...
 
                         //                            Text("Hi everyone. in this video I will sing a song")
                         Text(reelsDetail.title ?? "")
@@ -3086,17 +2998,13 @@ struct ReelsPlyer: View {
                                 likeVM.reelsLikeDataModel.userUUID = reelsDetail.creatorUUID ?? ""
                                 likeVM.reelsLikeDataModel.postID = reelsDetail.postID ?? 0
                                     if likeAndUnlike == true {
-                                        if likeeeeCount == 0 {
-                                            likeCount = likeCount+1
-                                            likeeeeCount = likeeeeCount+1
-                                            likeImage = "HeartRedLV"
-                                        }
+                                        likeCount = likeCount+1
+                                        likeeeeCount = likeeeeCount+1
+                                        likeImage = "HeartRedLV"
                                     } else{
-                                        if likeeeeCount == 1 {
-                                            likeCount = likeCount-1
-                                            likeeeeCount = likeeeeCount-1
-                                            likeImage = "LikeWhiteR"
-                                        }
+                                        likeCount = likeCount-1
+                                        likeeeeCount = likeeeeCount-1
+                                        likeImage = "LikeWhiteR"
                                     }
 
                                 likeVM.reelsLikeApi(reactionType: 1, postID: postID)
@@ -3144,14 +3052,13 @@ struct ReelsPlyer: View {
                     Button {
                         show = false
                         showTwo = false
-                        shareSheet = true
                         //                                DispatchQueue.global(qos: .background).async {
                         //                                DispatchQueue.main.async {
 //                        share()
                         //                                }
-//                        if let videoURL = URL(string: getImageVideoMarkedBaseURL + reelsDetail.contentURL!){
-//                            shareToFacebook(videoURL: videoURL, description: reelsDetail.description!)
-//                        }
+                        if let videoURL = URL(string: getImageVideoMarkedBaseURL + reelsDetail.contentURL!){
+                            shareToFacebook(videoURL: videoURL, description: reelsDetail.postDescription!)
+                        }
                     } label: {
                         VStack {
                             Image("Share")
@@ -3174,19 +3081,18 @@ struct ReelsPlyer: View {
                         likeVM.bookMarkDataModel.successMessage = ""
                         bookMarkMassage = true
                         isTappedBookmark.toggle()
-                        let uuid = UserDefaults.standard.string(forKey: "uuid")
-                        likeVM.bookMarkDataModel.userUUID = uuid ?? ""
+
+                        likeVM.bookMarkDataModel.userUUID = reelsDetail.creatorUUID ?? ""
                         likeVM.bookMarkDataModel.postID = reelsDetail.postID ?? 0
-                        likeVM.bookMarkApi(){ successMessage, success in
-                            if bookmarkCount == 0{
-                                bookmarkCount = bookmarkCount+1
-                            }else{
-                                bookmarkCount = bookmarkCount-1
-                            }
-                            
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                                bookMarkMassage = false
-                            }
+                        likeVM.bookMarkApi()
+                        if bookmarkCount == 0{
+                            bookmarkCount = bookmarkCount+1
+                        }else{
+                            bookmarkCount = bookmarkCount-1
+                        }
+
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                            bookMarkMassage = false
                         }
 
                     } label: {
@@ -3292,32 +3198,6 @@ struct ReelsPlyer: View {
             }
             .frame(maxHeight: .infinity, alignment: .bottom)
             .padding(.bottom, 70)
-            
-            if self.isShowPopup {
-                GeometryReader { geometry in
-                    VStack {
-                        Spacer()
-                        Spacer()
-                        Spacer()
-                        Text(" \(message) ")
-                            .frame(maxHeight: 35)
-                            .background(
-                                RoundedRectangle(cornerRadius: 16) // Using a fixed corner radius
-                                    .fill(Color.black.opacity(0.80))
-                            )
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 16)
-                            .onAppear {
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                                    withAnimation {
-                                        self.isShowPopup = false
-                                    }
-                                }
-                            }
-                    }
-                    .frame(width: geometry.size.width, height: geometry.size.height/1.12, alignment: .bottom)
-                }
-            }
 
         }
         
@@ -3342,16 +3222,6 @@ struct ReelsPlyer: View {
             }
 
         }
-        .blurredSheet(.init(.white), show: $shareSheet) {
-            
-        } content: {
-            if #available(iOS 16.0, *) {
-                CustomShareSheet(reelURL: $urll, reelDescription: $reelDescription, postID: $postID, shareSheet: $shareSheet, isSaveVideo: $isDownloading, isGifDownloading: $isGifDownloading, bottomSheetReport: $bottomSheetReport, isShowPopup: $isShowPopup, message: $message, isDuo: $isDuo)
-                    .presentationDetents([.large,.medium,.height(900)])
-            } else {
-                // Fallback on earlier versions
-            }
-        }
 
     }
     
@@ -3359,11 +3229,11 @@ struct ReelsPlyer: View {
         iconSize = playAndPause ? 30.0 : 30.0
     }
     
-//    func shareToFacebook(videoURL: URL, description: String) {
-//        let activityItems: [Any] = [videoURL, description]
-//                let activityViewController = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
-//                UIApplication.shared.windows.first?.rootViewController?.present(activityViewController, animated: true, completion: nil)
-//    }
+    func shareToFacebook(videoURL: URL, description: String) {
+        let activityItems: [Any] = [videoURL, description]
+                let activityViewController = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
+                UIApplication.shared.windows.first?.rootViewController?.present(activityViewController, animated: true, completion: nil)
+    }
     
 
     private func playorstop(){
@@ -3606,49 +3476,3 @@ extension View {
     }
 }
 
-
-struct VideoDownloadProgressView: View {
-    @StateObject var downloader = VideoDownloader()
-    @Binding var isDownloading: Bool
-    @Binding var isGifDownloading: Bool
-    
-    var body: some View {
-        VStack {
-            if isDownloading {
-                ProgressView(value: downloader.downloadProgress, total: 1.0)
-            }
-            if isGifDownloading {
-                ProgressView(value: downloader.downloadGifProgress, total: 1.0)
-            }
-        }
-    }
-}
-
-struct TabButton: View {
-    var title: String
-    var isSelected: Bool
-    @Binding var textColor: Bool
-    var action: () -> Void
-    
-    var body: some View {
-        Text(title)
-            .font(.custom("Urbanist-Bold", size: 16))
-            .frame(width: 150, height: 42)
-            .background(
-                ZStack {
-                    if isSelected {
-                        Color.white
-                            .cornerRadius(21)
-                            .matchedGeometryEffect(id: "TAB", in: Namespace().wrappedValue)
-                    }
-                }
-                    .padding(.leading, isSelected ? 6 : 0)
-            )
-            .foregroundColor(isSelected ? .black : Color(#colorLiteral(red: 0.787740171, green: 0.787740171, blue: 0.787740171, alpha: 0.3994205298)))
-            .onTapGesture {
-                withAnimation(.interactiveSpring(response: 0.5, dampingFraction: 0.6, blendDuration: 0.6)) {
-                    action()
-                }
-            }
-    }
-}

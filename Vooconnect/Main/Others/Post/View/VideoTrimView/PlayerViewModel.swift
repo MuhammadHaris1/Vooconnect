@@ -92,7 +92,7 @@ final class PlayerViewModel: ObservableObject {
                 self.player.seek(to: CMTime(seconds: self.currentTime, preferredTimescale: 1), toleranceBefore: .zero, toleranceAfter: .zero)
                 if self.player.rate != 0 {
                     self.player.play()
-                    self.player.rate = speed!
+                    self.player.rate = self.speed!
                 }
             })
             .store(in: &subscriptions)

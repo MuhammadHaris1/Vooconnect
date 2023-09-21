@@ -28,7 +28,7 @@ struct CustomeCameraView: View {
             .frame(maxHeight: .infinity,alignment: .top)
         }
         .padding(.bottom,-110)
-        .clipShape(RoundedRectangle(cornerRadius: 0, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous))
         .onAppear(perform: {
             if cameraModel.isBackCamera == false{
                 self.cameraModel.checkPermission(isBackCamera: self.cameraModel.isBackCamera)

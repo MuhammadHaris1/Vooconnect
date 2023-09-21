@@ -13,7 +13,7 @@ struct CreatorProfileView: View {
     
     private var appEventsManager = Container.default.resolver.resolve(AppEventsManager.self)!
     @StateObject var creatorProfileViewModel: CreatorProfileViewModel
-    @StateObject private var likeVM: ReelsLikeViewModel = ReelsLikeViewModel()
+    
     @State private var isCreaterTotalLikePopUpPresented = false
     @State private var creatorProfilePagerType: CreatorProfilePagerType = .post
     @State private var presentActionSheet = false
@@ -76,8 +76,8 @@ struct CreatorProfileView: View {
                             LazyVGrid(columns: gridLayoutCP, alignment: .center, spacing: columnSpacingCP, pinnedViews: []) {
                                 Section()
                                 {
-                                    ForEach(creatorProfileViewModel.userPosts, id: \.postID) { post in
-                                        CreatorPostView(posts: post)
+                                    ForEach(creatorProfileViewModel.userPosts, id:\.self) { post in
+                                        CreatorPostView()
                                     }
                                 }
                             }
@@ -89,8 +89,8 @@ struct CreatorProfileView: View {
                             LazyVGrid(columns: gridLayoutCP, alignment: .center, spacing: columnSpacingCP, pinnedViews: []) {
                                 Section()
                                 {
-                                    ForEach(creatorProfileViewModel.privatePosts, id: \.postID) { post in
-                                        CreatorPostView(posts: post)
+                                    ForEach(creatorProfileViewModel.privatePosts, id:\.self) { post in
+                                        CreatorPostView()
                                     }
                                 }
                             }
@@ -102,8 +102,8 @@ struct CreatorProfileView: View {
                             LazyVGrid(columns: gridLayoutCP, alignment: .center, spacing: columnSpacingCP, pinnedViews: []) {
                                 Section()
                                 {
-                                    ForEach(creatorProfileViewModel.bookmarkedPosts, id: \.postID) { post in
-                                        CreatorPostView(posts: post)
+                                    ForEach(creatorProfileViewModel.bookmarkedPosts, id:\.self) { post in
+                                        CreatorPostView()
                                     }
                                 }
                             }
@@ -115,8 +115,8 @@ struct CreatorProfileView: View {
                             LazyVGrid(columns: gridLayoutCP, alignment: .center, spacing: columnSpacingCP, pinnedViews: []) {
                                 Section()
                                 {
-                                    ForEach(creatorProfileViewModel.favouritePosts, id: \.postID) { post in
-                                        CreatorPostView(posts: post)
+                                    ForEach(creatorProfileViewModel.favouritePosts, id:\.self) { post in
+                                        CreatorPostView()
                                     }
                                 }
                             }

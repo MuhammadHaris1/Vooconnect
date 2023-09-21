@@ -29,19 +29,11 @@ enum NetworkConstants {
             case development = "com.skillr.development.app"
         }
         
-//        enum BaseAPI: String {
-//            case userAPIsUrl = "https://api.vooconnect.com:9450/api/v1"
-//            case postsAPIsUrl = "https://api.vooconnect.com:9451/api/v1"
-//            case assetsAPIsUrl = "https://api.vooconnect.com:9452/api/v1"
-//            case getImageVideoBaseURL = "https://api.vooconnect.com:9452/uploads/"
-//            case getFilterBaseURL = "https://apis.argear.io/api/v3"
-//        }
-        
         enum BaseAPI: String {
-            case userAPIsUrl = "https://vooconnectuser.devssh.xyz/api/v1"
-            case postsAPIsUrl = "https://vooconnectpost.devssh.xyz/api/v1"
-            case assetsAPIsUrl = "https://vooconnectasset.devssh.xyz/api/v1"
-            case getImageVideoBaseURL = "https://vooconnectasset.devssh.xyz/uploads/"
+            case userAPIsUrl = "https://api.vooconnect.com:9450/api/v1"
+            case postsAPIsUrl = "https://api.vooconnect.com:9451/api/v1"
+            case assetsAPIsUrl = "https://api.vooconnect.com:9452/api/v1"
+            case getImageVideoBaseURL = "https://api.vooconnect.com:9452/uploads/"
             case getFilterBaseURL = "https://apis.argear.io/api/v3"
         }
         static let deviceType = "ios"
