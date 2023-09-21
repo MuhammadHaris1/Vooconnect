@@ -7,13 +7,14 @@
 import Foundation
 
 //getBaseURL + EndPoints.reels)
-//
+
 //var baseURL = "https://api.vooconnect.com:9450/api/v1"
 //var assatEndPoint = "https://api.vooconnect.com:9452/api/v1"
+////var userApiEndPoint = "https://api.vooconnect.com:9452/api/v1"
 //var userApiEndPoint = "https://vooconnectasset.devssh.xyz/api/v1"//3002
 //var getBaseURL = "https://api.vooconnect.com:9451/api/v1"
-//var getImageVideoBaseURL = "https://api.vooconnect.com:9452/uploads"
-//var getImageVideoMarkedBaseURL = "https://api.vooconnect.com:9452"//3002
+//var getImageVideoBaseURL = "https://api.vooconnect.com:9452/uploads/"
+//var getImageVideoMarkedBaseURL = "https://api.vooconnect.com:9452/uploads/marked"//3002
 //
 //
 //
@@ -44,34 +45,29 @@ struct EndPoints {
     static var createNewPost = "/create-new-post"
     
     static var uploadProfileData = "/update-profile"
-    static var profile = "/profile"
     
     static var uploadFile = "/upload-file"
     static var subtitles = "/lang-for-subtitles"
     static var updateInterestList = "/update-interest-list"
     static var postInterest = "/get-interest-list"
     
-    static var reels = "/post-stream"
-    static var followingReels = "/following-post-stream"
+    static var reels = "/post-stream?page=1&post_type=recommended"
     
     static var uploadReels = "/create-new-post"
     
     static var like = "/like-unlike-post"
-    static var likeComment = "/like-unlike-comment"
     static var reaction = "/change-like-reaction"
-    static var commentReaction = "/change-comment-like-reaction"
     static var blockPost = "/block-post"
     static var blockUser = "/block-user"
     static var abuseReportPost = "/report-abuse-post"
     static var bookMark = "/bookmark-post"
-    static var GetComments = "/comments-by-post"
-    static var addComment = "/comment-on-post"
+    static var comment = "/comment-on-post"
     static var follow = "/follow"
     static var unFollow = "/unfollow"
     static var followingList = "/following-list"
     static var followerList = "/follower-list"
     static var replyToComment = "/reply-to-comment"
-    static var comments = "/comments-by-post"
+    static var comments = "/comments"
     static var users = "/users"
     static var interest_categ = "/int_categ"
     static var user_interest_categ = "/user_int_categ"
