@@ -1,0 +1,23 @@
+{
+  "images" : [
+    {
+      "filename" : "icNosenarrowBlackOffEng.png",
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "icNosenarrowBlackOffEng@2x.png",
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "filename" : "icNosenarrowBlackOffEng@3x.png",
+      "idiom" : "universal",
+      "scale" : "3x"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
